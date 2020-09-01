@@ -158,6 +158,7 @@
         //}, 10000); //指定10秒刷新一次
         $(function () {
             loadInfo();
+            loadOneA();
             loadTwoB();
             loadTwoA();
             loadThreeA();
@@ -176,6 +177,32 @@
                     //$('#OutIP').html(data.IP);
                 }
             });
+        }
+        function loadOneA() {
+            $.ajax({
+                async: false,
+                url: "/OperationMonitoring/EngineeringHomepage/GetDataUserEngineeringList",
+                type: "get",
+                dataType: "json",
+                success: function (da) {
+                    var item = da[0];
+                    $("#a1").text(item.Account);
+                    $("#b1").text(item.CustomerAmount);
+                    $("#b1").css({ "color": item.CustomerAmountColor });
+                    $("#c1").text(item.DeliveryCompletionRate + "%");
+                    $("#c1").css({ "color": item.DeliveryCompletionRateColor });
+                    $("#d1").text(item.OnTimeDeliveryMold);
+                    $("#d1").css({ "color": item.OnTimeDeliveryMoldColor });
+                    $("#e1").text(item.LateDeliveryMold);
+                    $("#e1").css({ "color": item.LateDeliveryMoldColor });
+                    $("#f1").text(item.MoldInProcess);
+                    $("#f1").css({ "color": item.MoldInProcessColor });
+                    $("#g1").text(item.NormalProgress);
+                    $("#g1").css({ "color": item.NormalProgressColor });
+                    $("#h1").text(item.ScheduleDelay);
+                    $("#h1").css({ "color": item.ScheduleDelayColor });
+                }
+            })
         }
         function loadTwoB() {
             var listName = new Array();

@@ -18,11 +18,23 @@ namespace WaterCloud.Web.Areas.OperationMonitoring.Controllers
     [Area("OperationMonitoring")]
     public class EngineeringHomepageController : ControllerBase
     {
+        public UserEngineeringService _ueService { get; set; }
         public EHNumberMoldsDeliveredService _EHnmdService { get; set; }
         public EHDeliveryCompletionRateService _EHdcrService { get; set; }
         public EHProductionScheduleService _EHpsService { get; set; }
         public EHDelayMoldListService _EHdmlService { get; set; }
         public CustomerListDetailService _cldService { get; set; }
+
+
+        [HttpGet]
+        [HandlerAjaxOnly]
+        public async Task<ActionResult> GetDataUserEngineeringList()
+        {
+            var data = await _ueService.GetList();
+            data = data.Where(p => p.IsEffective == 1).ToList();
+            return Content(data.ToJson());
+
+        }
 
         [HttpGet]
         [HandlerAjaxOnly]
