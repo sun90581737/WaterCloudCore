@@ -1,0 +1,405 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Index.cshtml";
+}
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment env
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<style>
+
+    .layui-card {
+        border: 1px solid #f2f2f2;
+        border-radius: 5px;
+    }
+
+    .icon {
+        margin-right: 10px;
+        color: #1aa094;
+    }
+
+    .icon-cray {
+        color: #ffb800 !important;
+    }
+
+    .icon-blue {
+        color: #1e9fff !important;
+    }
+
+    .icon-tip {
+        color: #ff5722 !important;
+    }
+
+    .layuimini-qiuck-module {
+        text-align: center;
+        margin-top: 10px
+    }
+
+        .layuimini-qiuck-module a i {
+            display: inline-block;
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            border-radius: 2px;
+            font-size: 30px;
+            background-color: #F8F8F8;
+            color: #333;
+            transition: all .3s;
+            -webkit-transition: all .3s;
+        }
+
+        .layuimini-qiuck-module a cite {
+            position: relative;
+            top: 2px;
+            display: block;
+            color: #666;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+    .welcome-module {
+        width: 40%;
+        height: 100px;
+    }
+
+    .panel {
+        background-color: #fff;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+        box-shadow: 0 1px 1px rgba(0,0,0,.05)
+    }
+
+    .panel-body {
+        padding: 30px
+    }
+
+    .panel-title {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: 12px;
+        color: inherit
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .layui-bg-number {
+        background-color: #F8F8F8;
+    }
+
+    .tmp-layui-col-xs4 {
+        width: 12.5%;
+        float: left;
+        position: relative;
+        display: block;
+        box-sizing: border-box
+    }
+    /*鼠标指向表格时,奇数行背景颜色 */
+    /*    .layui-table tbody tr:hover, .layui-table-hover {
+        background-color: #eeffee;
+    }*/
+
+    /* 表格头部工具栏背景色 */
+    /*    .layui-table-tool {
+        background-color: #eeffee;
+    }*/
+
+    /* 表格头部背景色 */
+    /*th {
+        background-color: #359f6a;*/ /* MediumSeaGreen */
+    /*color: #fff;
+        font-weight: bold
+    }*/
+
+</style>
+<script>
+    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            common = layui.common,
+            layer = layui.layer,
+            echarts = layui.echarts,
+            element = layui.element;;
+        wcLoading.close();
+        // toolbarDemo.innerHTML = common.authorizeButtonNew(toolbarDemo.innerHTML);
+
+        //common.iframeInterval(function () {
+        //    loadInfo();
+        //}, 10000); //指定10秒刷新一次
+        $(function () {
+            loadTwoB();
+            loadTwoA();
+        });
+
+        function loadTwoB() {
+            var listName = new Array();
+            var str = [];
+            $.ajax({
+                async: false,
+                url: "/OperationMonitoring/EngineeringHomepage/GetDataEHNumberMoldsDelivered",
+                //type: "get",
+                dataType: "json",
+                success: function (da) {
+                    $(da).each(function (index, item) {
+                        listName.push(item.Type);
+                        var str3 = new Object();
+                        str3.name = item.Type;
+                        str3.value = item.Number;
+                        str[index] = str3;
+                    })
+                }
+            })
+            var myChart = echarts.init(document.getElementById('chart2b'))
+
+            var color = ['#f18533', '#6d48e6']
+
+            var option = {
+                color: color,
+                title: {
+                    text: '',
+                    left: 'center',
+                    top: '50%',
+                    textStyle: {
+                        fontSize: 20,
+                        color: '#808080',
+                        fontWeight: 'normal'
+                    }
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    //orient: 'vertical',
+                    //right: 20,
+                    //top: 20,
+                    itemWidth: 10,  //图例标记的图形宽度
+                    itemHeight: 10, //图例标记的图形高度
+                    bottom: 0,
+                    left: 'center',
+                    data: listName,
+                    textStyle: {    //图例文字的样式
+                        color: '#000000',  //文字颜色
+                        fontSize: 12    //文字大小
+                    }
+                },
+                series: [{
+                    type: 'pie',
+                    roseType: 'radius',
+                    radius: ['40%', '70%'],
+                    center: ['45%', '50%'],
+                    data: str,
+                    label: {
+                        normal: {
+                            formatter: '{font|{c}}\n{hr|}\n{font|{d}%}',
+                            rich: {
+                                font: {
+                                    fontSize: 14,
+                                    padding: [5, 0],
+                                    color: '#808080'
+                                },
+                                hr: {
+                                    height: 0,
+                                    borderWidth: 1,
+                                    width: '100%',
+                                    borderColor: '#808080'
+                                }
+                            }
+                        },
+                    },
+                    labelLine: {
+                        lineStyle: {
+                            color: '#808080'
+                        }
+                    },
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0,0,0,0.5)'
+                        }
+                    }
+                }]
+            };
+            myChart.setOption(option);
+        }
+        function loadTwoA() {
+            var ListMonth = new Array();
+            var ListDeliveryRate = new Array();
+
+            $.ajax({
+                async: false,
+                url: "/OperationMonitoring/EngineeringHomepage/GetDataEHDeliveryCompletionRate",
+                type: "get",
+                dataType: "json",
+                success: function (da) {
+                    $(da).each(function (index, item) {
+                        ListMonth.push(item.Month);
+                        ListDeliveryRate.push(item.DeliveryRate);
+                    })
+                }
+            })
+            var myChart = echarts.init(document.getElementById('chart1'));
+            var option = {
+                title: {
+                    text: ''
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                grid: {
+                    top: 10,
+                    left: 40,
+                    right: 15,
+                    bottom: 50,
+                    containLabel: false
+                },
+                //toolbox: {
+                //    feature: {
+                //        saveAsImage: {}
+                //    }
+                //},
+                tooltip: {
+                    trigger: 'axis',
+                    formatter: function (params) {
+                        var relVal = params[0].name;
+                        for (var i = 0, l = params.length; i < l; i++) {
+                            relVal += '<br/>' + params[i].marker + params[i].seriesName + ' : ' + params[i].value + "%";
+                        }
+                        return relVal;
+                    }
+                },
+                xAxis: [{
+                    type: 'category',
+                    data: ListMonth,
+                    axisLine: {
+                        show: false,
+                        lineStyle: {
+                            color: '#808080',
+
+                        }
+                    },
+                    axisLabel: {
+                        // interval: 0,
+                        // rotate: 40,
+                        textStyle: {
+                            fontSize: '11'
+                        }
+                    },
+                    axisTick: { //y轴刻度线
+                        show: false
+                    },
+                }],
+                yAxis: [{
+                    interval: 20,
+                    type: 'value',
+                    axisLine: {
+                        show: false,
+                        lineStyle: {
+                            color: '#f2961d'
+                        }
+                    },
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            //color: "#57617B"
+                            type: 'dashed'
+                        }
+                    },
+                    axisTick: { //y轴刻度线
+                        show: false
+                    },
+                    axisLabel: {
+                        formatter: function (value) {
+                            return value + "%";
+                        },
+                        show: true,
+                        textStyle: {
+                            color: '#f2961d'
+                        }
+                    },
+                }],
+                series: [
+                    {
+                        name: '交期达成率',
+                        type: 'line',
+                        areaStyle: {
+                            normal: {
+                                color: new echarts.graphic.LinearGradient(
+                                    0, 0, 0, 1,
+                                    [
+                                        { offset: 0, color: '#f28938' },
+                                        { offset: 0.5, color: '#ffba86' },
+                                        { offset: 1, color: '#fefefe' }
+                                    ]
+                                )
+                            }
+                        },
+                        itemStyle: {
+                            normal: {
+                                color: '#f28938', //改变折线点的颜色
+                                lineStyle: {
+                                    color: '#f28938' //改变折线颜色
+                                }
+                            }
+                        },
+                        data: ListDeliveryRate,
+                    }
+                ]
+            };
+            myChart.setOption(option);
+        }
+    })
+</script>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>交期达成率
+                    </div>
+                    <div class="layui-card-body layui-text">
+                        <div style="float:left;width:40%">
+                            <div style="text-align:center;font-size:13px;color:#808080;">上月交付模具数量</div>
+                            <div id="chart2b" style="        height: 450px;"></div>
+                        </div>
+                        <div style="margin-left:40%;">
+                            <div style="text-align:center;font-size:13px;color:#808080;">交期达成率趋势</div>
+                            <div id="chart1" style="height:450px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

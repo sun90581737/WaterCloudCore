@@ -1,0 +1,399 @@
+﻿<html>
+<head>
+    <meta charset="utf-8">
+    <title>通知中心</title>
+    <link href="../lib/font-awesome-4.7.0/css/font-awesome.css" rel="stylesheet" />
+    <script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../js/lay-module/dtree/dtree.css">
+    <link rel="stylesheet" href="../js/lay-module/dtree/font/dtreefont.css">
+    <script src="../js/framework-ui.js?v=@WaterCloud.Code.GlobalContext.GetVersion()"></script>
+    <script src="../lib/layui-v2.5.5/layui.js"></script>
+    <link rel="stylesheet" href="../lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+    <script src="../js/lay-config.js?v=@WaterCloud.Code.GlobalContext.GetVersion()" charset="utf-8"></script>
+    <link href="../css/watercloud.css?v=@WaterCloud.Code.GlobalContext.GetVersion()" rel="stylesheet" />
+    <link rel="stylesheet" href="../js/lay-module/loading/wcLoading.css" media="all">
+    <script src="../js/lay-module/loading/wcLoading.js?v=@WaterCloud.Code.GlobalContext.GetVersion()" charset="utf-8"></script>
+    <style>
+        /** 消息列表样式 */
+        .layui-badge {
+            position: relative;
+            display: inline-block;
+            padding: 0 6px;
+            font-size: 12px;
+            text-align: center;
+            background-color: #FF5722;
+            color: #fff;
+            border-radius: 2px;
+            left: 40px;
+        }
+
+        .layui-badge-yellow {
+            margin-top: 5px;
+            color: #faad14;
+            background: #fff;
+            border: 1px solid #ffe58f;
+        }
+
+        .layui-badge-green {
+            margin-top: 5px;
+            color: #52c41a;
+            background: #fff;
+            border: 1px solid #b7eb8f;
+        }
+
+        .layui-badge-red {
+            margin-top: 5px;
+            color: #f5222d;
+            background: #fff;
+            border: 1px solid #ffa39e;
+        }
+
+        .message-list {
+            position: absolute;
+            top: 48px;
+            padding: 0px 15px;
+            left: 0;
+            right: 0;
+            bottom: 45px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            background: #F2F2F2;
+        }
+
+        .watercolor {
+            background-color: #fff;
+        }
+
+        .message-list-item {
+            display: block;
+            line-height: 24px;
+            position: relative;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+            .message-list-item:hover, .message-btn-clear:hover, .message-btn-more:hover {
+                background: #F2F2F2;
+            }
+
+            .message-list-item .message-item-icon {
+                width: 30px;
+                height: 30px;
+                line-height: 30px;
+                margin-top: -20px;
+                border-radius: 50%;
+                position: absolute;
+                left: 40px;
+                top: 50%;
+            }
+
+                .message-list-item .message-item-icon.layui-icon {
+                    color: #fff;
+                    font-size: 15px;
+                    text-align: center;
+                    background-color: #FE5D58;
+                    margin-top: -20px;
+                }
+
+                .message-list-item .message-item-icon + .message-item-right {
+                    margin-left: 40px;
+                }
+
+            .message-list-item .message-item-title {
+                color: #666;
+                font-size: 14px;
+                padding-left: 40px;
+            }
+
+            .message-list-item .message-item-text {
+                color: #999;
+                font-size: 12px;
+                padding-left: 40px;
+            }
+
+            .message-list-item .message-item-extra {
+                color: #999;
+                font-size: 12px;
+                padding-left: 40px;
+            }
+
+            .message-list-item > .layui-badge {
+                position: absolute;
+                right: 20px;
+                top: 12px;
+                left: 40px;
+            }
+
+        .message-btn-clear, .message-btn-more {
+            color: #666;
+            display: block;
+            padding: 10px 5px;
+            line-height: 24px;
+            text-align: center;
+            cursor: pointer;
+            background-color: #fff;
+        }
+
+        .message-btn-clear {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-top: 1px solid #e8e8e8;
+        }
+
+        .message-btn-more {
+            color: #666;
+            font-size: 13px;
+        }
+
+            .message-btn-more.ew-btn-loading > .ew-btn-loading-text {
+                font-size: 13px !important;
+            }
+
+        .message-list-empty {
+            color: #999;
+            padding: 100px 0;
+            text-align: center;
+            display: none;
+        }
+
+            .message-list-empty > .layui-icon {
+                color: #ccc;
+                display: block;
+                font-size: 45px;
+                margin-bottom: 15px;
+            }
+
+        .show-empty .message-list-empty {
+            display: block;
+        }
+
+        .show-empty .message-btn-clear, .show-empty .message-list {
+            display: none;
+        }
+
+        /** //消息列表样式结束 */
+    </style>
+    <script>
+        layui.use(['element', 'jquery', 'common'], function () {
+            var $ = layui.$;
+            var common = layui.common;
+            $(function () {
+                //todo ajax获取3个信息的参数 进行显示
+                common.ajax({
+                    url: "/InfoManage/Message/GetUnReadListJson",
+                    dataType: "json",
+                    async: false,
+                    success: function (data) {
+                        //通知值
+                        var num1 = 0;
+                        //私信值
+                        var num2 = 0;
+                        //带办值
+                        var num3 = 0;
+                        var html1 = '';
+                        var html2 = '';
+                        var html3 = '';
+                        for (var i = 0; i < data.length; i++) {
+                            if (data[i].F_MessageType == 0) {
+                                num1++;
+                                html1 += '<a class="message-list-item" id="' + data[i].F_Id + '" href="javascript:;">'
+                                    + '<div class="watercolor">'
+                                    + '<i class="layui-icon layui-icon-tips message-item-icon"></i>'
+                                    + '<div class="message-item-right">'
+                                    + '<div class="message-item-title">' + '通知--' + new Date(data[i].F_CreatorTime).Format("yyyy-MM-dd hh:mm") + '</div>'
+                                    + '<div class="message-item-text layui-hide">' + data[i].F_MessageInfo + '</div>'
+                                    + '<div class="message-item-extra">' + data[i].F_CreatorUserName + '</div>'
+                                    + '</div>'
+                                    + '</div >'
+                                    + '</a >';
+                            }
+                            else if (data[i].F_MessageType == 1) {
+                                num2++;
+                                html2 += '<a class="message-list-item" id="' + data[i].F_Id + '" href="javascript:;">'
+                                    + '<div class="watercolor">'
+                                    + '<div class="message-item-right">'
+                                    + '<div class="message-item-title">' + '私信--' + data[i].F_CreatorUserName + '</div>'
+                                    + '<div class="message-item-text layui-hide">' + data[i].F_MessageInfo + '</div>'
+                                    + '<div class="message-item-extra">' + new Date(data[i].F_CreatorTime).Format("yyyy-MM-dd hh:mm") + '</div>'
+                                    + '</div>'
+                                    + '</div>'
+                                    + '</a>';
+                            }
+                            else {
+                                num3++;
+                                html3 += '<a class="message-list-item" id="' + data[i].F_Id + '" href="javascript:;">'
+                                    + '<div class="watercolor">'
+                                    + '<span class="layui-badge ' + 'layui-badge-yellow' + '">' + '待处理' + '</span>'
+                                    + '<div class="message-item-right">'
+                                    + '<h2 class="message-item-title">' + data[i].F_MessageInfo + '</h2>'
+                                    + '<div class="message-item-text layui-hide">' + data[i].F_Href + '</div>'
+                                    + '<div class="message-item-extra">' + new Date(data[i].F_CreatorTime).Format("yyyy-MM-dd hh:mm") + '</div>'
+                                    + '</div>'
+                                    + '</div>'
+                                    + '</a>';
+                            }
+                        }
+                        $('#message1').html("通知(" + num1 + ")");
+                        $('#message2').html("私信(" + num2 + ")");
+                        $('#message3').html("待办(" + num3 + ")");
+                        $('#list1').html(html1);
+                        $('#list2').html(html2);
+                        $('#list3').html(html3);
+                        if (num1 == 0) {
+                            $('#list1').parents('.layui-tab-item').addClass('show-empty');
+                        }
+                        if (num2 == 0) {
+                            $('#list2').parents('.layui-tab-item').addClass('show-empty');
+                        }
+                        if (num3 == 0) {
+                            $('#list3').parents('.layui-tab-item').addClass('show-empty');
+                        }
+                    }
+                });
+
+            });
+            wcLoading.close();
+            /* 按钮点击事件 */
+            $('body').on('click', '.message-list-item', function () {
+                //todo 前后交互，htm2是根据后端数据生成的
+                var message = $('.layui-this')[0].id;
+                common.ajax({
+                    url: "/InfoManage/Message/ReadMsgForm",
+                    data: { keyValue: this.id },
+                    dataType: "json",
+                    type: 'POST',
+                    success: function () {
+                    }
+                });
+                if (message == 'message1') {
+                    var title = $(this).children('.watercolor').children('.message-item-right').children('.message-item-title').text(),
+                        noticeTime = $(this).children('.watercolor').children('.message-item-right').children('.message-item-extra').text(),
+                        content = $(this).children('.watercolor').children('.message-item-right').children('.message-item-text').text();
+                    var html = '<div style="padding:15px 20px; text-align:justify; line-height: 22px;border-bottom:1px solid #e2e2e2;background-color: #2f4056;color: #ffffff">\n' +
+                        '<div style="text-align: center;margin-bottom: 20px;font-weight: bold;border-bottom:1px solid #718fb5;padding-bottom: 5px"><h4 class="text-danger">' + title + '</h4></div>\n' +
+                        '<div style="font-size: 12px">' + content + '</div>\n' +
+                        '</div>\n';
+                    top.layer.open({
+                        type: 1,
+                        title: '通知' + '<span style="float: right;right: 1px;font-size: 12px;color: #b1b3b9;margin-top: 1px">' + noticeTime + '</span>',
+                        area: '250px;',
+                        shade: 0.8,
+                        id: 'layuimini-notice',
+                        btn: ['确定'],
+                        btnAlign: 'c',
+                        moveType: 1,
+                        content: html
+                    });
+                }
+                else if (message == 'message2') {
+                    var title = $(this).children('.watercolor').children('.message-item-right').children('.message-item-title').text(),
+                        noticeTime = $(this).children('.watercolor').children('.message-item-right').children('.message-item-extra').text(),
+                        content = $(this).children('.watercolor').children('.message-item-right').children('.message-item-text').text();
+                    var html = '<div style="padding:15px 20px; text-align:justify; line-height: 22px;border-bottom:1px solid #e2e2e2;background-color: #2f4056;color: #ffffff">\n' +
+                        '<div style="text-align: center;margin-bottom: 20px;font-weight: bold;border-bottom:1px solid #718fb5;padding-bottom: 5px"><h4 class="text-danger">' + title + '</h4></div>\n' +
+                        '<div style="font-size: 12px">' + content + '</div>\n' +
+                        '</div>\n';
+                    top.layer.open({
+                        type: 1,
+                        title: '私信' + '<span style="float: right;right: 1px;font-size: 12px;color: #b1b3b9;margin-top: 1px">' + noticeTime + '</span>',
+                        area: '250px;',
+                        shade: 0.8,
+                        id: 'layuimini-notice',
+                        btn: ['确定'],
+                        btnAlign: 'c',
+                        moveType: 1,
+                        content: html
+                    });
+                }
+                else {
+                    var Href = $(this).children('.watercolor').children('.message-item-right').children('.message-item-text').html();
+                    top.$("[layuimini-href='" + Href + "']", ".layuimini-menu-left").click();
+                    common.modalClose();
+                }
+
+            });
+            /* 清空消息点击事件 分开写交互*/
+            $('#messageClearBtn1').click(function () {
+                common.ajax({
+                    url: "/InfoManage/Message/ReadAllMsgForm",
+                    param: { type: 0 },
+                    success: function () {
+                        $('#message1').html("通知(0)");
+                        $(this).parents('.layui-tab-item').addClass('show-empty');
+                    }
+                });
+            });
+            $('#messageClearBtn2').click(function () {
+                common.ajax({
+                    url: "/InfoManage/Message/ReadAllMsgForm",
+                    param: { type: 1 },
+                    success: function () {
+                        $('#message2').html("私信(0)");
+                        $(this).parents('.layui-tab-item').addClass('show-empty');
+                    }
+                });
+
+            });
+            $('#messageClearBtn3').click(function () {
+                common.ajax({
+                    url: "/InfoManage/Message/ReadAllMsgForm",
+                    param: { type: 2 },
+                    success: function () {
+                        $('#message3').html("待办(0)");
+                        $(this).parents('.layui-tab-item').addClass('show-empty');
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="layui-card" style="box-shadow: none;border: none;">
+        <div class="layui-tab layui-tab-brief">
+            <ul class="layui-tab-title" style="text-align: center;">
+                <li class="layui-this" id="message1"></li>
+                <li id="message2" class="layui-hide"></li>
+                <li id="message3"></li>
+            </ul>
+            <div class="layui-tab-content" style="padding: 0;">
+                <!-- tab1 -->
+                <div class="layui-tab-item layui-show">
+                    <div class="message-list" id="list1">
+                    </div>
+                    <!-- 列表为空 -->
+                    <div class="message-list-empty">
+                        <i class="layui-icon layui-icon-notice"></i>
+                        <div>没有通知</div>
+                    </div>
+                    <a id="messageClearBtn1" class="message-btn-clear">全部标记已读</a>
+                </div>
+                <!-- tab2 -->
+                <div class="layui-tab-item">
+                    <div class="message-list"  id="list2">
+                    </div>
+                    <!-- 列表为空 -->
+                    <div class="message-list-empty">
+                        <i class="layui-icon layui-icon-dialogue"></i>
+                        <div>没有私信</div>
+                    </div>
+                    <a id="messageClearBtn2" class="message-btn-clear">全部标记已读</a>
+                </div>
+                <!-- tab3 -->
+                <div class="layui-tab-item">
+                    <div class="message-list"  id="list3">
+                    </div>
+                    <!-- 列表为空 -->
+                    <div class="message-list-empty">
+                        <i class="layui-icon layui-icon-flag"></i>
+                        <div>没有待办</div>
+                    </div>
+                    <a id="messageClearBtn3" class="message-btn-clear">全部标记已读</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
