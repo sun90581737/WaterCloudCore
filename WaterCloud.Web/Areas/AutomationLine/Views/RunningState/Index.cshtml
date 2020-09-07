@@ -1,0 +1,340 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Index.cshtml";
+}
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment env
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<style type="text/css">
+    .tip {
+        z-index: 10000;
+        position: absolute;
+        opacity: 0.86;
+        background: rgb(255, 0, 0);
+        padding: 7px;
+        border-radius: 4px;
+        display: block;
+        visibility: visible;
+        color: #fff;
+    }
+
+    .tip-text {
+        max-width: 222px;
+    }
+
+        .tip-text > p {
+            margin: 0;
+            padding: 2px;
+        }
+
+    .tip-arrow {
+        position: absolute;
+        width: 0px;
+        height: 0px;
+        border-width: 6px;
+        border-style: solid;
+        border-color: rgb(255, 0, 0) transparent transparent;
+        border-image: initial;
+        left: 50%;
+        bottom: -12px;
+    }
+
+    .tip-arrows {
+        position: absolute;
+        width: 0px;
+        height: 0px;
+        border-width: 6px;
+        border-style: solid;
+        border-color: transparent transparent rgb(51, 204, 153);
+        border-image: initial;
+        left: 29.5px;
+        top: -12px;
+    }
+
+    .tip-1 {
+        left: 23%;
+        top: 6%;
+    }
+
+    .tip-2 {
+        left: 40%;
+        top: -10%;
+    }
+
+    .tip-3 {
+        left: 65%;
+        top: -11%;
+    }
+
+    .tip-4 {
+        left: 22%;
+        top: 75%;
+    }
+
+    .tip-5 {
+        left: 50%;
+        top: 40%;
+    }
+
+    .tip-6 {
+        left: 71%;
+        top: 55%;
+    }
+
+    .iden {
+        left: 52%;
+        top: 68%;
+        width: 30px;
+        height: 30px;
+        z-index: 10000;
+        position: absolute;
+    }
+
+    .iden2 {
+        left: 63%;
+        top: 58%;
+        width: 30px;
+        height: 30px;
+        z-index: 10000;
+        position: absolute;
+    }
+
+    .temp1 {
+        left: 65%;
+        top: 73%;
+        background: url('/i-quicker/img/bk2.png') 0 0 / 100% 100% no-repeat;
+        width: 232px;
+        height: 192px;
+        z-index: 10000;
+        position: absolute;
+    }
+
+    .temp2 {
+        left: 93%;
+        top: 73%;
+        background: url('/i-quicker/img/bk2.png') 0 0 / 100% 100% no-repeat;
+        width: 232px;
+        height: 192px;
+        z-index: 10000;
+        position: absolute;
+    }
+
+    .temp3 {
+        left: -20%;
+        top: 60%;
+        width: 232px;
+        height: 192px;
+        z-index: 10000;
+        position: absolute;
+    }
+
+    .temp-text {
+        text-align: center;
+        font-size: 16px;
+        color: #f2961d;
+        font-weight: 500;
+        top: 5%;
+        position: relative;
+    }
+</style>
+<script type="text/javascript">
+    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            common = layui.common,
+            layer = layui.layer,
+            echarts = layui.echarts,
+            element = layui.element;;
+        wcLoading.close();
+    })
+
+    var tunningTip = function (opts) {
+        var el = ".tip-" + opts.el;
+        $(el).children("div[class='tip-text']").html(opts.text);
+        $(el).css("background", opts.color);
+        $(el).children("span[class='tip-arrow']").css("border-color", opts.color + " transparent transparent");
+    }
+    var tunningTips = function (opts) {
+        var el = ".tip-" + opts.el;
+        $(el).children("div[class='tip-text']").html(opts.text);
+        $(el).css("background", opts.color);
+        $(el).children("span[class='tip-arrows']").css("border-color", " transparent transparent" + opts.color);
+    }
+
+    $(function () {
+        ImgLoading(true);
+    })
+    function S() {
+        window.setInterval(function () {
+            ImgLoading(false);
+        }, 1000 * 60 * 30);
+    }
+    function ImgLoading(first) {
+        $.ajax({
+            async: false,
+            url: "/AutomationLine/RunningState/GetRunningState",
+            type: "get",
+            dataType: "json",
+            success: function (da) {
+                var item = da[0];
+                tunningTip({
+                    el: "1",
+                    text: item.Describe1,
+                    color: item.DescribeColor1,
+                });
+                tunningTip({
+                    el: "2",
+                    text: item.Describe2,
+                    color: item.DescribeColor2,
+                });
+                tunningTip({
+                    el: "3",
+                    text: item.Describe3,
+                    color: item.DescribeColor3,
+                });
+                tunningTips({
+                    el: "4",
+                    text: item.Describe4,
+                    color: item.DescribeColor4,
+                });
+                tunningTips({
+                    el: "5",
+                    text: item.Describe5,
+                    color: item.DescribeColor5,
+                });
+                tunningTips({
+                    el: "6",
+                    text: item.Describe6,
+                    color: item.DescribeColor6,
+                });
+
+                var strs = new Array();
+                strs = item.Describe7.split(";");
+                var Sum = Number(strs[0]) + Number(strs[1]) + Number(strs[2]) + Number(strs[3]) + Number(strs[4]) + Number(strs[5]);
+                $("#dis1").css("width", strs[0] / Sum * 100 + "%");
+                $("#dis2").css("width", strs[1] / Sum * 100 + "%");
+                $("#dis3").css("width", strs[2] / Sum * 100 + "%");
+                $("#dis4").css("width", strs[3] / Sum * 100 + "%");
+                $("#dis5").css("width", strs[4] / Sum * 100 + "%");
+                $("#dis6").css("width", strs[5] / Sum * 100 + "%");
+
+                var strs0 = new Array();
+                strs0 = item.DescribeColor7.split(";");
+                $("#dis1").css("background-color", strs0[0]);
+                $("#dis2").css("background-color", strs0[1]);
+                $("#dis3").css("background-color", strs0[2]);
+                $("#dis4").css("background-color", strs0[3]);
+                $("#dis5").css("background-color", strs0[4]);
+                $("#dis6").css("background-color", strs0[5]);
+
+                var strs1 = new Array();
+                strs1 = item.Describe8.split(";");
+                var Sum2 = Number(strs1[0]) + Number(strs1[1]) + Number(strs1[2]) + Number(strs1[3]) + Number(strs1[4]) + Number(strs1[5]);
+                $("#yis1").css("width", strs1[0] / Sum * 100 + "%");
+                $("#yis2").css("width", strs1[1] / Sum * 100 + "%");
+                $("#yis3").css("width", strs1[2] / Sum * 100 + "%");
+                $("#yis4").css("width", strs1[3] / Sum * 100 + "%");
+                $("#yis5").css("width", strs1[4] / Sum * 100 + "%");
+                $("#yis6").css("width", strs1[5] / Sum * 100 + "%");
+
+                var strs2 = new Array();
+                strs2 = item.DescribeColor8.split(";");
+                $("#yis1").css("background-color", strs2[0]);
+                $("#yis2").css("background-color", strs2[1]);
+                $("#yis3").css("background-color", strs2[2]);
+                $("#yis4").css("background-color", strs2[3]);
+                $("#yis5").css("background-color", strs2[4]);
+                $("#yis6").css("background-color", strs2[5]);
+
+                //图例 状态默认
+                //$("#tl1").css("background-color", strs0[0]);
+                //$("#tl2").css("background-color", strs0[1]);
+                //$("#tl3").css("background-color", strs0[2]);
+                //$("#tl4").css("background-color", strs0[3]);
+                //$("#tl5").css("background-color", strs0[4]);
+                //$("#tl6").css("background-color", strs0[5]);
+
+
+                if (first) {  // 第一次初始化 直接取值
+                    console.log("laod...");
+                    $("#OngridList").css("background", "url(" + item.Picture_Url + ")");
+                    //$("#OngridList").css("background", "url('/i-quicker/img/product/runningstate/01.png')");
+                    $("#OngridList").css({ "width": "850px", "height": "530px", "position": "relative", "margin": "auto", "background-size": "100% 100%", "top": "82px" });
+                    S();
+                }
+            }
+        })
+    }
+</script>
+
+@*<div class="layuimini-container">
+    <div class="layuimini-main">*@
+        <div id="OngridList">
+            <div class="tip tip-1">
+                <div class="tip-text"></div>
+                <span class="tip-arrow"></span>
+            </div>
+            <div class="tip tip-2">
+                <div class="tip-text"></div>
+                <span class="tip-arrow"></span>
+            </div>
+            <div class="tip tip-3">
+                <div class="tip-text"></div>
+                <span class="tip-arrow"></span>
+            </div>
+            <div class="tip tip-4">
+                <div class="tip-text"></div>
+                <span class="tip-arrows"></span>
+            </div>
+            <div class="tip tip-5">
+                <div class="tip-text"></div>
+                <span class="tip-arrows"></span>
+            </div>
+            <div class="tip tip-6">
+                <div class="tip-text"></div>
+                <span class="tip-arrows"></span>
+            </div>
+            <div class="iden">
+                <div style="color:#0403fe; font-size:20px;transform: rotate(-30deg);">①</div>
+            </div>
+            <div class="iden2">
+                <div style="color:#0403fe; font-size:20px;transform: rotate(-30deg);">②</div>
+            </div>
+            <div class="temp1">
+                <div class="temp-text">1号料仓</div>
+                <div style="color:#000000;position:relative;top:8px;left:10px;font-size:12px;">未开始</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top: -10px; left: 15px; border: 1px transparent solid; margin: 4px auto; position: relative; width: 160px; height: 10px; border-radius: 12px;"><div id="dis1" style="white-space:pre-line;width: 10%;height: 80%;background-color:#0403fe;border-radius: 3px;"></div></div></div>
+                <div style="color:#000000;position:relative;top:0px;left:10px;font-size:12px;">进行中</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-17px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="dis2" style="white-space:pre-line;width: 20%;height: 80%;background-color:#f3961d;border-radius: 3px;"></div></div></div>
+                <div style="color:#000000;position:relative;top:-8px;left:10px;font-size:12px;">已完成</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-25px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="dis3" style="white-space:pre-line;width: 30%;height: 80%;background-color:#f15d5d;border-radius: 3px;"></div></div></div>
+                <div style="color:#000000;position:relative;top:-16px;left:22px;font-size:12px;">异常</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-33px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="dis4" style="white-space:pre-line;width: 40%;height: 80%;background-color:#01ffff;border-radius: 3px;"></div></div></div>
+                <div style="color:#000000;position:relative;top:-24px;left:22px;font-size:12px;">停止</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-41px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="dis5" style="white-space:pre-line;width: 50%;height: 80%;background-color:#01ffff;border-radius: 3px;"></div></div></div>
+                <div style="color:#000000;position:relative;top:-32px;left:22px;font-size:12px;">取消</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat; top: -49px; left: 15px; border: 1px transparent solid; margin: 4px auto; position: relative; width: 160px; height: 10px; border-radius: 12px;"><div id="dis6" style="white-space:pre-line;width: 60%;height: 80%;background-color:#01ffff;border-radius: 3px;"></div></div></div>
+            </div>
+            <div class="temp2" style="">
+                <div class="temp-text">2号料仓</div>
+                <div style="color:#000000;position:relative;top:8px;left:10px;font-size:12px;">未开始</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top: -10px; left: 15px; border: 1px transparent solid; margin: 4px auto; position: relative; width: 160px; height: 10px; border-radius: 12px;"><div id="yis1" style="white-space:pre-line;width: 100%;height: 80%;background-color:#0403fe;border-radius: 3px;"></div></div></div>
+                <div style="color:#000000;position:relative;top:0px;left:10px;font-size:12px;">进行中</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-17px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="yis2" style="white-space:pre-line;width: 90%;height: 80%;background-color:#f3961d;border-radius: 3px;"></div></div></div>
+                <div style="color:#000000;position:relative;top:-8px;left:10px;font-size:12px;">已完成</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-25px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="yis3" style="white-space:pre-line;width: 80%;height: 80%;background-color:#f15d5d;border-radius: 3px;"></div></div></div>
+                <div style="color:#000000;position:relative;top:-16px;left:22px;font-size:12px;">异常</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-33px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="yis4" style="white-space:pre-line;width: 70%;height: 80%;background-color:#01ffff;border-radius: 3px;"></div></div></div>
+                <div style="color:#000000;position:relative;top:-24px;left:22px;font-size:12px;">停止</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-41px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="yis5" style="white-space:pre-line;width: 60%;height: 80%;background-color:#01ffff;border-radius: 3px;"></div></div></div>
+                <div style="color:#000000;position:relative;top:-32px;left:22px;font-size:12px;">取消</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-49px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="yis6" style="white-space:pre-line;width: 50%;height: 80%;background-color:#01ffff;border-radius: 3px;"></div></div></div>
+            </div>
+            <div class="temp3">
+                <div id="tl1" style="width:45px;height:18px;background:#c8c8c8;color:#000000;font-size:14px;text-align:center;border-radius:5px;">离线</div>
+                <br />
+                <div id="tl2" style="width:45px;height:18px;background:#0865e3;color:#000000;font-size:14px;text-align:center;border-radius:5px;">待机</div>
+                <br />
+                <div id="tl3" style="width:45px;height:18px;background:#23ab33;color:#000000;font-size:14px;text-align:center;border-radius:5px;">运行中</div>
+                <br />
+                <div id="tl4" style="width:45px;height:18px;background:#ffc000;color:#000000;font-size:14px;text-align:center;border-radius:5px;">暂停</div>
+                <br />
+                <div id="tl5" style="width:45px;height:18px;background:#ee5d5d;color:#000000;font-size:14px;text-align:center;border-radius:5px;">报警</div>
+                <br />
+                <div id="tl6" style="width:45px;height:18px;background:#0fcdfd;color:#000000;font-size:14px;text-align:center;border-radius:5px;">未就绪</div>
+                <br />
+                <div id="tl7" style="width:45px;height:18px;background:#fc9711;color:#000000;font-size:14px;text-align:center;border-radius:5px;">停止</div>
+            </div>
+        </div>
+    @*</div>
+</div>*@
