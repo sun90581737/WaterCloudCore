@@ -268,59 +268,57 @@
         })
     }
 </script>
-
-@*<div class="layuimini-container">
-    <div class="layuimini-main">*@
-        <div id="OngridList">
-            <div class="tip tip-1">
-                <div class="tip-text"></div>
-                <span class="tip-arrow"></span>
-            </div>
-            <div class="tip tip-2">
-                <div class="tip-text"></div>
-                <span class="tip-arrow"></span>
-            </div>
-            <div class="tip tip-3">
-                <div class="tip-text"></div>
-                <span class="tip-arrow"></span>
-            </div>
-            <div class="tip tip-4">
-                <div class="tip-text"></div>
-                <span class="tip-arrows"></span>
-            </div>
-            <div class="tip tip-5">
-                <div class="tip-text"></div>
-                <span class="tip-arrows"></span>
-            </div>
-            <div class="tip tip-6">
-                <div class="tip-text"></div>
-                <span class="tip-arrows"></span>
-            </div>
-            <div class="iden">
-                <div style="color:#0403fe; font-size:20px;transform: rotate(-30deg);">①</div>
-            </div>
-            <div class="iden2">
-                <div style="color:#0403fe; font-size:20px;transform: rotate(-30deg);">②</div>
-            </div>
-            <div class="temp1">
-                <div class="temp-text">1号料仓</div>
-                <div style="color:#000000;position:relative;top:8px;left:10px;font-size:12px;">未开始</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top: -10px; left: 15px; border: 1px transparent solid; margin: 4px auto; position: relative; width: 160px; height: 10px; border-radius: 12px;"><div id="dis1" style="white-space:pre-line;width: 10%;height: 80%;background-color:#0403fe;border-radius: 3px;"></div></div></div>
-                <div style="color:#000000;position:relative;top:0px;left:10px;font-size:12px;">进行中</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-17px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="dis2" style="white-space:pre-line;width: 20%;height: 80%;background-color:#f3961d;border-radius: 3px;"></div></div></div>
-                <div style="color:#000000;position:relative;top:-8px;left:10px;font-size:12px;">已完成</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-25px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="dis3" style="white-space:pre-line;width: 30%;height: 80%;background-color:#f15d5d;border-radius: 3px;"></div></div></div>
-                <div style="color:#000000;position:relative;top:-16px;left:22px;font-size:12px;">异常</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-33px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="dis4" style="white-space:pre-line;width: 40%;height: 80%;background-color:#01ffff;border-radius: 3px;"></div></div></div>
-                <div style="color:#000000;position:relative;top:-24px;left:22px;font-size:12px;">停止</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-41px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="dis5" style="white-space:pre-line;width: 50%;height: 80%;background-color:#01ffff;border-radius: 3px;"></div></div></div>
-                <div style="color:#000000;position:relative;top:-32px;left:22px;font-size:12px;">取消</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat; top: -49px; left: 15px; border: 1px transparent solid; margin: 4px auto; position: relative; width: 160px; height: 10px; border-radius: 12px;"><div id="dis6" style="white-space:pre-line;width: 60%;height: 80%;background-color:#01ffff;border-radius: 3px;"></div></div></div>
-            </div>
-            <div class="temp2" style="">
-                <div class="temp-text">2号料仓</div>
-                <div style="color:#000000;position:relative;top:8px;left:10px;font-size:12px;">未开始</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top: -10px; left: 15px; border: 1px transparent solid; margin: 4px auto; position: relative; width: 160px; height: 10px; border-radius: 12px;"><div id="yis1" style="white-space:pre-line;width: 100%;height: 80%;background-color:#0403fe;border-radius: 3px;"></div></div></div>
-                <div style="color:#000000;position:relative;top:0px;left:10px;font-size:12px;">进行中</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-17px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="yis2" style="white-space:pre-line;width: 90%;height: 80%;background-color:#f3961d;border-radius: 3px;"></div></div></div>
-                <div style="color:#000000;position:relative;top:-8px;left:10px;font-size:12px;">已完成</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-25px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="yis3" style="white-space:pre-line;width: 80%;height: 80%;background-color:#f15d5d;border-radius: 3px;"></div></div></div>
-                <div style="color:#000000;position:relative;top:-16px;left:22px;font-size:12px;">异常</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-33px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="yis4" style="white-space:pre-line;width: 70%;height: 80%;background-color:#01ffff;border-radius: 3px;"></div></div></div>
-                <div style="color:#000000;position:relative;top:-24px;left:22px;font-size:12px;">停止</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-41px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="yis5" style="white-space:pre-line;width: 60%;height: 80%;background-color:#01ffff;border-radius: 3px;"></div></div></div>
-                <div style="color:#000000;position:relative;top:-32px;left:22px;font-size:12px;">取消</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-49px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="yis6" style="white-space:pre-line;width: 50%;height: 80%;background-color:#01ffff;border-radius: 3px;"></div></div></div>
-            </div>
-            @*<div class="temp3">
+<div style="height: 614px;background-color: #ffffff !important">
+    <div id="OngridList">
+        <div class="tip tip-1">
+            <div class="tip-text"></div>
+            <span class="tip-arrow"></span>
+        </div>
+        <div class="tip tip-2">
+            <div class="tip-text"></div>
+            <span class="tip-arrow"></span>
+        </div>
+        <div class="tip tip-3">
+            <div class="tip-text"></div>
+            <span class="tip-arrow"></span>
+        </div>
+        <div class="tip tip-4">
+            <div class="tip-text"></div>
+            <span class="tip-arrows"></span>
+        </div>
+        <div class="tip tip-5">
+            <div class="tip-text"></div>
+            <span class="tip-arrows"></span>
+        </div>
+        <div class="tip tip-6">
+            <div class="tip-text"></div>
+            <span class="tip-arrows"></span>
+        </div>
+        <div class="iden">
+            <div style="color:#0403fe; font-size:20px;transform: rotate(-30deg);">①</div>
+        </div>
+        <div class="iden2">
+            <div style="color:#0403fe; font-size:20px;transform: rotate(-30deg);">②</div>
+        </div>
+        <div class="temp1">
+            <div class="temp-text">1号料仓</div>
+            <div style="color:#000000;position:relative;top:8px;left:10px;font-size:12px;">未开始</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top: -10px; left: 15px; border: 1px transparent solid; margin: 4px auto; position: relative; width: 160px; height: 10px; border-radius: 12px;"><div id="dis1" style="white-space:pre-line;width: 10%;height: 80%;background-color:#0403fe;border-radius: 3px;"></div></div></div>
+            <div style="color:#000000;position:relative;top:0px;left:10px;font-size:12px;">进行中</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-17px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="dis2" style="white-space:pre-line;width: 20%;height: 80%;background-color:#f3961d;border-radius: 3px;"></div></div></div>
+            <div style="color:#000000;position:relative;top:-8px;left:10px;font-size:12px;">已完成</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-25px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="dis3" style="white-space:pre-line;width: 30%;height: 80%;background-color:#f15d5d;border-radius: 3px;"></div></div></div>
+            <div style="color:#000000;position:relative;top:-16px;left:22px;font-size:12px;">异常</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-33px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="dis4" style="white-space:pre-line;width: 40%;height: 80%;background-color:#01ffff;border-radius: 3px;"></div></div></div>
+            <div style="color:#000000;position:relative;top:-24px;left:22px;font-size:12px;">停止</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-41px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="dis5" style="white-space:pre-line;width: 50%;height: 80%;background-color:#01ffff;border-radius: 3px;"></div></div></div>
+            <div style="color:#000000;position:relative;top:-32px;left:22px;font-size:12px;">取消</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat; top: -49px; left: 15px; border: 1px transparent solid; margin: 4px auto; position: relative; width: 160px; height: 10px; border-radius: 12px;"><div id="dis6" style="white-space:pre-line;width: 60%;height: 80%;background-color:#01ffff;border-radius: 3px;"></div></div></div>
+        </div>
+        <div class="temp2" style="">
+            <div class="temp-text">2号料仓</div>
+            <div style="color:#000000;position:relative;top:8px;left:10px;font-size:12px;">未开始</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top: -10px; left: 15px; border: 1px transparent solid; margin: 4px auto; position: relative; width: 160px; height: 10px; border-radius: 12px;"><div id="yis1" style="white-space:pre-line;width: 100%;height: 80%;background-color:#0403fe;border-radius: 3px;"></div></div></div>
+            <div style="color:#000000;position:relative;top:0px;left:10px;font-size:12px;">进行中</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-17px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="yis2" style="white-space:pre-line;width: 90%;height: 80%;background-color:#f3961d;border-radius: 3px;"></div></div></div>
+            <div style="color:#000000;position:relative;top:-8px;left:10px;font-size:12px;">已完成</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-25px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="yis3" style="white-space:pre-line;width: 80%;height: 80%;background-color:#f15d5d;border-radius: 3px;"></div></div></div>
+            <div style="color:#000000;position:relative;top:-16px;left:22px;font-size:12px;">异常</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-33px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="yis4" style="white-space:pre-line;width: 70%;height: 80%;background-color:#01ffff;border-radius: 3px;"></div></div></div>
+            <div style="color:#000000;position:relative;top:-24px;left:22px;font-size:12px;">停止</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-41px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="yis5" style="white-space:pre-line;width: 60%;height: 80%;background-color:#01ffff;border-radius: 3px;"></div></div></div>
+            <div style="color:#000000;position:relative;top:-32px;left:22px;font-size:12px;">取消</div><div><div style="background: url('/i-quicker/img/jdt.png') 0 0 / 100% 100% no-repeat;top:-49px;left:15px;border: 1px transparent solid;margin:4px auto;position: relative;width:160px; height: 10px; border-radius: 12px;"><div id="yis6" style="white-space:pre-line;width: 50%;height: 80%;background-color:#01ffff;border-radius: 3px;"></div></div></div>
+        </div>
+        @*<div class="temp3">
                 <div id="tl1" style="width:45px;height:18px;background:#c8c8c8;color:#000000;font-size:14px;text-align:center;border-radius:5px;">离线</div>
                 <br />
                 <div id="tl2" style="width:45px;height:18px;background:#0865e3;color:#000000;font-size:14px;text-align:center;border-radius:5px;">待机</div>
@@ -335,6 +333,5 @@
                 <br />
                 <div id="tl7" style="width:45px;height:18px;background:#fc9711;color:#000000;font-size:14px;text-align:center;border-radius:5px;">停止</div>
             </div>*@
-        </div>
-    @*</div>
-</div>*@
+    </div>
+</div>
