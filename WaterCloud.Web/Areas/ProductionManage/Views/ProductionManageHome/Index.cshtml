@@ -471,35 +471,65 @@
                     series: [{
                         name: '',
                         type: 'pie',
-                        radius: '80%',
-                        center: ['50%', '50%'],
+                        radius: '60%',
+                        center: ['45%', '60%'],
                         data: str,
                         itemStyle: {  //图形样式
                             normal: { //normal 是图形在默认状态下的样式；emphasis 是图形在高亮状态下的样式，比如在鼠标悬浮或者图例联动高亮时。
                                 label: {  //饼图图形上的文本标签
-                                    show: true,  //平常不显示
-                                    formatter: '{b}:{c}%',
-                                    position: 'inner'
-                                },
-                                labelLine: {     //标签的视觉引导线样式
-                                    show: false  //平常不显示
-                                }
-                            },
-                            emphasis: {   //normal 是图形在默认状态下的样式；emphasis 是图形在高亮状态下的样式，比如在鼠标悬浮或者图例联动高亮时。
-                                label: {  //饼图图形上的文本标签
-                                    show: true,
-                                    position: 'center',
-                                    textStyle: {
-                                        fontSize: '20',
-                                        fontWeight: 'bold'
+                                    formatter: function (params) {
+                                        var percent = 0;
+                                        var total = 0;
+                                        for (var i = 0; i < str.length; i++) {
+                                            total += str[i].value;
+                                        }
+                                        percent = ((params.value / total) * 100).toFixed(0);
+                                        if (params.name !== '') {
+                                            return params.name + '：' + params.value + '套' + '\n' + '\n' + percent + '%';
+                                        } else {
+                                            return '';
+                                        }
+                                    },
+                                    rich: {
+                                        font: {
+                                            fontSize: 14,
+                                            padding: [5, 0],
+                                            color: '#808080'
+                                        },
+                                        hr: {
+                                            height: 0,
+                                            borderWidth: 1,
+                                            width: '100%',
+                                            borderColor: '#808080'
+                                        }
                                     }
                                 },
-                                itemStyle: {
-                                    shadowBlur: 10,
-                                    shadowOffsetX: 0,
-                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                //labelLine: {     //标签的视觉引导线样式
+                                //    show: false  //平常不显示
+                                //},
+                                labelLine: {
+                                    length: 5,
+                                    length2: 4,
+                                    show: true,
+                                    color: '#00ffff'
                                 }
-                            }
+                            },
+                            
+                            //emphasis: {   //normal 是图形在默认状态下的样式；emphasis 是图形在高亮状态下的样式，比如在鼠标悬浮或者图例联动高亮时。
+                            //    label: {  //饼图图形上的文本标签
+                            //        show: true,
+                            //        position: 'center',
+                            //        textStyle: {
+                            //            fontSize: '20',
+                            //            fontWeight: 'bold'
+                            //        }
+                            //    },
+                            //    itemStyle: {
+                            //        shadowBlur: 10,
+                            //        shadowOffsetX: 0,
+                            //        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            //    }
+                            //}
                         }
                     }]
                 };
