@@ -770,6 +770,10 @@
                 series: series
             };
             myChart.setOption(option, true);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
         }
         function loadFour() {
             var listName = new Array();
@@ -979,7 +983,7 @@
                 series: series
             };
             myChart.setOption(option);
-            window.onresize = echart.resize;
+            window.addEventListener = echart.resize;
             function resize(width, height) {
                 var chart = document.getElementById('chart4b');
                 chart.style.width = width + "px";
@@ -1299,6 +1303,10 @@
                 }]
             }
             myChart.setOption(option, true);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
         }
         function loadNine() {
             var listDeviceType = new Array();
@@ -1445,6 +1453,10 @@
                 series: series
             };
             myChart.setOption(option, true);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
         }
     })
 </script>

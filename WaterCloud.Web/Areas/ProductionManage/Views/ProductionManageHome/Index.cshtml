@@ -124,15 +124,15 @@
     }
 </style>
 <script>
-     layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element'], function () {
-         var $ = layui.jquery,
-             form = layui.form,
-             table = layui.table,
-             common = layui.common,
-             layer = layui.layer,
-             echarts = layui.echarts,
-             element = layui.element;;
-         wcLoading.close();
+    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            common = layui.common,
+            layer = layui.layer,
+            echarts = layui.echarts,
+            element = layui.element;;
+        wcLoading.close();
         $(function () {
             loadOne();
             gridListOn();
@@ -230,442 +230,454 @@
                     }
                 ]
             };
-            myChart.setOption(option);       
-         }
+            myChart.setOption(option);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
         function gridListOn() {
-             common.rendertable({
-                 elem: '#currentTableId2',
-                 id: 'currentTableId2',
-                 url: "/ProductionManage/ProductionManageHome/GetGridJsonOn",
-                 height: 220,
-                 toolbar: false,/*隐藏打印*/
-                 page: false,/*隐藏分页*/
-                 sqlkey: 'id',//数据库主键
-                 cols: [[
-                     { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
-                     { field: 'MoldNo', title: '模具编号', width: 90, sort: true },
-                     { field: 'Edition', title: '版本', width: 50, sort: true, filter: true },
-                     { field: 'Type', title: '类型', width: 60, sort: true },
-                     {
-                         field: 'PlannedDeliveryDate', title: '计划交期', width: 80,
-                         templet: function (d) {
-                             if (d.PlannedDeliveryDate) {
-                                 return new Date(d.PlannedDeliveryDate).Format("yyyy-MM-dd");
+            common.rendertable({
+                elem: '#currentTableId2',
+                id: 'currentTableId2',
+                url: "/ProductionManage/ProductionManageHome/GetGridJsonOn",
+                height: 220,
+                toolbar: false,/*隐藏打印*/
+                page: false,/*隐藏分页*/
+                sqlkey: 'id',//数据库主键
+                cols: [[
+                    { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
+                    { field: 'MoldNo', title: '模具编号', width: 90, sort: true },
+                    { field: 'Edition', title: '版本', width: 50, sort: true, filter: true },
+                    { field: 'Type', title: '类型', width: 60, sort: true },
+                    {
+                        field: 'PlannedDeliveryDate', title: '计划交期', width: 80,
+                        templet: function (d) {
+                            if (d.PlannedDeliveryDate) {
+                                return new Date(d.PlannedDeliveryDate).Format("yyyy-MM-dd");
 
-                             }
-                         }
-                     },
-                     {
-                         field: 'Progress', title: '预警', align: 'center', width: 80,
-                         templet: function (d) {
-                             if (d.Progress) {
-                                 var temp = ''
-                                 var tip = d.Progress.split(';');
-                                 if (tip == 0) {
-                                     return '<div class="layui-progress" style="margin-top: 10px;"><div class="layui-progress-bar layui-bg-red" lay-percent="100%"></div></div>';
-                                 }
-                                 else if (tip > 0) {
-                                     var attnum = 1 - tip;
-                                     return '<div class="layui-progress layui-bg-red" style="margin-top: 10px;"><div class="layui-progress-bar layui-bg-green" lay-percent=' + attnum * 100 + '%></div></div>';
-                                 }
-                                 else if (tip.length == 2) {
-                                     return '<div class="layui-progress layui-bg-red" lay-percent=' + tip[0] * 100 + '% style="margin-top: 10px;"><div class="layui-progress-bar layui-bg-green" lay-percent=' + tip[1] * 100 + '%><div class="layui-progress-bar layui-bg-orange" lay-percent=' + tip[2] * 100 + '%></div></div></div>';
-                                 }
-                             }
-                         }
-                     },
-                 ]]
-             });
-         }
-        function loadTwo() {
-                var listDeviceType = new Array();
-                var listDeviceName = new Array();
-                var listAll = new Array();
-                //var keyValue = $('#Types_id option:selected').val();
-                $.ajax({
-                    url: "/ProductionManage/ProductionManageHome/GetDataPMHomeCapacityLoad",
-                    //data: { keyValue: keyValue },
-                    dataType: "json",
-                    async: false,
-                    success: function (da) {
-                        $(da).each(function (index, item) {
-                            listDeviceType.push(item.DeviceType);
-                            listDeviceName.push(item.DeviceName);
-                            listAll.push(item);
-                        })
-                    }
-                })
-
-                $.unique(listDeviceType);
-                $.unique(listDeviceName.sort());
-
-                var series = [];
-                $.each(listDeviceName, function (index, value) {
-                    var tempName = new Array();
-                    var tempArry = new Array();
-                    $.each(listAll, function (index1, value1) {
-                        if (value == value1.DeviceName) {
-                            tempName = value1.DeviceName;
-                            tempArry.push(value1.Number);
+                            }
                         }
-                    });
-                    series.push({
-                        name: tempName,
-                        type: 'bar',
-                        barWidth: '15%',
-                        barGap: '80%',
-                        data: tempArry,
-                        itemStyle: {
-                            normal: {
-                                label: {
-                                    show: true, //开启显示
-                                    position: 'top', //在上方显示
-                                    textStyle: { //数值样式
-                                        color: 'red',
-                                        fontSize: 12
-                                    }
+                    },
+                    {
+                        field: 'Progress', title: '预警', align: 'center', width: 80,
+                        templet: function (d) {
+                            if (d.Progress) {
+                                var temp = ''
+                                var tip = d.Progress.split(';');
+                                if (tip == 0) {
+                                    return '<div class="layui-progress" style="margin-top: 10px;"><div class="layui-progress-bar layui-bg-red" lay-percent="100%"></div></div>';
+                                }
+                                else if (tip > 0) {
+                                    var attnum = 1 - tip;
+                                    return '<div class="layui-progress layui-bg-red" style="margin-top: 10px;"><div class="layui-progress-bar layui-bg-green" lay-percent=' + attnum * 100 + '%></div></div>';
+                                }
+                                else if (tip.length == 2) {
+                                    return '<div class="layui-progress layui-bg-red" lay-percent=' + tip[0] * 100 + '% style="margin-top: 10px;"><div class="layui-progress-bar layui-bg-green" lay-percent=' + tip[1] * 100 + '%><div class="layui-progress-bar layui-bg-orange" lay-percent=' + tip[2] * 100 + '%></div></div></div>';
                                 }
                             }
-                        },
+                        }
+                    },
+                ]]
+            });
+        }
+        function loadTwo() {
+            var listDeviceType = new Array();
+            var listDeviceName = new Array();
+            var listAll = new Array();
+            //var keyValue = $('#Types_id option:selected').val();
+            $.ajax({
+                url: "/ProductionManage/ProductionManageHome/GetDataPMHomeCapacityLoad",
+                //data: { keyValue: keyValue },
+                dataType: "json",
+                async: false,
+                success: function (da) {
+                    $(da).each(function (index, item) {
+                        listDeviceType.push(item.DeviceType);
+                        listDeviceName.push(item.DeviceName);
+                        listAll.push(item);
                     })
-                });
+                }
+            })
 
-                var myChart = echarts.init(document.getElementById('chart2'));
+            $.unique(listDeviceType);
+            $.unique(listDeviceName.sort());
 
-                var option = {
-                    color: ['#f2961f', '#6d48e6'],
-                    grid: {
-                        left: '0%',
-                        right: '0',
-                        bottom: '0%',
-                        containLabel: true
-                    },
-                    legend: {
-                        itemGap: 30,
-                        data: listDeviceName,
-                        itemWidth: 10,  //图例标记的图形宽度
-                        itemHeight: 10, //图例标记的图形高度
-                        textStyle: {    //图例文字的样式
-                            color: '#808080',  //文字颜色
-                            fontSize: 12    //文字大小
-                        }
-                    },
-                    tooltip: {
-                        trigger: 'axis',
-                        axisPointer: { // 坐标轴指示器，坐标轴触发有效
-                            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-                        }
-                    },
-                    xAxis: [
-                        {
-                            //type: 'category',
-                            //axisTick: { show: false },
-                            //axisLabel: {
-                            //    //X轴刻度配置
-                            //    interval: 0 //0：表示全部显示不间隔；auto:表示自动根据刻度个数和宽度自动设置间隔个数
-                            //    , rotate: 0
-                            //},
-                            //data: listDeviceType,
-
-                            type: 'category',
-                            data: listDeviceType,
-                            axisLine: {
-                                show: false,
-                                lineStyle: {
-                                    color: '#808080',
-
-                                }
-                            },
-                            axisLabel: {
-                                // interval: 0,
-                                // rotate: 40,
-                                textStyle: {
-                                    fontSize: '11'
-                                }
-                            },
-                            axisTick: { //y轴刻度线
-                                show: false
-                            },
-
-                        }
-                    ],
-                    yAxis: [
-                        {
-                            type: 'value',
-                            axisLine: {
-                                show: false,
-                                lineStyle: {
-                                    color: '#f2961d'
-                                }
-                            },
-                            splitLine: {
-                                show: true,
-                                lineStyle: {
-                                    //color: "#57617B"
-                                    type: 'dashed'
-                                }
-                            },
-                            axisTick: { //y轴刻度线
-                                show: true
-                            },
-                            axisLabel: {}
-                        }
-                    ],
-                    series: series
-                };
-                myChart.setOption(option, true);
-            }
-        function loadThree() {
-                var listName = new Array();
-                var str = [];
-                $.ajax({
-                    url: "/ProductionManage/ProductionManageHome/GetDataPMHomeOutsourcingRate",
-                    dataType: "json",
-                    async: false,
-                    success: function (data) {
-                        $(data).each(function (index, item) {
-                            listName.push(item.Type);
-                            var str3 = new Object();
-                            str3.name = item.Type;
-                            str3.value = item.Cost;
-                            str[index] = str3;
-                        })
+            var series = [];
+            $.each(listDeviceName, function (index, value) {
+                var tempName = new Array();
+                var tempArry = new Array();
+                $.each(listAll, function (index1, value1) {
+                    if (value == value1.DeviceName) {
+                        tempName = value1.DeviceName;
+                        tempArry.push(value1.Number);
                     }
                 });
-                var myChart = echarts.init(document.getElementById('chart3'));
-
-                var option = {
-                    color: ['#f18533', '#6d48e6'],
-                    tooltip: {
-                        trigger: 'item',
-                        formatter: "{b} : ({c}套)"
+                series.push({
+                    name: tempName,
+                    type: 'bar',
+                    barWidth: '15%',
+                    barGap: '80%',
+                    data: tempArry,
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true, //开启显示
+                                position: 'top', //在上方显示
+                                textStyle: { //数值样式
+                                    color: 'red',
+                                    fontSize: 12
+                                }
+                            }
+                        }
                     },
-                    series: [{
-                        name: '',
-                        type: 'pie',
-                        radius: '60%',
-                        center: ['45%', '60%'],
-                        data: str,
-                        itemStyle: {  //图形样式
-                            normal: { //normal 是图形在默认状态下的样式；emphasis 是图形在高亮状态下的样式，比如在鼠标悬浮或者图例联动高亮时。
-                                label: {  //饼图图形上的文本标签
-                                    formatter: function (params) {
-                                        var percent = 0;
-                                        var total = 0;
-                                        for (var i = 0; i < str.length; i++) {
-                                            total += str[i].value;
-                                        }
-                                        percent = ((params.value / total) * 100).toFixed(0);
-                                        if (params.name !== '') {
-                                            return params.name + '：' + params.value + '套' + '\n' + '\n' + percent + '%';
-                                        } else {
-                                            return '';
-                                        }
-                                    },
-                                    rich: {
-                                        font: {
-                                            fontSize: 14,
-                                            padding: [5, 0],
-                                            color: '#808080'
-                                        },
-                                        hr: {
-                                            height: 0,
-                                            borderWidth: 1,
-                                            width: '100%',
-                                            borderColor: '#808080'
-                                        }
+                })
+            });
+
+            var myChart = echarts.init(document.getElementById('chart2'));
+
+            var option = {
+                color: ['#f2961f', '#6d48e6'],
+                grid: {
+                    left: '0%',
+                    right: '0',
+                    bottom: '0%',
+                    containLabel: true
+                },
+                legend: {
+                    itemGap: 30,
+                    data: listDeviceName,
+                    itemWidth: 10,  //图例标记的图形宽度
+                    itemHeight: 10, //图例标记的图形高度
+                    textStyle: {    //图例文字的样式
+                        color: '#808080',  //文字颜色
+                        fontSize: 12    //文字大小
+                    }
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                        type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+                    }
+                },
+                xAxis: [
+                    {
+                        //type: 'category',
+                        //axisTick: { show: false },
+                        //axisLabel: {
+                        //    //X轴刻度配置
+                        //    interval: 0 //0：表示全部显示不间隔；auto:表示自动根据刻度个数和宽度自动设置间隔个数
+                        //    , rotate: 0
+                        //},
+                        //data: listDeviceType,
+
+                        type: 'category',
+                        data: listDeviceType,
+                        axisLine: {
+                            show: false,
+                            lineStyle: {
+                                color: '#808080',
+
+                            }
+                        },
+                        axisLabel: {
+                            // interval: 0,
+                            // rotate: 40,
+                            textStyle: {
+                                fontSize: '11'
+                            }
+                        },
+                        axisTick: { //y轴刻度线
+                            show: false
+                        },
+
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value',
+                        axisLine: {
+                            show: false,
+                            lineStyle: {
+                                color: '#f2961d'
+                            }
+                        },
+                        splitLine: {
+                            show: true,
+                            lineStyle: {
+                                //color: "#57617B"
+                                type: 'dashed'
+                            }
+                        },
+                        axisTick: { //y轴刻度线
+                            show: true
+                        },
+                        axisLabel: {}
+                    }
+                ],
+                series: series
+            };
+            myChart.setOption(option, true);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function loadThree() {
+            var listName = new Array();
+            var str = [];
+            $.ajax({
+                url: "/ProductionManage/ProductionManageHome/GetDataPMHomeOutsourcingRate",
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    $(data).each(function (index, item) {
+                        listName.push(item.Type);
+                        var str3 = new Object();
+                        str3.name = item.Type;
+                        str3.value = item.Cost;
+                        str[index] = str3;
+                    })
+                }
+            });
+            var myChart = echarts.init(document.getElementById('chart3'));
+
+            var option = {
+                color: ['#f18533', '#6d48e6'],
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{b} : ({c}套)"
+                },
+                series: [{
+                    name: '',
+                    type: 'pie',
+                    radius: '60%',
+                    center: ['45%', '60%'],
+                    data: str,
+                    itemStyle: {  //图形样式
+                        normal: { //normal 是图形在默认状态下的样式；emphasis 是图形在高亮状态下的样式，比如在鼠标悬浮或者图例联动高亮时。
+                            label: {  //饼图图形上的文本标签
+                                formatter: function (params) {
+                                    var percent = 0;
+                                    var total = 0;
+                                    for (var i = 0; i < str.length; i++) {
+                                        total += str[i].value;
+                                    }
+                                    percent = ((params.value / total) * 100).toFixed(0);
+                                    if (params.name !== '') {
+                                        return params.name + '：' + params.value + '套' + '\n' + '\n' + percent + '%';
+                                    } else {
+                                        return '';
                                     }
                                 },
-                                //labelLine: {     //标签的视觉引导线样式
-                                //    show: false  //平常不显示
-                                //},
-                                labelLine: {
-                                    length: 5,
-                                    length2: 4,
-                                    show: true,
-                                    color: '#00ffff'
+                                rich: {
+                                    font: {
+                                        fontSize: 14,
+                                        padding: [5, 0],
+                                        color: '#808080'
+                                    },
+                                    hr: {
+                                        height: 0,
+                                        borderWidth: 1,
+                                        width: '100%',
+                                        borderColor: '#808080'
+                                    }
                                 }
                             },
-                            
-                            //emphasis: {   //normal 是图形在默认状态下的样式；emphasis 是图形在高亮状态下的样式，比如在鼠标悬浮或者图例联动高亮时。
-                            //    label: {  //饼图图形上的文本标签
-                            //        show: true,
-                            //        position: 'center',
-                            //        textStyle: {
-                            //            fontSize: '20',
-                            //            fontWeight: 'bold'
-                            //        }
-                            //    },
-                            //    itemStyle: {
-                            //        shadowBlur: 10,
-                            //        shadowOffsetX: 0,
-                            //        shadowColor: 'rgba(0, 0, 0, 0.5)'
-                            //    }
-                            //}
-                        }
-                    }]
-                };
-                myChart.setOption(option);
-                // echarts 窗口缩放自适应
-                window.onresize = function () {
-                    myChart.resize();
-                }
-         }
+                            //labelLine: {     //标签的视觉引导线样式
+                            //    show: false  //平常不显示
+                            //},
+                            labelLine: {
+                                length: 5,
+                                length2: 4,
+                                show: true,
+                                color: '#00ffff'
+                            }
+                        },
+
+                        //emphasis: {   //normal 是图形在默认状态下的样式；emphasis 是图形在高亮状态下的样式，比如在鼠标悬浮或者图例联动高亮时。
+                        //    label: {  //饼图图形上的文本标签
+                        //        show: true,
+                        //        position: 'center',
+                        //        textStyle: {
+                        //            fontSize: '20',
+                        //            fontWeight: 'bold'
+                        //        }
+                        //    },
+                        //    itemStyle: {
+                        //        shadowBlur: 10,
+                        //        shadowOffsetX: 0,
+                        //        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        //    }
+                        //}
+                    }
+                }]
+            };
+            myChart.setOption(option);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
         function gridList() {
-             common.rendertable({
-                 elem: '#currentTableId',
-                 id: 'currentTableId',
-                 url: "/ProductionManage/ProductionManageHome/GetGridJson",
-                 height: 220,
-                 toolbar: false,/*隐藏打印*/
-                 page: false,/*隐藏分页*/
-                 sqlkey: 'id',//数据库主键
-                 cols: [[
-                     { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
-                     { field: 'ModuleNumber', title: '模号', width: 110, sort: true },
-                     { field: 'WorkpieceNo', title: '工件号', width: 80, sort: true, filter: true },
-                     { field: 'WorkingProcedure', title: '委外工序', width: 80, sort: true },
-                     { field: 'Supplier', title: '供应商', width: 60, sort: true },
-                     {
-                         field: 'PlannedDeliveryDate', title: '计划交期', width: 110,
-                         templet: function (d) {
-                             if (d.PlannedDeliveryDate) {
-                                 return new Date(d.PlannedDeliveryDate).Format("yyyy-MM-dd");
+            common.rendertable({
+                elem: '#currentTableId',
+                id: 'currentTableId',
+                url: "/ProductionManage/ProductionManageHome/GetGridJson",
+                height: 220,
+                toolbar: false,/*隐藏打印*/
+                page: false,/*隐藏分页*/
+                sqlkey: 'id',//数据库主键
+                cols: [[
+                    { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
+                    { field: 'ModuleNumber', title: '模号', width: 110, sort: true },
+                    { field: 'WorkpieceNo', title: '工件号', width: 80, sort: true, filter: true },
+                    { field: 'WorkingProcedure', title: '委外工序', width: 80, sort: true },
+                    { field: 'Supplier', title: '供应商', width: 60, sort: true },
+                    {
+                        field: 'PlannedDeliveryDate', title: '计划交期', width: 110,
+                        templet: function (d) {
+                            if (d.PlannedDeliveryDate) {
+                                return new Date(d.PlannedDeliveryDate).Format("yyyy-MM-dd");
 
-                             }
-                         }
-                     },
-                     { field: 'DaysOfExtension', title: '延期天数', width: 70, sort: true },
-                     { field: 'OrderStatus', title: '状态', width: 80, sort: true },
-                 ]]
-             });
-         }
-         function loadFour() {
-             var listMonthDay = new Array();
-             var listAll = new Array();
-             var listDeviceName = new Array();
-             $.ajax({
-                 url: "/ProductionManage/ProductionManageHome/GetDataPMHomeJiadongRate",
-                 dataType: "json",
-                 async: false,
-                 success: function (data) {
-                     $(data).each(function (index, item) {
-                         if (item.Month_Day != "") {
-                             listMonthDay.push(item.Month_Day);
-                             listDeviceName.push(item.Device_Name);
-                             listAll.push(item);
-                         }
-                     })
-                 }
-             });
-             $.unique(listMonthDay);//日期
-             $.unique(listDeviceName.sort());//设备名字
+                            }
+                        }
+                    },
+                    { field: 'DaysOfExtension', title: '延期天数', width: 70, sort: true },
+                    { field: 'OrderStatus', title: '状态', width: 80, sort: true },
+                ]]
+            });
+        }
+        function loadFour() {
+            var listMonthDay = new Array();
+            var listAll = new Array();
+            var listDeviceName = new Array();
+            $.ajax({
+                url: "/ProductionManage/ProductionManageHome/GetDataPMHomeJiadongRate",
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    $(data).each(function (index, item) {
+                        if (item.Month_Day != "") {
+                            listMonthDay.push(item.Month_Day);
+                            listDeviceName.push(item.Device_Name);
+                            listAll.push(item);
+                        }
+                    })
+                }
+            });
+            $.unique(listMonthDay);//日期
+            $.unique(listDeviceName.sort());//设备名字
 
-             var series = [];
-             $.each(listDeviceName, function (index, value) {
-                 var tempName = new Array();
-                 var tempArry = new Array();
-                 $.each(listAll, function (index1, value1) {
-                     if (value == value1.Device_Name) {
-                         tempName = value1.Device_Name;
-                         tempArry.push(value1.TrendRate);
-                     }
-                 });
-                 var getRandomColor = function () {
-                     return '#' + Math.floor(Math.random() * 16777215).toString(16);
-                 }
-                 series.push({
-                     name: tempName,
-                     type: 'line',
-                     smooth: true,
-                     stack: '总量' + index,
-                     data: tempArry,
-                     itemStyle: {
-                         normal: {
-                             color: getRandomColor(),
-                             lineStyle: {
-                                 // color: getRandomColor()
-                             }
-                         }
-                     },
-                 })
-             });
+            var series = [];
+            $.each(listDeviceName, function (index, value) {
+                var tempName = new Array();
+                var tempArry = new Array();
+                $.each(listAll, function (index1, value1) {
+                    if (value == value1.Device_Name) {
+                        tempName = value1.Device_Name;
+                        tempArry.push(value1.TrendRate);
+                    }
+                });
+                var getRandomColor = function () {
+                    return '#' + Math.floor(Math.random() * 16777215).toString(16);
+                }
+                series.push({
+                    name: tempName,
+                    type: 'line',
+                    smooth: true,
+                    stack: '总量' + index,
+                    data: tempArry,
+                    itemStyle: {
+                        normal: {
+                            color: getRandomColor(),
+                            lineStyle: {
+                                // color: getRandomColor()
+                            }
+                        }
+                    },
+                })
+            });
 
-             // 基于准备好的dom，初始化echarts实例
-             var myChart = echarts.init(document.getElementById('chart4'));
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('chart4'));
 
-             var option = {
-                 tooltip: {
-                     trigger: 'axis'
-                 },
-                 legend: {
-                     left: 'center',
-                     bottom: 10,
-                     data: listDeviceName,
-                     textStyle: {    //图例文字的样式
-                         color: '#808080',  //文字颜色
-                         fontSize: 12    //文字大小
-                     }
-                 },
-                 grid: {
-                     left: '3%',
-                     right: '4%',
-                     bottom: '20%',
-                     top: '10%',
-                     containLabel: true
-                 },
-                 xAxis: {
-                     type: 'category',
-                     boundaryGap: false,
-                     data: listMonthDay,
-                     axisLine: {
-                         show: false,
-                         lineStyle: {
-                             color: '#808080',
+            var option = {
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    left: 'center',
+                    bottom: 10,
+                    data: listDeviceName,
+                    textStyle: {    //图例文字的样式
+                        color: '#808080',  //文字颜色
+                        fontSize: 12    //文字大小
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '20%',
+                    top: '10%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: listMonthDay,
+                    axisLine: {
+                        show: false,
+                        lineStyle: {
+                            color: '#808080',
 
-                         }
-                     },
-                     axisLabel: {
-                         // interval: 0,
-                         // rotate: 40,
-                         textStyle: {
-                             fontSize: '11'
-                         }
-                     },
-                     axisTick: { //y轴刻度线
-                         show: false
-                     },
-                 },
-                 yAxis: {
-                     min: '60',
-                     type: 'value',
-                     axisLine: {
-                         show: false,
-                         lineStyle: {
-                             color: '#f2961d'
-                         }
-                     },
-                     splitLine: {
-                         show: false,
-                         lineStyle: {
-                             color: "#57617B"
-                         }
-                     },
-                     axisTick: { //y轴刻度线
-                         show: false
-                     },
-                     axisLabel: {
-                         show: true,
-                         interval: 'auto',
-                         formatter: '{value} %'
-                     },
-                     show: true,
-                 },
-                 series: series
-             };
-             // 使用刚指定的配置项和数据显示图表。
-             myChart.setOption(option);
-         }
+                        }
+                    },
+                    axisLabel: {
+                        // interval: 0,
+                        // rotate: 40,
+                        textStyle: {
+                            fontSize: '11'
+                        }
+                    },
+                    axisTick: { //y轴刻度线
+                        show: false
+                    },
+                },
+                yAxis: {
+                    min: '60',
+                    type: 'value',
+                    axisLine: {
+                        show: false,
+                        lineStyle: {
+                            color: '#f2961d'
+                        }
+                    },
+                    splitLine: {
+                        show: false,
+                        lineStyle: {
+                            color: "#57617B"
+                        }
+                    },
+                    axisTick: { //y轴刻度线
+                        show: false
+                    },
+                    axisLabel: {
+                        show: true,
+                        interval: 'auto',
+                        formatter: '{value} %'
+                    },
+                    show: true,
+                },
+                series: series
+            };
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
     })
 </script>
 <div class="layuimini-container">
