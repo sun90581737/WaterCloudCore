@@ -1,0 +1,589 @@
+﻿@{
+    ViewBag.Title = "数据采集";
+    Layout = "~/Views/Shared/_Index.cshtml";
+}
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment env
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<style>
+
+    .layui-card {
+        border: 1px solid #f2f2f2;
+        border-radius: 5px;
+    }
+
+    .icon {
+        margin-right: 10px;
+        color: #1aa094;
+    }
+
+    .icon-cray {
+        color: #ffb800 !important;
+    }
+
+    .icon-blue {
+        color: #1e9fff !important;
+    }
+
+    .icon-tip {
+        color: #ff5722 !important;
+    }
+
+    .layuimini-qiuck-module {
+        text-align: center;
+        margin-top: 10px
+    }
+
+        .layuimini-qiuck-module a i {
+            display: inline-block;
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            border-radius: 2px;
+            font-size: 30px;
+            background-color: #F8F8F8;
+            color: #333;
+            transition: all .3s;
+            -webkit-transition: all .3s;
+        }
+
+        .layuimini-qiuck-module a cite {
+            position: relative;
+            top: 2px;
+            display: block;
+            color: #666;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+    .welcome-module {
+        width: 40%;
+        height: 100px;
+    }
+
+    .panel {
+        background-color: #fff;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+        box-shadow: 0 1px 1px rgba(0,0,0,.05)
+    }
+
+    .panel-body {
+        padding: 30px
+    }
+
+    .panel-title {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: 12px;
+        color: inherit
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .layui-bg-number {
+        background-color: #F8F8F8;
+    }
+
+    .tmp-layui-col-xs4 {
+        width: 12.5%;
+        float: left;
+        position: relative;
+        display: block;
+        box-sizing: border-box
+    }
+</style>
+<script src="~/js/lay-module/echarts/echarts.min.js"></script>
+<script>
+    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'element'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            common = layui.common,
+            layer = layui.layer,
+            element = layui.element;;
+        wcLoading.close();
+        $(function () {
+            loadInfo();
+            LoadAllData();
+        });
+        function loadInfo() {
+            $.ajax({
+                url: "/SystemSecurity/ServerMonitoring/GetServerDataJson?v=" + new Date().Format("yyyy-MM-dd hh:mm:ss"),
+                dataType: "json",
+                success: function (data) {
+                    //$('#cpucout').html(data.CPU + "%");
+                    //$('#armcout').html(data.ARM + "%");
+                    //$('#TotalRAM').html(data.TotalRAM);
+                    //$('#OutIP').html(data.IP);
+                }
+            });
+        }
+        function LoadAllData() {
+            $.ajax({
+                async: false,
+                url: "/AutomationLine/DataAcquisition/GetDataAcquisition",
+                type: "get",
+                dataType: "json",
+                success: function (da) {
+                    if (da.length != 0) {
+                        $(da).each(function (index, item) {
+                            if (index == 0) {
+                                debugger;
+                                $("#div1").css({ "background-image": "linear-gradient(" + item.DeviceLndicatorLight + ", #0b3447)" });
+                                //23ab33绿   f3961d黄     eb5c5d红   第二层颜色0b3447
+                                //$("#div1").css({ "background-image": "linear-gradient(#23ab33, #0b3447)" });
+                                $("#a1").text(item.DeviceName);
+                                $("#b1").text(item.DeviceRunStatus);
+                                $("#imageId1").css("display", "block");
+                                $("#imageId1").attr("src", item.DeviceUrl);
+                                $("#f1").text(item.TodayOutput);
+                                $("#g1").text(item.TodayJiadong);
+                                loadSpindle("maina", item.SpindleSpeed);
+                                loadFeed("mainb", item.FeedSpeed);
+                                $("#h1").text(item.SpindleRatio);
+                                $("#i1").text(item.FeedRatio);
+                                $("#j1").text(item.LoadRatio + "%");
+                            } else if (index == 1) {
+                                $("#div2").css({ "background-image": "linear-gradient(" + item.DeviceLndicatorLight + ", #0b3447)" });
+                                //$("#div2").css({ "background-image": "linear-gradient(#f3961d, #0b3447)" });
+                                $("#a2").text(item.DeviceName);
+                                $("#b2").text(item.DeviceRunStatus);
+                                $("#imageId2").css("display", "block");
+                                $("#imageId2").attr("src", item.DeviceUrl);
+                                $("#f2").text(item.TodayOutput);
+                                $("#g2").text(item.TodayJiadong);
+                                loadSpindle("maina2", item.SpindleSpeed);
+                                loadFeed("mainb2", item.FeedSpeed);
+                                $("#h2").text(item.SpindleRatio);
+                                $("#i2").text(item.FeedRatio);
+                                $("#j2").text(item.LoadRatio + "%");
+                            } else if (index == 2) {
+                                $("#div3").css({ "background-image": "linear-gradient(" + item.DeviceLndicatorLight + ", #0b3447)" });
+                                //$("#div3").css({ "background-image": "linear-gradient(#eb5c5d, #0b3447)" });
+                                $("#a3").text(item.DeviceName);
+                                $("#b3").text(item.DeviceRunStatus);
+                                $("#imageId3").css("display", "block");
+                                $("#imageId3").attr("src", item.DeviceUrl);
+                                $("#f3").text(item.TodayOutput);
+                                $("#g3").text(item.TodayJiadong);
+                                loadSpindle("maina3", item.SpindleSpeed);
+                                loadFeed("mainb3", item.FeedSpeed);
+                                $("#h3").text(item.SpindleRatio);
+                                $("#i3").text(item.FeedRatio);
+                                $("#j3").text(item.LoadRatio + "%");
+                            } else if (index == 3) {
+                                $("#div4").css({ "background-image": "linear-gradient(" + item.DeviceLndicatorLight + ", #0b3447)" });
+                                //$("#div4").css({ "background-image": "linear-gradient(#23ab33, #0b3447)" });
+                                $("#a4").text(item.DeviceName);
+                                $("#b4").text(item.DeviceRunStatus);
+                                $("#imageId4").css("display", "block");
+                                $("#imageId4").attr("src", item.DeviceUrl);
+                                $("#f4").text(item.TodayOutput);
+                                $("#g4").text(item.TodayJiadong);
+                                loadSpindle("maina4", item.SpindleSpeed);
+                                loadFeed("mainb4", item.FeedSpeed);
+                                $("#h4").text(item.SpindleRatio);
+                                $("#i4").text(item.FeedRatio);
+                                $("#j4").text(item.LoadRatio + "%");
+                            }
+                        })
+                    }
+                }
+            })
+        }
+
+        function loadSpindle(divId, tempCount) {
+            var myChart = echarts.init(document.getElementById(divId));
+            var option = {
+                series: [
+                    {
+                        type: "gauge",
+                        min: 0,
+                        max: 30000,
+                        splitNumber: 5,
+                        center: ["50%", "52%"], // 默认全局居中
+                        radius: "100%",
+                        startAngle: 180,
+                        endAngle: 0,
+                        axisLine: {
+                            show: true,
+                            lineStyle: { // 属性lineStyle控制线条样式
+                                color: [ //表盘颜色
+                                    [0.5, "#DA462C"],//0-50%处的颜色
+                                    [0.7, "#FF9618"],//51%-70%处的颜色
+                                    [0.9, "#FFED44"],//70%-90%处的颜色
+                                    [1, "#20AE51"]//90%-100%处的颜色
+                                ],
+                                width: 10//表盘宽度
+                            }
+                        },
+                        splitLine: { //分割线样式（及10、20等长线样式）
+                            length: 30,
+                            lineStyle: { // 属性lineStyle控制线条样式
+                                width: 2
+                            }
+                        },
+                        //axisTick: { //刻度线样式（及短线样式）
+                        //    length: 20
+                        //},
+                        axisTick: {            // 坐标轴小标记
+                            splitNumber: 5,   // 每份split细分多少段
+                            length: 20,        // 属性length控制线长
+                            lineStyle: {       // 属性lineStyle控制线条样式
+                                color: 'auto'
+                            },
+                        },
+                        axisLabel: { //文字样式（及“10”、“20”等文字样式）
+                            color: "#fff",
+                            distance: 5 //文字离表盘的距离
+                        },
+                        detail: {
+                            formatter: "{score|{value}}",
+                            offsetCenter: [0, "25%"],
+                            //backgroundColor: '#FFEC45',
+                            //height: 20,
+                            rich: {
+                                score: {
+                                    color: "#DA462C",
+                                    fontFamily: "微软雅黑",
+                                    fontSize: 20
+                                }
+                            }
+                        },
+                        data: [{
+                            value: tempCount,
+                            label: {
+                                textStyle: {
+                                    fontSize: 12
+                                }
+                            }
+                        }]
+                    }
+                ]
+            };
+
+            myChart.setOption(option, true);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+            //clearInterval(timeTicket);
+            //var timeTicket = setInterval(function () {
+            //    //option.series[0].max = data.maxThread;
+            //    option.series[0].max = 30000;
+            //    option.series[0].data[0].value = (Math.random() * 30000).toFixed(2) - 0;
+            //    myChart.setOption(option, true);
+            //}, 2000)
+        }
+        function loadFeed(divId, tempCount) {
+            var myChart1 = echarts.init(document.getElementById(divId));
+            option1 = {
+                series: [
+                    {
+                        type: "gauge",
+                        min: 0,
+                        max: 10000,
+                        splitNumber: 5,
+                        center: ["50%", "52%"], // 默认全局居中
+                        radius: "100%",
+                        startAngle: 180,
+                        endAngle: 0,
+                        axisLine: {
+                            show: true,
+                            lineStyle: { // 属性lineStyle控制线条样式
+                                color: [ //表盘颜色
+                                    [0.5, "#DA462C"],//0-50%处的颜色
+                                    [0.7, "#FF9618"],//51%-70%处的颜色
+                                    [0.9, "#FFED44"],//70%-90%处的颜色
+                                    [1, "#20AE51"]//90%-100%处的颜色
+                                ],
+                                width: 10//表盘宽度
+                            }
+                        },
+                        splitLine: { //分割线样式（及10、20等长线样式）
+                            length: 30,
+                            lineStyle: { // 属性lineStyle控制线条样式
+                                width: 2
+                            }
+                        },
+                        //axisTick: { //刻度线样式（及短线样式）
+                        //    length: 20
+                        //},
+                        axisTick: {            // 坐标轴小标记
+                            splitNumber: 5,   // 每份split细分多少段
+                            length: 20,        // 属性length控制线长
+                            lineStyle: {       // 属性lineStyle控制线条样式
+                                color: 'auto'
+                            },
+                        },
+                        axisLabel: { //文字样式（及“10”、“20”等文字样式）
+                            color: "#fff",
+                            distance: 5 //文字离表盘的距离
+                        },
+                        detail: {
+                            formatter: "{score|{value}}",
+                            offsetCenter: [0, "25%"],
+                            //backgroundColor: '#FFEC45',
+                            //height: 20,
+                            rich: {
+                                score: {
+                                    color: "#DA462C",
+                                    fontFamily: "微软雅黑",
+                                    fontSize: 20
+                                }
+                            }
+                        },
+                        data: [{
+                            value: tempCount,
+                            label: {
+                                textStyle: {
+                                    fontSize: 12
+                                }
+                            }
+                        }]
+                    }
+                ]
+            };
+            myChart1.setOption(option1);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart1.resize();
+            });
+            //clearInterval(timeTicket);
+            //var timeTicket = setInterval(function () {
+            //    option1.series[0].max = 10000;
+            //    option1.series[0].data[0].value = (Math.random() * 10000).toFixed(2) - 0;
+            //    myChart.setOption(option1, true);
+            //}, 2000)
+        }
+    })
+</script>
+<div class="layuimini-container" style="height: 700px;background-color: #ffffff !important">
+    <div class="layuimini-main">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md3">
+                <div class="layui-card" style="background-color:#082848">
+                    <div id="div1" class="layui-card-header" style="border-bottom: 0px;">
+                        <h6 id="a1" style="font-weight:600;font-size:13px;text-align:center;display:inline-block;color: #ffffff;"></h6>
+                        <h6 id="b1" style="float:right;font-weight:600;font-size:13px;display:inline-block;color: #ffffff;"></h6>
+                    </div>
+                    <div class="layui-card-body layui-text" style="height: 618px;">
+                        <div class="tab-content" style="height:110px">
+                            <div style="width:100px;height:100px;position:absolute;left:35%;top:3%;transform:translate(-10%,-10%);">
+                                <img id="imageId1" style="width:100px;height:100px;display:none" src="" />
+                            </div>
+                        </div>
+                        <div class="box-header with-border" style="height:45px;position:relative;left:-12px;border-top:1px solid #325171;border-bottom:1px solid #325171">
+                            <div style="float:left;width:50%">
+                                <div style="text-align:center;font-size:13px;color:#ffffff">今日产量(件)</div>
+                                <div id="f1" style="text-align:center;color:#0eb0de; font-size:18px;font-weight:600;"></div>
+                            </div>
+                            <div style="margin-left:50%;width:auto;">
+                                <div style="text-align:center;font-size:13px;color:#ffffff">今日稼动率(%)</div>
+                                <div id="g1" style="text-align:center;color:#0eb0de; font-size:18px;font-weight:600;"></div>
+                            </div>
+                        </div>
+                        <div class="box-header with-border" style="height:210px;position:relative;left:-12px;border-bottom:1px solid #325171">
+                            <div style="text-align:center;font-size:13px;color:#ffffff">主轴转速(r/min)</div>
+                            <div id="maina" style="height: 246px;"></div>
+                        </div>
+                        <div class="box-header with-border" style="height:210px;">
+                            <div style="text-align:center;font-size:13px;color:#ffffff">进给速度(mm/min)</div>
+                            <div id="mainb" style="height: 246px;"></div>
+                        </div>
+                        <div class="box-header with-border" style="height:55px;position:relative;left:-12px;border-top:1px solid #325171;">
+                            <div style="float:left;width:33%">
+                                <div style="text-align:center;font-size:13px;color:#ffffff">主轴倍率(%)</div>
+                                <div id="h1" style="text-align:center;color:#0eb0de; font-size:18px;font-weight:600;"></div>
+                            </div>
+                            <div style="float:left;width:33%">
+                                <div style="text-align:center;font-size:13px;color:#ffffff">进给倍率(%)</div>
+                                <div id="i1" style="text-align:center;color:#0eb0de; font-size:18px;font-weight:600;"></div>
+                            </div>
+                            <div style="margin-left:50%;width:auto;">
+                                <div style="text-align:center;font-size:13px;color:#ffffff">负载(%)</div>
+                                <div id="j1" style="text-align:center;color:#0eb0de; font-size:18px;font-weight:600;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-md3">
+                <div class="layui-card" style="background-color:#082848">
+                    <div id="div2" class="layui-card-header" style="border-bottom: 0px;">
+                        <h6 id="a2" style="font-weight:600;font-size:13px;text-align:center;display:inline-block;color: #ffffff;"></h6>
+                        <h6 id="b2" style="float:right;font-weight:600;font-size:13px;display:inline-block;color: #ffffff;"></h6>
+                    </div>
+                    <div class="layui-card-body layui-text" style="height: 618px;">
+                        <div class="tab-content" style="height:110px">
+                            <div style="width:100px;height:100px;position:absolute;left:35%;top:3%;transform:translate(-10%,-10%);">
+                                <img id="imageId2" style="width:100px;height:100px;display:none" src="" />
+                            </div>
+                        </div>
+                        <div class="box-header with-border" style="height:45px;position:relative;left:-12px;border-top:1px solid #325171;border-bottom:1px solid #325171">
+                            <div style="float:left;width:50%">
+                                <div style="text-align:center;font-size:13px;color:#ffffff">今日产量(件)</div>
+                                <div id="f2" style="text-align:center;color:#0eb0de; font-size:18px;font-weight:600;"></div>
+                            </div>
+                            <div style="margin-left:50%;width:auto;">
+                                <div style="text-align:center;font-size:13px;color:#ffffff">今日稼动率(%)</div>
+                                <div id="g2" style="text-align:center;color:#0eb0de; font-size:18px;font-weight:600;"></div>
+                            </div>
+                        </div>
+                        <div class="box-header with-border" style="height:210px;position:relative;left:-12px;border-bottom:1px solid #325171">
+                            <div style="text-align:center;font-size:13px;color:#ffffff">主轴转速(r/min)</div>
+                            <div id="maina2" style="height: 246px;"></div>
+                        </div>
+                        <div class="box-header with-border" style="height:210px;">
+                            <div style="text-align:center;font-size:13px;color:#ffffff">进给速度(mm/min)</div>
+                            <div id="mainb2" style="height: 246px;"></div>
+                        </div>
+                        <div class="box-header with-border" style="height:55px;position:relative;left:-12px;border-top:1px solid #325171;">
+                            <div style="float:left;width:33%">
+                                <div style="text-align:center;font-size:13px;color:#ffffff">主轴倍率(%)</div>
+                                <div id="h2" style="text-align:center;color:#0eb0de; font-size:18px;font-weight:600;"></div>
+                            </div>
+                            <div style="float:left;width:33%">
+                                <div style="text-align:center;font-size:13px;color:#ffffff">进给倍率(%)</div>
+                                <div id="i2" style="text-align:center;color:#0eb0de; font-size:18px;font-weight:600;"></div>
+                            </div>
+                            <div style="margin-left:50%;width:auto;">
+                                <div style="text-align:center;font-size:13px;color:#ffffff">负载(%)</div>
+                                <div id="j2" style="text-align:center;color:#0eb0de; font-size:18px;font-weight:600;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-md3">
+                <div class="layui-card" style="background-color:#082848">
+                    <div id="div3" class="layui-card-header" style="border-bottom: 0px;">
+                        <h6 id="a3" style="font-weight:600;font-size:13px;text-align:center;display:inline-block;color: #ffffff;"></h6>
+                        <h6 id="b3" style="float:right;font-weight:600;font-size:13px;display:inline-block;color: #ffffff;"></h6>
+                    </div>
+                    <div class="layui-card-body layui-text" style="height: 618px;">
+                        <div class="tab-content" style="height:110px">
+                            <div style="width:100px;height:100px;position:absolute;left:35%;top:3%;transform:translate(-10%,-10%);">
+                                <img id="imageId3" style="width:100px;height:100px;display:none" src="" />
+                            </div>
+                        </div>
+                        <div class="box-header with-border" style="height:45px;position:relative;left:-12px;border-top:1px solid #325171;border-bottom:1px solid #325171">
+                            <div style="float:left;width:50%">
+                                <div style="text-align:center;font-size:13px;color:#ffffff">今日产量(件)</div>
+                                <div id="f3" style="text-align:center;color:#0eb0de; font-size:18px;font-weight:600;"></div>
+                            </div>
+                            <div style="margin-left:50%;width:auto;">
+                                <div style="text-align:center;font-size:13px;color:#ffffff">今日稼动率(%)</div>
+                                <div id="g3" style="text-align:center;color:#0eb0de; font-size:18px;font-weight:600;"></div>
+                            </div>
+                        </div>
+                        <div class="box-header with-border" style="height:210px;position:relative;left:-12px;border-bottom:1px solid #325171">
+                            <div style="text-align:center;font-size:13px;color:#ffffff">主轴转速(r/min)</div>
+                            <div id="maina3" style="height: 246px;"></div>
+                        </div>
+                        <div class="box-header with-border" style="height:210px;">
+                            <div style="text-align:center;font-size:13px;color:#ffffff">进给速度(mm/min)</div>
+                            <div id="mainb3" style="height: 246px;"></div>
+                        </div>
+                        <div class="box-header with-border" style="height:55px;position:relative;left:-12px;border-top:1px solid #325171;">
+                            <div style="float:left;width:33%">
+                                <div style="text-align:center;font-size:13px;color:#ffffff">主轴倍率(%)</div>
+                                <div id="h3" style="text-align:center;color:#0eb0de; font-size:18px;font-weight:600;"></div>
+                            </div>
+                            <div style="float:left;width:33%">
+                                <div style="text-align:center;font-size:13px;color:#ffffff">进给倍率(%)</div>
+                                <div id="i3" style="text-align:center;color:#0eb0de; font-size:18px;font-weight:600;"></div>
+                            </div>
+                            <div style="margin-left:50%;width:auto;">
+                                <div style="text-align:center;font-size:13px;color:#ffffff">负载(%)</div>
+                                <div id="j3" style="text-align:center;color:#0eb0de; font-size:18px;font-weight:600;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-md3">
+                <div class="layui-card" style="background-color:#082848">
+                    <div id="div4" class="layui-card-header" style="border-bottom: 0px;">
+                        <h6 id="a4" style="font-weight:600;font-size:13px;text-align:center;display:inline-block;color: #ffffff;"></h6>
+                        <h6 id="b4" style="float:right;font-weight:600;font-size:13px;display:inline-block;color: #ffffff;"></h6>
+                    </div>
+                    <div class="layui-card-body layui-text" style="height: 618px;">
+                        <div class="tab-content" style="height:110px">
+                            <div style="width:100px;height:100px;position:absolute;left:35%;top:3%;transform:translate(-10%,-10%);">
+                                <img id="imageId4" style="width:100px;height:100px;display:none" src="" />
+                            </div>
+                        </div>
+                        <div class="box-header with-border" style="height:45px;position:relative;left:-12px;border-top:1px solid #325171;border-bottom:1px solid #325171">
+                            <div style="float:left;width:50%">
+                                <div style="text-align:center;font-size:13px;color:#ffffff">今日产量(件)</div>
+                                <div id="f4" style="text-align:center;color:#0eb0de; font-size:18px;font-weight:600;"></div>
+                            </div>
+                            <div style="margin-left:50%;width:auto;">
+                                <div style="text-align:center;font-size:13px;color:#ffffff">今日稼动率(%)</div>
+                                <div id="g4" style="text-align:center;color:#0eb0de; font-size:18px;font-weight:600;"></div>
+                            </div>
+                        </div>
+                        <div class="box-header with-border" style="height:210px;position:relative;left:-12px;border-bottom:1px solid #325171">
+                            <div style="text-align:center;font-size:13px;color:#ffffff">主轴转速(r/min)</div>
+                            <div id="maina4" style="height: 246px;"></div>
+                        </div>
+                        <div class="box-header with-border" style="height:210px;">
+                            <div style="text-align:center;font-size:13px;color:#ffffff">进给速度(mm/min)</div>
+                            <div id="mainb4" style="height: 246px;"></div>
+                        </div>
+                        <div class="box-header with-border" style="height:55px;position:relative;left:-12px;border-top:1px solid #325171;">
+                            <div style="float:left;width:33%">
+                                <div style="text-align:center;font-size:13px;color:#ffffff">主轴倍率(%)</div>
+                                <div id="h4" style="text-align:center;color:#0eb0de; font-size:18px;font-weight:600;"></div>
+                            </div>
+                            <div style="float:left;width:33%">
+                                <div style="text-align:center;font-size:13px;color:#ffffff">进给倍率(%)</div>
+                                <div id="i4" style="text-align:center;color:#0eb0de; font-size:18px;font-weight:600;"></div>
+                            </div>
+                            <div style="margin-left:50%;width:auto;">
+                                <div style="text-align:center;font-size:13px;color:#ffffff">负载(%)</div>
+                                <div id="j4" style="text-align:center;color:#0eb0de; font-size:18px;font-weight:600;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

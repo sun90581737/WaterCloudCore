@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "工程主页";
     Layout = "~/Views/Shared/_Index.cshtml";
 }
 @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment env
@@ -295,9 +295,9 @@
             };
             myChart.setOption(option);
             // echarts 窗口缩放自适应
-            window.onresize = function () {
+            window.addEventListener("resize", function () {
                 myChart.resize();
-            }
+            });
         }
         function loadTwoA() {
             var ListMonth = new Array();
@@ -425,9 +425,9 @@
             };
             myChart.setOption(option);
             // echarts 窗口缩放自适应
-            window.onresize = function () {
+            window.addEventListener("resize", function () {
                 myChart.resize();
-            }
+            });
         }
         function loadThreeA() {
             var listName = new Array();
@@ -507,9 +507,9 @@
             };
             myChart.setOption(option);
             // echarts 窗口缩放自适应
-            window.onresize = function () {
+            window.addEventListener("resize", function () {
                 myChart.resize();
-            }
+            });
         }
         function gridList() {
             common.rendertable({

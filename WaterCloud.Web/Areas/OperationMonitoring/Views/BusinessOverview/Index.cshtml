@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "经营概览";
     Layout = "~/Views/Shared/_Index.cshtml";
 }
 @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment env
@@ -315,9 +315,9 @@
             };
             myChart.setOption(option);
             // echarts 窗口缩放自适应
-            window.onresize = function () {
+            window.addEventListener("resize", function () {
                 myChart.resize();
-            }
+            });
         }
         function loadOne1b() {
             var listName = new Array();
@@ -447,9 +447,9 @@
             };
             myChart.setOption(option);
             // echarts 窗口缩放自适应
-            window.onresize = function () {
+            window.addEventListener("resize", function () {
                 myChart.resize();
-            }
+            });
         }
         function loadTwo() {
             var ListMonth = new Array();
@@ -577,9 +577,9 @@
             };
             myChart.setOption(option);
             // echarts 窗口缩放自适应
-            window.onresize = function () {
+            window.addEventListener("resize", function () {
                 myChart.resize();
-            }
+            });
         }
         function gridList() {
             common.rendertable({
@@ -1049,9 +1049,9 @@
             };
             myChart.setOption(option);
             // echarts 窗口缩放自适应
-            window.onresize = function () {
+            window.addEventListener("resize", function () {
                 myChart.resize();
-            }
+            });
         }
         function loadSeven() {
             var listMonthDay = new Array();
@@ -1185,9 +1185,9 @@
             // 使用刚指定的配置项和数据显示图表。
             myChart.setOption(option);
             // echarts 窗口缩放自适应
-            window.onresize = function () {
+            window.addEventListener("resize", function () {
                 myChart.resize();
-            }
+            });
         }
         function loadEight() {
             var myChart = echarts.init(document.getElementById('chart6'));
