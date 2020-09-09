@@ -135,21 +135,9 @@
             element = layui.element;;
         wcLoading.close();
         $(function () {
-            loadInfo();
             LoadAllData();
+            LoadAllDataB();
         });
-        function loadInfo() {
-            $.ajax({
-                url: "/SystemSecurity/ServerMonitoring/GetServerDataJson?v=" + new Date().Format("yyyy-MM-dd hh:mm:ss"),
-                dataType: "json",
-                success: function (data) {
-                    //$('#cpucout').html(data.CPU + "%");
-                    //$('#armcout').html(data.ARM + "%");
-                    //$('#TotalRAM').html(data.TotalRAM);
-                    //$('#OutIP').html(data.IP);
-                }
-            });
-        }
         function LoadAllData() {
             $.ajax({
                 async: false,
@@ -223,7 +211,6 @@
                 }
             })
         }
-
         function loadSpindle(divId, tempCount) {
             var myChart = echarts.init(document.getElementById(divId));
             var option = {
@@ -387,6 +374,46 @@
             //    option1.series[0].data[0].value = (Math.random() * 10000).toFixed(2) - 0;
             //    myChart.setOption(option1, true);
             //}, 2000)
+        }
+        window.setInterval(function () {
+            LoadAllData();
+        }, 1000 * 60 * 10);
+        window.setInterval(function () {
+            LoadAllDataB();
+        }, 1000 * 3);
+        function LoadAllDataB() {
+            $.ajax({
+                async: false,
+                url: "/AutomationLine/DataAcquisition/GetDataAcquisitionDetail",
+                type: "get",
+                dataType: "json",
+                success: function (da) {
+                    if (da.length != 0) {
+                        $(da).each(function (index, item) {
+                            if (item.DeviceName == "CNC1发那科") {
+                                loadSpindle("maina", item.SpindleSpeed);
+                                loadFeed("mainb", item.FeedSpeed);
+                                $("#h1").text(item.SpindleRatio);
+                                $("#i1").text(item.FeedRatio);
+                                $("#j1").text(item.LoadRatio + "%");
+                            }
+                            else if (item.DeviceName == "CNC2发那科") {
+                                loadSpindle("maina2", item.SpindleSpeed);
+                                loadFeed("mainb2", item.FeedSpeed);
+                                $("#h2").text(item.SpindleRatio);
+                                $("#i2").text(item.FeedRatio);
+                                $("#j2").text(item.LoadRatio + "%");
+                            } else if (item.DeviceName == "CNC3发那科") {
+                                loadSpindle("maina3", item.SpindleSpeed);
+                                loadFeed("mainb3", item.FeedSpeed);
+                                $("#h3").text(item.SpindleRatio);
+                                $("#i3").text(item.FeedRatio);
+                                $("#j3").text(item.LoadRatio + "%");
+                            }
+                        })
+                    }
+                }
+            })
         }
     })
 </script>

@@ -7,12 +7,12 @@ using WaterCloud.Domain.Entity.OperationMonitoring;
 
 namespace WaterCloud.Service.OperationMonitoring
 {
-    public class PMHomeDepartmentQualityStatisticsService : DataFilterService<PMHomeDepartmentQualityStatisticsEntity>, IDenpendency
+    public class PMHomeJiadongRateService : DataFilterService<PMHomeJiadongRateEntity>, IDenpendency
     {
-        public PMHomeDepartmentQualityStatisticsService(IDbContext context) : base(context)
+        public PMHomeJiadongRateService(IDbContext context) : base(context)
         {
         }
-        public async Task<List<PMHomeDepartmentQualityStatisticsEntity>> GetList()
+        public async Task<List<PMHomeJiadongRateEntity>> GetList()
         {
             return repository.IQueryable().ToList();
         }
