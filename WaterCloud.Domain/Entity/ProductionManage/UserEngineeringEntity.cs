@@ -26,6 +26,7 @@ namespace WaterCloud.Domain.Entity.ProductionManage
         public string NormalProgressColor { get; set; }
         public int? ScheduleDelay { get; set; }
         public string ScheduleDelayColor { get; set; }
+        public bool? IsManage { get; set; }
         public DateTime? CreationTime { get; set; }
         public int? IsEffective { get; set; }
     }

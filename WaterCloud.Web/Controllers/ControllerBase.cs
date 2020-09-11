@@ -60,6 +60,12 @@ namespace WaterCloud.Web
         }
         [HttpGet]
         [ServiceFilter(typeof(HandlerAuthorizeAttribute))]
+        public virtual ActionResult Index2()
+        {
+            return View();
+        }
+        [HttpGet]
+        [ServiceFilter(typeof(HandlerAuthorizeAttribute))]
         public virtual ActionResult Form()
         {
             return View();

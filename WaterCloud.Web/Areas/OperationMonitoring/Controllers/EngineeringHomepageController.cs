@@ -31,9 +31,22 @@ namespace WaterCloud.Web.Areas.OperationMonitoring.Controllers
         public async Task<ActionResult> GetDataUserEngineeringList()
         {
             var data = await _ueService.GetList();
-            data = data.Where(p => p.IsEffective == 1).ToList();
+            data = data.Where(p => p.IsEffective == 1 && p.IsManage == true).ToList();
             return Content(data.ToJson());
+        }
 
+        [HttpGet]
+        [HandlerAjaxOnly]
+        public async Task<ActionResult> GetDataUserEngineeringListStaff()
+        {
+            var temp = OperatorProvider.Provider.GetCurrent();
+            var data = await _ueService.GetList();
+            data = data.Where(p => p.IsEffective == 1 && p.IsManage == false && p.Account == temp.UserCode).ToList();
+            foreach (var item in data)
+            {
+                item.Account = temp.UserName;
+            }
+            return Content(data.ToJson());
         }
 
         [HttpGet]

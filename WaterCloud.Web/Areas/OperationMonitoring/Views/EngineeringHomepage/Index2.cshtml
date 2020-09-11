@@ -1,0 +1,785 @@
+﻿@{
+    ViewBag.Title = "工程主页";
+    Layout = "~/Views/Shared/_Index.cshtml";
+}
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment env
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<style>
+
+    .layui-card {
+        border: 1px solid #f2f2f2;
+        border-radius: 5px;
+    }
+
+    .icon {
+        margin-right: 10px;
+        color: #1aa094;
+    }
+
+    .icon-cray {
+        color: #ffb800 !important;
+    }
+
+    .icon-blue {
+        color: #1e9fff !important;
+    }
+
+    .icon-tip {
+        color: #ff5722 !important;
+    }
+
+    .layuimini-qiuck-module {
+        text-align: center;
+        margin-top: 10px
+    }
+
+        .layuimini-qiuck-module a i {
+            display: inline-block;
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            border-radius: 2px;
+            font-size: 30px;
+            background-color: #F8F8F8;
+            color: #333;
+            transition: all .3s;
+            -webkit-transition: all .3s;
+        }
+
+        .layuimini-qiuck-module a cite {
+            position: relative;
+            top: 2px;
+            display: block;
+            color: #666;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+    .welcome-module {
+        width: 40%;
+        height: 100px;
+    }
+
+    .panel {
+        background-color: #fff;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+        box-shadow: 0 1px 1px rgba(0,0,0,.05)
+    }
+
+    .panel-body {
+        padding: 30px
+    }
+
+    .panel-title {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: 12px;
+        color: inherit
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .layui-bg-number {
+        background-color: #F8F8F8;
+    }
+
+    .tmp-layui-col-xs4 {
+        width: 12.5%;
+        float: left;
+        position: relative;
+        display: block;
+        box-sizing: border-box
+    }
+    /*鼠标指向表格时,奇数行背景颜色 */
+    /*    .layui-table tbody tr:hover, .layui-table-hover {
+        background-color: #eeffee;
+    }*/
+
+    /* 表格头部工具栏背景色 */
+    /*    .layui-table-tool {
+        background-color: #eeffee;
+    }*/
+
+    /* 表格头部背景色 */
+    /*th {
+        background-color: #359f6a;*/ /* MediumSeaGreen */
+    /*color: #fff;
+        font-weight: bold
+    }*/
+
+</style>
+<script>
+    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            common = layui.common,
+            layer = layui.layer,
+            echarts = layui.echarts,
+            element = layui.element;;
+        wcLoading.close();
+        // toolbarDemo.innerHTML = common.authorizeButtonNew(toolbarDemo.innerHTML);
+
+        //common.iframeInterval(function () {
+        //    loadInfo();
+        //}, 10000); //指定10秒刷新一次
+        $(function () {
+            loadInfo();
+            loadOneA();
+            loadTwoB();
+            loadTwoA();
+            loadThreeA();
+            gridList();
+            gridListOn();
+        });
+
+        function loadInfo() {
+            $.ajax({
+                url: "/SystemSecurity/ServerMonitoring/GetServerDataJson?v=" + new Date().Format("yyyy-MM-dd hh:mm:ss"),
+                dataType: "json",
+                success: function (data) {
+                    //$('#cpucout').html(data.CPU + "%");
+                    //$('#armcout').html(data.ARM + "%");
+                    //$('#TotalRAM').html(data.TotalRAM);
+                    //$('#OutIP').html(data.IP);
+                }
+            });
+        }
+        function loadOneA() {
+            $.ajax({
+                async: false,
+                url: "/OperationMonitoring/EngineeringHomepage/GetDataUserEngineeringListStaff",
+                type: "get",
+                dataType: "json",
+                success: function (da) {
+                    var item = da[0];
+                    $("#a1").text(item.Account);
+                    $("#b1").text(item.CustomerAmount);
+                    $("#b1").css({ "color": item.CustomerAmountColor });
+                    $("#c1").text(item.DeliveryCompletionRate + "%");
+                    $("#c1").css({ "color": item.DeliveryCompletionRateColor });
+                    $("#d1").text(item.OnTimeDeliveryMold);
+                    $("#d1").css({ "color": item.OnTimeDeliveryMoldColor });
+                    $("#e1").text(item.LateDeliveryMold);
+                    $("#e1").css({ "color": item.LateDeliveryMoldColor });
+                    $("#f1").text(item.MoldInProcess);
+                    $("#f1").css({ "color": item.MoldInProcessColor });
+                    $("#g1").text(item.NormalProgress);
+                    $("#g1").css({ "color": item.NormalProgressColor });
+                    $("#h1").text(item.ScheduleDelay);
+                    $("#h1").css({ "color": item.ScheduleDelayColor });
+                }
+            })
+        }
+        function loadTwoB() {
+            var listName = new Array();
+            var str = [];
+            $.ajax({
+                async: false,
+                url: "/OperationMonitoring/EngineeringHomepage/GetDataEHNumberMoldsDelivered",
+                //type: "get",
+                dataType: "json",
+                success: function (da) {
+                    $(da).each(function (index, item) {
+                        listName.push(item.Type);
+                        var str3 = new Object();
+                        str3.name = item.Type;
+                        str3.value = item.Number;
+                        str[index] = str3;
+                    })
+                }
+            })
+            var myChart = echarts.init(document.getElementById('chart2b'))
+
+            var color = ['#f18533', '#6d48e6']
+
+            var option = {
+                color: color,
+                title: {
+                    text: '',
+                    left: 'center',
+                    top: '50%',
+                    textStyle: {
+                        fontSize: 20,
+                        color: '#808080',
+                        fontWeight: 'normal'
+                    }
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    //orient: 'vertical',
+                    //right: 20,
+                    //top: 20,
+                    itemWidth: 10,  //图例标记的图形宽度
+                    itemHeight: 10, //图例标记的图形高度
+                    bottom: 0,
+                    left: 'center',
+                    data: listName,
+                    textStyle: {    //图例文字的样式
+                        color: '#000000',  //文字颜色
+                        fontSize: 12    //文字大小
+                    }
+                },
+                series: [{
+                    type: 'pie',
+                    roseType: 'radius',
+                    radius: ['40%', '70%'],
+                    center: ['45%', '50%'],
+                    data: str,
+                    label: {
+                        normal: {
+                            formatter: '{font|{c}}\n{hr|}\n{font|{d}%}',
+                            rich: {
+                                font: {
+                                    fontSize: 14,
+                                    padding: [5, 0],
+                                    color: '#808080'
+                                },
+                                hr: {
+                                    height: 0,
+                                    borderWidth: 1,
+                                    width: '100%',
+                                    borderColor: '#808080'
+                                }
+                            }
+                        },
+                    },
+                    labelLine: {
+                        lineStyle: {
+                            color: '#808080'
+                        }
+                    },
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0,0,0,0.5)'
+                        }
+                    }
+                }]
+            };
+            myChart.setOption(option);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function loadTwoA() {
+            var ListMonth = new Array();
+            var ListDeliveryRate = new Array();
+
+            $.ajax({
+                async: false,
+                url: "/OperationMonitoring/EngineeringHomepage/GetDataEHDeliveryCompletionRate",
+                type: "get",
+                dataType: "json",
+                success: function (da) {
+                    $(da).each(function (index, item) {
+                        ListMonth.push(item.Month);
+                        ListDeliveryRate.push(item.DeliveryRate);
+                    })
+                }
+            })
+            var myChart = echarts.init(document.getElementById('chart1'));
+            var option = {
+                title: {
+                    text: ''
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                grid: {
+                    top: 10,
+                    left: 40,
+                    right: 15,
+                    bottom: 50,
+                    containLabel: false
+                },
+                //toolbox: {
+                //    feature: {
+                //        saveAsImage: {}
+                //    }
+                //},
+                tooltip: {
+                    trigger: 'axis',
+                    formatter: function (params) {
+                        var relVal = params[0].name;
+                        for (var i = 0, l = params.length; i < l; i++) {
+                            relVal += '<br/>' + params[i].marker + params[i].seriesName + ' : ' + params[i].value + "%";
+                        }
+                        return relVal;
+                    }
+                },
+                xAxis: [{
+                    type: 'category',
+                    data: ListMonth,
+                    axisLine: {
+                        show: false,
+                        lineStyle: {
+                            color: '#808080',
+
+                        }
+                    },
+                    axisLabel: {
+                        // interval: 0,
+                        // rotate: 40,
+                        textStyle: {
+                            fontSize: '11'
+                        }
+                    },
+                    axisTick: { //y轴刻度线
+                        show: false
+                    },
+                }],
+                yAxis: [{
+                    interval: 20,
+                    type: 'value',
+                    axisLine: {
+                        show: false,
+                        lineStyle: {
+                            color: '#f2961d'
+                        }
+                    },
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            //color: "#57617B"
+                            type: 'dashed'
+                        }
+                    },
+                    axisTick: { //y轴刻度线
+                        show: false
+                    },
+                    axisLabel: {
+                        formatter: function (value) {
+                            return value + "%";
+                        },
+                        show: true,
+                        textStyle: {
+                            color: '#f2961d'
+                        }
+                    },
+                }],
+                series: [
+                    {
+                        name: '交期达成率',
+                        type: 'line',
+                        areaStyle: {
+                            normal: {
+                                color: new echarts.graphic.LinearGradient(
+                                    0, 0, 0, 1,
+                                    [
+                                        { offset: 0, color: '#f28938' },
+                                        { offset: 0.5, color: '#ffba86' },
+                                        { offset: 1, color: '#fefefe' }
+                                    ]
+                                )
+                            }
+                        },
+                        itemStyle: {
+                            normal: {
+                                color: '#f28938', //改变折线点的颜色
+                                lineStyle: {
+                                    color: '#f28938' //改变折线颜色
+                                }
+                            }
+                        },
+                        data: ListDeliveryRate,
+                    }
+                ]
+            };
+            myChart.setOption(option);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function loadThreeA() {
+            var listName = new Array();
+            var str = [];
+
+            $.ajax({
+                async: false,
+                url: "/OperationMonitoring/EngineeringHomepage/GetDataEHProductionSchedule",
+                type: "get",
+                dataType: "json",
+                success: function (da) {
+                    $(da).each(function (index, item) {
+                        listName.push(item.Name);
+                        var str3 = new Object();
+                        str3.name = item.Name;
+                        str3.value = item.Number;
+                        str[index] = str3;
+                    })
+                }
+            })
+
+            var myChart = echarts.init(document.getElementById('chart2a'));
+            var option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{b} : ({c}%)"
+                },
+                legend: {
+                    itemWidth: 10,  //图例标记的图形宽度
+                    itemHeight: 10, //图例标记的图形高度
+                    bottom: 20,
+                    left: 'center',
+                    data: listName,
+                    textStyle: {    //图例文字的样式
+                        color: '#000000',  //文字颜色
+                        fontSize: 12    //文字大小
+                    }
+                },
+                color: ['#f28533', '#00ffff', '#ff6239'],
+                series: [
+                    {
+                        name: '访问来源',
+                        type: 'pie',
+                        radius: '65%',
+                        center: ['50%', '40%'],
+                        data: str
+                        ,
+                        itemStyle: {  //图形样式
+                            normal: { //normal 是图形在默认状态下的样式；emphasis 是图形在高亮状态下的样式，比如在鼠标悬浮或者图例联动高亮时。
+                                label: {  //饼图图形上的文本标签
+                                    show: true,  //平常不显示
+                                    formatter: '{c}%',
+                                    position: 'inner'
+                                },
+                                labelLine: {     //标签的视觉引导线样式
+                                    show: false  //平常不显示
+                                }
+                            },
+                            emphasis: {   //normal 是图形在默认状态下的样式；emphasis 是图形在高亮状态下的样式，比如在鼠标悬浮或者图例联动高亮时。
+                                label: {  //饼图图形上的文本标签
+                                    show: true,
+                                    position: 'center',
+                                    textStyle: {
+                                        fontSize: '20',
+                                        fontWeight: 'bold'
+                                    }
+                                },
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    }
+                ]
+            };
+            myChart.setOption(option);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function gridList() {
+            common.rendertable({
+                elem: '#currentTableId',
+                id: 'currentTableId',
+                url: '/OperationMonitoring/EngineeringHomepage/GetGridJson',
+                height: 180,
+                toolbar: false,/*隐藏打印*/
+                page: false,/*隐藏分页*/
+                sqlkey: 'id',//数据库主键
+                cols: [[
+                    { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
+                    { field: 'MoldNo', title: '模具编号', width: 80, sort: true },
+                    { field: 'Customers', title: '客户', width: 60, sort: true, filter: true },
+                    { field: 'Type', title: '类型', width: 60, sort: true },
+                    {
+                        field: 'PlannedDeliveryDate', title: '计划交期', width: 80,
+                        templet: function (d) {
+                            if (d.PlannedDeliveryDate) {
+                                return new Date(d.PlannedDeliveryDate).Format("yyyy-MM-dd");
+
+                            }
+                        }
+                    },
+                    {
+                        field: 'EarlyWarning', title: '预警', align: 'center', width: 80,
+                        templet: function (d) {
+                            if (d.EarlyWarning) {
+                                var temp = ''
+                                var tip = d.EarlyWarning.split(';');
+                                if (tip == 0) {
+                                    return '<div class="layui-progress" style="margin-top: 10px;"><div class="layui-progress-bar layui-bg-red" lay-percent="100%"></div></div>';
+                                }
+                                else if (tip > 0) {
+                                    var attnum = 1 - tip;
+                                    return '<div class="layui-progress layui-bg-red" style="margin-top: 10px;"><div class="layui-progress-bar layui-bg-green" lay-percent=' + attnum * 100 + '%></div></div>';
+                                }
+                                else if (tip.length == 2) {
+                                    return '<div class="layui-progress layui-bg-red" lay-percent=' + tip[0] * 100 + '% style="margin-top: 10px;"><div class="layui-progress-bar layui-bg-green" lay-percent=' + tip[1] * 100 + '%><div class="layui-progress-bar layui-bg-orange" lay-percent=' + tip[2] * 100 + '%></div></div></div>';
+                                }
+                            }
+                        }
+                    },
+                ]]
+                , done: function (res, currentCount) {
+                    //***重点***：table渲染完成后渲染element进度条
+                    element.render()
+                }
+            });
+        }
+        function gridListOn() {
+            common.rendertable({
+                elem: '#currentTableId2',
+                id: 'currentTableId2',
+                url: '/OperationMonitoring/EngineeringHomepage/GetGridJsonOn',
+                height: 190,
+                toolbar: false,/*隐藏打印*/
+                page: false,/*隐藏分页*/
+                sqlkey: 'id',//数据库主键
+                cols: [[
+                    {
+                        field: 'Colour', title: '', width: 50, sort: false, filter: false,
+                        templet: function (d) {
+                            if (d.Colour) {
+                                return '<span style="padding:1px 9px;border-radius:50%;background:' + d.Colour + ';"></span>'
+                            }
+                        }
+                    },
+                    //{ field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
+                    { field: 'MoldName', title: '模具名称', width: 120, sort: true },
+                    { field: 'MoldNo', title: '模具编号', width: 120, sort: true },
+                    { field: 'TN', title: 'TN', width: 120, sort: true },
+                    { field: 'CustomerName', title: '客户', width: 120, sort: true },
+                    { field: 'ContactPerson', title: '内部负责人', width: 120, sort: true },
+                    { field: 'MoldType', title: '类型', width: 120, sort: true, filter: true },
+                    { field: 'MoldState', title: '状态', width: 120, sort: true, filter: true },
+                    {
+                        field: 'MoldDate', title: '试模日期', width: 150,
+                        templet: function (d) {
+                            if (d.MoldDate) {
+                                return new Date(d.MoldDate).Format("yyyy-MM-dd");
+
+                            }
+                        }
+                    },
+                    { field: 'MoldMaterial', title: '模仁材质', width: 120, sort: true },
+                    { field: 'Category', title: '类别', width: 120, sort: true },
+                ]]
+            });
+        }
+        $(document).on('click', "#funOne", function () {
+            //layer.msg("按钮点击");
+            window.open("/Home/Index#//OperationMonitoring/EngineeringHomepage/Form");
+        });
+        $(document).on('click', "#funTwo", function () {
+            window.open("/Home/Index#//OperationMonitoring/EngineeringHomepage/Form2");
+        });
+        $(document).on('click', "#funThree", function () {
+            window.open("/Home/Index#//OperationMonitoring/EngineeringHomepage/Form3");
+        });
+    })
+</script>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <fieldset class="table-search-fieldset">
+                    <div class="">
+                        @*layui-card-body*@
+                        <div class="">
+                            @*welcome-module*@
+                            <div class="layui-row layui-col-space5">
+                                <div class="tmp-layui-col-xs4" style="display: inline-block; ">
+                                    <div class="panel layui-bg-number">
+                                        <div class="panel-body">
+                                            <div class="panel-title">
+                                                @*<i class="fa fa-warning icon"></i>*@
+                                                <h6 style="text-align:center;font-size:10px;color:#808080">项目工程师</h6>
+                                                <img src="~/i-quicker/img/OM/01.png" style="width: 30px; height: 30px; position: absolute; left: 10px; top: 35px; background: url('~/i-quicker/img/OM/01.png') 0 0 / 100% 100% no-repeat;" />
+                                            </div>
+                                            <div class="panel-content">
+                                                @*<h1 class="no-margins" id="cpucout"></h1>
+                                                    <small>当前记录</small>*@
+                                                <h6 id="a1" style="text-align:center;font-weight:bold;font-size:14px;color:#000000">超级管理员</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tmp-layui-col-xs4" style="display: inline-block; ">
+                                    <div class="panel layui-bg-number">
+                                        <div class="panel-body">
+                                            <div class="panel-title">
+                                                <h6 style="text-align:center;font-size:10px;color:#808080">负责客户数量</h6>
+                                                <img src="~/i-quicker/img/OM/02.png" style="width: 30px; height: 30px; position: absolute; left: 10px; top: 35px; background: url('~/i-quicker/img/OM/02.png') 0 0 / 100% 100% no-repeat;" />
+                                            </div>
+                                            <div class="panel-content">
+                                                <h6 id="a1" style="text-align:center;font-weight:bold;font-size:14px;color:#000000">5</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tmp-layui-col-xs4" style="display: inline-block; ">
+                                    <div class="panel layui-bg-number">
+                                        <div class="panel-body">
+                                            <div class="panel-title">
+                                                <h6 style="text-align:center;font-size:10px;color:#808080">交期达成率</h6>
+                                                <img src="~/i-quicker/img/OM/03.png" style="width: 30px; height: 30px; position: absolute; left: 10px; top: 35px; background: url('~/i-quicker/img/OM/03.png') 0 0 / 100% 100% no-repeat;" />
+                                            </div>
+                                            <div class="panel-content">
+                                                <h6 id="a1" style="text-align:center;font-weight:bold;font-size:14px;color:#000000">89%</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tmp-layui-col-xs4" style="display: inline-block; ">
+                                    <div class="panel layui-bg-number">
+                                        <div class="panel-body">
+                                            <div class="panel-title">
+                                                <h6 style="text-align:center;font-size:10px;color:#808080">本月按期交付模具</h6>
+                                                <img src="~/i-quicker/img/OM/04.png" style="width: 30px; height: 30px; position: absolute; left: 10px; top: 35px; background: url('~/i-quicker/img/OM/04.png') 0 0 / 100% 100% no-repeat;" />
+                                            </div>
+                                            <div class="panel-content">
+                                                <h6 id="a1" style="text-align:center;font-weight:bold;font-size:14px;color:#000000">9</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tmp-layui-col-xs4" style="display: inline-block; ">
+                                    <div class="panel layui-bg-number">
+                                        <div class="panel-body">
+                                            <div class="panel-title">
+                                                <h6 style="text-align:center;font-size:10px;color:#808080">本月延期交付模具</h6>
+                                                <img src="~/i-quicker/img/OM/05.png" style="width: 30px; height: 30px; position: absolute; left: 10px; top: 35px; background: url('~/i-quicker/img/OM/05.png') 0 0 / 100% 100% no-repeat;" />
+                                            </div>
+                                            <div class="panel-content">
+                                                <h6 id="a1" style="text-align:center;font-weight:bold;font-size:14px;color:#000000">2</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tmp-layui-col-xs4" style="display: inline-block; ">
+                                    <div class="panel layui-bg-number">
+                                        <div class="panel-body">
+                                            <div class="panel-title">
+                                                <h6 style="text-align:center;font-size:10px;color:#808080">在制模具/个</h6>
+                                                <img src="~/i-quicker/img/OM/06.png" style="width: 30px; height: 30px; position: absolute; left: 10px; top: 35px; background: url('~/i-quicker/img/OM/06.png') 0 0 / 100% 100% no-repeat;" />
+                                            </div>
+                                            <div class="panel-content">
+                                                <h6 id="a1" style="text-align:center;font-weight:bold;font-size:14px;color:#000000">10</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tmp-layui-col-xs4" style="display: inline-block; ">
+                                    <div class="panel layui-bg-number">
+                                        <div class="panel-body">
+                                            <div class="panel-title">
+                                                <h6 style="text-align:center;font-size:10px;color:#808080">进度正常</h6>
+                                                <img src="~/i-quicker/img/OM/07.png" style="width: 30px; height: 30px; position: absolute; left: 10px; top: 35px; background: url('~/i-quicker/img/OM/07.png') 0 0 / 100% 100% no-repeat;" />
+                                            </div>
+                                            <div class="panel-content">
+                                                <h6 id="a1" style="text-align:center;font-weight:bold;font-size:14px;color:#000000">7</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tmp-layui-col-xs4" style="display: inline-block; ">
+                                    <div class="panel layui-bg-number">
+                                        <div class="panel-body">
+                                            <div class="panel-title">
+                                                <h6 style="text-align:center;font-size:10px;color:#808080">进度延误</h6>
+                                                <img src="~/i-quicker/img/OM/07.png" style="width: 30px; height: 30px; position: absolute; left: 10px; top: 35px; background: url('~/i-quicker/img/OM/07.png') 0 0 / 100% 100% no-repeat;" />
+                                            </div>
+                                            <div class="panel-content">
+                                                <h6 id="a1" style="text-align:center;font-weight:bold;font-size:14px;color:#000000">3</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>交期达成率
+                        <button type="button" id="funOne" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                    </div>
+                    <div class="layui-card-body layui-text">
+                        <div style="float:left;width:40%">
+                            <div style="text-align:center;font-size:13px;color:#808080;">上月交付模具数量</div>
+                            <div id="chart2b" style="height:200px;"></div>
+                        </div>
+                        <div style="margin-left:40%;">
+                            <div style="text-align:center;font-size:13px;color:#808080;">交期达成率趋势</div>
+                            <div id="chart1" style="height:200px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>在制进度正常、延误比例
+                        <button type="button" id="funTwo" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                    </div>
+                    <div class="layui-card-body layui-text">
+                        <div style="float:left;width:40%">
+                            <div style="text-align:center;font-size:13px;color:#808080;">生产进度</div>
+                            <div id="chart2a" style="height:200px;"></div>
+                        </div>
+                        <div style="margin-left:40%;">
+                            <div style="text-align:center;font-size:13px;color:#808080;">延期模具列表</div>
+                            <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>客户清单
+                        <button type="button" id="funThree" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                    </div>
+                    <table class="layui-hide" id="currentTableId2" lay-filter="currentTableFilter"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
