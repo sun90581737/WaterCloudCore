@@ -20,6 +20,7 @@ namespace WaterCloud.Web.Areas.CostAnalysis.Controllers
         private readonly IFACostAnalysisNotCustService _ANCservice;
         private readonly IDbContext _context;
         public FACostShareService _faCSService { get; set; }
+        public FACostComparisonService _faCCService { get; set; }
 
         public FinancialAnalysisController(IDbContext context)
         {
@@ -77,6 +78,15 @@ namespace WaterCloud.Web.Areas.CostAnalysis.Controllers
             var data = await _faCSService.GetList();
             data = data.Where(p => p.IsEffective == 1).ToList();
             return Content(data.ToJson());
+        }
+        [HttpGet]
+        [HandlerAjaxOnly]
+        public async Task<ActionResult> GetGridJson(Pagination pagination, string keyword = "")
+        {
+            pagination.order = "desc";
+            pagination.sort = "MoldNo desc";
+            var data = await _faCCService.GetList(pagination, keyword);
+            return Success(pagination.records, data);
         }
     } 
 }
