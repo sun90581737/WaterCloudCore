@@ -3,17 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace WaterCloud.Domain.Entity.QualityOptimization
+namespace WaterCloud.Domain.Entity.ProcessScheduling
 {
-    [TableAttribute("Sys_QualityOTeamPassRate")]
-    public class QualityOTeamPassRateEntity : IEntity<QualityOTeamPassRateEntity>
+    [TableAttribute("Sys_SHDepartmentLoad")]
+    public class SHDepartmentLoadEntity : IEntity<SHDepartmentLoadEntity>
     {
         [ColumnAttribute("id", IsPrimaryKey = true)]
         public int? id { get; set; }
         public string DeviceType { get; set; }
         public string DeviceName { get; set; }
         public int? Number { get; set; }
-        public string Colour { get; set; }
         public DateTime? CreationTime { get; set; }
         public int? IsEffective { get; set; }
     }
