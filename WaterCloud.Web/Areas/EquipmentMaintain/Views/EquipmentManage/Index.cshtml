@@ -1,0 +1,481 @@
+﻿@{
+    ViewBag.Title = " 财务分析";
+    Layout = "~/Views/Shared/_Index.cshtml";
+}
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment env
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link href="~/lib/layui-v2.5.5/css/layui.css" rel="stylesheet" />
+<style>
+    .layui-card {
+        border: 1px solid #f2f2f2;
+        border-radius: 5px;
+    }
+
+    .icon {
+        margin-right: 10px;
+        color: #1aa094;
+    }
+
+    .icon-cray {
+        color: #ffb800 !important;
+    }
+
+    .icon-blue {
+        color: #1e9fff !important;
+    }
+
+    .icon-tip {
+        color: #ff5722 !important;
+    }
+
+    .layuimini-qiuck-module {
+        text-align: center;
+        margin-top: 10px
+    }
+
+        .layuimini-qiuck-module a i {
+            display: inline-block;
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            border-radius: 2px;
+            font-size: 30px;
+            background-color: #F8F8F8;
+            color: #333;
+            transition: all .3s;
+            -webkit-transition: all .3s;
+        }
+
+        .layuimini-qiuck-module a cite {
+            position: relative;
+            top: 2px;
+            display: block;
+            color: #666;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+    .welcome-module {
+        width: 40%;
+        height: 100px;
+    }
+
+    .panel {
+        background-color: #fff;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+        box-shadow: 0 1px 1px rgba(0,0,0,.05)
+    }
+
+    .panel-body {
+        padding: 30px
+    }
+
+    .panel-title {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: 12px;
+        color: inherit
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .layui-bg-number {
+        background-color: #F8F8F8;
+    }
+
+    .tmp-layui-col-xs4 {
+        width: 12.5%;
+        float: left;
+        position: relative;
+        display: block;
+        box-sizing: border-box
+    }
+</style>
+<script>
+    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element', 'laydate'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            common = layui.common,
+            layer = layui.layer,
+            echarts = layui.echarts,
+            element = layui.element,
+            laydate = layui.laydate;
+        wcLoading.close();
+        $(function () {
+            loadOne();
+            loadTwo();
+            loadThree();
+            loadFour();
+        });
+        laydate.render({
+            elem: '#test1'
+            , range: true,
+            done: (value) => {
+                //赋值
+                $('#test1').val(value);
+                //执行指定方法
+            }
+        });
+        laydate.render({
+            elem: '#test2'
+            , range: true,
+            done: (value) => {
+                //赋值
+                $('#test2').val(value);
+                //执行指定方法
+            }
+        });
+        function loadOne() {
+            var listName = new Array();
+            var str = [];
+            $.ajax({
+                url: "/EquipmentMaintain/EquipmentManage/GetDataEMEquipmentStatus",
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    $(data).each(function (index, item) {
+                        listName.push(item.Type);
+                        var str3 = new Object();
+                        str3.name = item.Type;
+                        str3.value = item.Cost;
+                        str[index] = str3;
+                    })
+                }
+            });
+            var myChart = echarts.init(document.getElementById('chart1'));
+
+            var option = {
+                color: ['#f28533', '#6bedfd', '#6d48e6', '#ff6239'],
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{b} : ({c}套)"
+                },
+                series: [{
+                    name: '',
+                    type: 'pie',
+                    radius: '70%',
+                    center: ['45%', '60%'],
+                    data: str,
+                    itemStyle: {  //图形样式
+                        normal: { //normal 是图形在默认状态下的样式；emphasis 是图形在高亮状态下的样式，比如在鼠标悬浮或者图例联动高亮时。
+                            label: {  //饼图图形上的文本标签
+                                formatter: function (params) {
+                                    var percent = 0;
+                                    var total = 0;
+                                    for (var i = 0; i < str.length; i++) {
+                                        total += str[i].value;
+                                    }
+                                    percent = ((params.value / total) * 100).toFixed(0);
+                                    if (params.name !== '') {
+                                        return params.name + '：' + params.value + '套' + '\n' + '\n' + percent + '%';
+                                    } else {
+                                        return '';
+                                    }
+                                },
+                                rich: {
+                                    font: {
+                                        fontSize: 14,
+                                        padding: [5, 0],
+                                        color: '#808080'
+                                    },
+                                    hr: {
+                                        height: 0,
+                                        borderWidth: 1,
+                                        width: '100%',
+                                        borderColor: '#808080'
+                                    }
+                                }
+                            },
+                            //labelLine: {     //标签的视觉引导线样式
+                            //    show: false  //平常不显示
+                            //},
+                            labelLine: {
+                                length: 8,
+                                length2: 8,
+                                show: true,
+                                color: '#00ffff'
+                            }
+                        },
+
+                        //emphasis: {   //normal 是图形在默认状态下的样式；emphasis 是图形在高亮状态下的样式，比如在鼠标悬浮或者图例联动高亮时。
+                        //    label: {  //饼图图形上的文本标签
+                        //        show: true,
+                        //        position: 'center',
+                        //        textStyle: {
+                        //            fontSize: '20',
+                        //            fontWeight: 'bold'
+                        //        }
+                        //    },
+                        //    itemStyle: {
+                        //        shadowBlur: 10,
+                        //        shadowOffsetX: 0,
+                        //        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        //    }
+                        //}
+                    }
+                }]
+            };
+            myChart.setOption(option);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function loadTwo() {
+            common.rendertable({
+                elem: '#currentTableId',
+                id: 'currentTableId',
+                url: "/EquipmentMaintain/EquipmentManage/GetGridJson",
+                height: 180,
+                toolbar: false,/*隐藏打印*/
+                page: true,/*隐藏分页*/
+                sqlkey: 'id',//数据库主键
+                cols: [[
+                    { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
+                    { field: 'Number', title: '编号', width: 150, sort: true },
+                    { field: 'Name', title: '名称', width: 150, sort: true },
+                    { field: 'Brand', title: '标准工时', width: 150, sort: true },
+                    { field: 'Department', title: '部门', width: 150, sort: true, filter: true },
+                    { field: 'State', title: '状态', width: 140, sort: true, filter: true },
+                    {
+                        field: 'DateArrival', title: '入场日期', width: 105,
+                        templet: function (d) {
+                            if (d.DateArrival) {
+                                return new Date(d.DateArrival).Format("yyyy-MM-dd");
+
+                            }
+                        }
+                    },
+                ]]
+            });
+            // 监听搜索操作
+            form.on('submit(data-search-btn1)', function (data) {
+                //执行搜索重载
+                common.reloadtable({
+                    elem: 'currentTableId',
+                    curr: 1,
+                    where: { keyword: $('#txt_keyword').val() }
+                });
+                duty = null;
+                return false;
+            });
+        }
+        function loadThree() {
+            common.rendertable({
+                elem: '#currentTableId1',
+                id: 'currentTableId1',
+                url: "/EquipmentMaintain/EquipmentManage/GetDataEMMaintainPlan",
+                height: 240,
+                toolbar: false,/*隐藏打印*/
+                page: true,/*隐藏分页*/
+                sqlkey: 'id',//数据库主键
+                cols: [[
+                    { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
+                    { field: 'EquipmentNumber', title: '设备编号', width: 100, sort: true },
+                    { field: 'EquipmentName', title: '设备名称', width: 100, sort: true },
+                    { field: 'Department', title: '部门', width: 100, sort: true, filter: true },
+                    { field: 'MaintainPlan', title: '保养计划', width: 100, sort: true },
+                    { field: 'MaintainType', title: '保养类型', width: 100, sort: true },
+                    {
+                        field: 'PlanStartTime', title: '计划开始时间', width: 100,
+                        templet: function (d) {
+                            if (d.PlanStartTime) {
+                                return new Date(d.PlanStartTime).Format("yyyy-MM-dd");
+
+                            }
+                        }
+                    },
+                    {
+                        field: 'PlanEndTime', title: '计划结束时间', width: 100,
+                        templet: function (d) {
+                            if (d.PlanEndTime) {
+                                return new Date(d.PlanEndTime).Format("yyyy-MM-dd");
+
+                            }
+                        }
+                    },
+                    { field: 'Remarks', title: '保养备注', width: 100, sort: true, filter: true },
+                ]]
+            });
+            // 监听搜索操作
+            form.on('submit(data-search-btn2)', function (data) {
+                //执行搜索重载
+                common.reloadtable({
+                    elem: 'currentTableId1',
+                    curr: 1,
+                    where: { keyvalue: $('#test1').val(), keyword: $('#txt_keyword1').val() }
+                });
+                duty = null;
+                return false;
+            });
+        }
+        function loadFour() {
+            common.rendertable({
+                elem: '#currentTableId2',
+                id: 'currentTableId2',
+                url: "/EquipmentMaintain/EquipmentManage/GetDataEMMaintainHistory",
+                height: 240,
+                toolbar: false,/*隐藏打印*/
+                page: true,/*隐藏分页*/
+                sqlkey: 'id',//数据库主键
+                cols: [[
+                    { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
+                    { field: 'EquipmentNumber', title: '设备编号', width: 100, sort: true },
+                    { field: 'EquipmentName', title: '设备名称', width: 100, sort: true },
+                    { field: 'Department', title: '部门', width: 100, sort: true, filter: true },
+                    { field: 'MaintainPlan', title: '保养计划', width: 100, sort: true },
+                    { field: 'MaintainType', title: '保养类型', width: 100, sort: true },
+                    { field: 'MaintainPersonnel', title: '保养人员', width: 100, sort: true },
+                    {
+                        field: 'MaintainTime', title: '保养时间', width: 100,
+                        templet: function (d) {
+                            if (d.MaintainTime) {
+                                return new Date(d.MaintainTime).Format("yyyy-MM-dd");
+
+                            }
+                        }
+                    },
+                    { field: 'MaintainRecord', title: '保养记录', width: 100, sort: true, filter: true },
+                ]]
+            });
+            // 监听搜索操作
+            form.on('submit(data-search-btn3)', function (data) {
+                //执行搜索重载
+                common.reloadtable({
+                    elem: 'currentTableId2',
+                    curr: 1,
+                    where: { keyvalue: $('#test2').val(), keyword: $('#txt_keyword2').val() }
+                });
+                duty = null;
+                return false;
+            });
+        }
+    })
+</script>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md4">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>设备状态分布
+                        <button type="button" id="funOne" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                    </div>
+                    <div class="layui-card-body layui-text">
+                        <div id="chart1" style="height:180px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md8">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>设备清单
+                        <button type="button" id="funTwo" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                        <div class="layui-inline" style="float: right;">
+                            <button type="submit" class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn1"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                        </div>
+                        <div class="layui-inline" style="float: right;">
+                            <div class="layui-input-inline">
+                                <input type="text" id="txt_keyword" name="txt_keyword" autocomplete="off" class="layui-input" placeholder="">
+                            </div>
+                        </div>
+                    </div>
+                    <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+                </div>
+            </div>
+            <div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>保养计划
+                        <button type="button" id="funThree" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                        <div class="layui-inline" style="float: right;">
+                            <button type="submit" class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn2"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                        </div>
+                        <div class="layui-inline" style="float: right;">
+                            <div class="layui-input-inline">
+                                <input type="text" id="txt_keyword1" name="txt_keyword1" autocomplete="off" class="layui-input" placeholder="">
+                            </div>
+                        </div>
+                        <div class="layui-inline" style="float: right;">
+                            <div class="layui-input-inline">
+                                <input type="text" class="layui-input" id="test1" placeholder=" - " readonly="readonly">
+                            </div>
+                        </div>
+                    </div>
+                    <table class="layui-hide" id="currentTableId1" lay-filter="currentTableFilter"></table>
+                </div>
+            </div>
+
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>保养历史
+                        <button type="button" id="funThree" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                        <div class="layui-inline" style="float: right;">
+                            <button type="submit" class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn3"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                        </div>
+                        <div class="layui-inline" style="float: right;">
+                            <div class="layui-input-inline">
+                                <input type="text" id="txt_keyword2" name="txt_keyword2" autocomplete="off" class="layui-input" placeholder="">
+                            </div>
+                        </div>
+                        <div class="layui-inline" style="float: right;">
+                            <div class="layui-input-inline">
+                                <input type="text" class="layui-input" id="test2" placeholder=" - " readonly="readonly">
+                            </div>
+                        </div>
+                    </div>
+                    <table class="layui-hide" id="currentTableId2" lay-filter="currentTableFilter"></table>
+                </div>
+            </div>
+
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>维修分析
+                        <button type="button" id="funThree" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                    </div>
+                    <div class="layui-card-body layui-text">
+                        <div id="chart2" style="height:260px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

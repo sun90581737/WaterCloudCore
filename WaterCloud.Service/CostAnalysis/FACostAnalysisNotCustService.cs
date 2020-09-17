@@ -20,7 +20,7 @@ namespace WaterCloud.Service.CostAnalysis
             var parameter = new List<DbParam>();
             if (string.IsNullOrEmpty(GetTime))
             {
-                strSql.Append(@"SELECT DeviceType, DeviceName, SUM(Number)Number FROM	Sys_FACostAnalysisNotCust WHERE 1=1  GROUP BY DeviceType, DeviceName ORDER BY DeviceType ASC");
+                strSql.Append(@"SELECT DeviceType, DeviceName, SUM(Number)Number FROM	Sys_FACostAnalysisNotCust WHERE IsEffective=1  GROUP BY DeviceType, DeviceName ORDER BY DeviceType ASC");
                 parameter.Add(new DbParam("", ""));
             }
             else
@@ -29,7 +29,7 @@ namespace WaterCloud.Service.CostAnalysis
                 var endtime = GetTime.Remove(0, 13);
 
                 strSql.Append(@"SELECT DeviceType, DeviceName, SUM(Number)Number FROM	Sys_FACostAnalysisNotCust
-                WHERE AcctDate between @starttime AND @endtime  GROUP BY DeviceType, DeviceName ORDER BY DeviceType ASC");
+                WHERE IsEffective=1 AND AcctDate between @starttime AND @endtime  GROUP BY DeviceType, DeviceName ORDER BY DeviceType ASC");
 
                 parameter.Add(new DbParam("@starttime", starttime.ToString()));
                 parameter.Add(new DbParam("@endtime", endtime.ToString()));

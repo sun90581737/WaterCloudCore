@@ -20,7 +20,7 @@ namespace WaterCloud.Service.CostAnalysis
             var parameter = new List<DbParam>();
             if (string.IsNullOrEmpty(GetTime))
             {
-                strSql.Append(@"SELECT Name,SUM(Cost) Cost FROM	Sys_FATotalCycleCost WHERE 1=1 GROUP BY Name ");
+                strSql.Append(@"SELECT Name,SUM(Cost) Cost FROM	Sys_FATotalCycleCost WHERE IsEffective=1 GROUP BY Name ");
                 parameter.Add(new DbParam("", ""));
             }
             else
@@ -28,7 +28,7 @@ namespace WaterCloud.Service.CostAnalysis
                 var starttime = GetTime.Substring(0, 10);
                 var endtime = GetTime.Remove(0, 13);
 
-                strSql.Append(@"SELECT Name, SUM(Cost) Cost FROM Sys_FATotalCycleCost WHERE AcctDate between @starttime AND @endtime GROUP BY Name");
+                strSql.Append(@"SELECT Name, SUM(Cost) Cost FROM Sys_FATotalCycleCost WHERE IsEffective=1 AND AcctDate between @starttime AND @endtime GROUP BY Name");
 
                 parameter.Add(new DbParam("@starttime", starttime.ToString()));
                 parameter.Add(new DbParam("@endtime", endtime.ToString()));
