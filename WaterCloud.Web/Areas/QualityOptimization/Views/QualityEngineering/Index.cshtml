@@ -144,9 +144,9 @@
                 elem: '#currentTableId2',
                 id: 'currentTableId2',
                 url: "/QualityOptimization/QualityEngineering/GetGridJsonOn",
-                height: 220,
+                height: 240,
                 toolbar: false,/*隐藏打印*/
-                page: false,/*隐藏分页*/
+                page: true,/*隐藏分页*/
                 sqlkey: 'id',//数据库主键
                 cols: [[
                     {
@@ -160,9 +160,9 @@
                     //{ field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
                     { field: 'MoldNumber', title: '模具号', width: 80, sort: true },
                     { field: 'Edition', title: '版本', width: 70, sort: true },
-                    { field: 'PartNumber', title: '零件编号', width: 70, sort: true },
-                    { field: 'InspectionProcess', title: '检测工序', width: 70, sort: true, filter: true },
-                    { field: 'LastProcess', title: '上道工序', width: 70, sort: true, filter: true },
+                    { field: 'PartNumber', title: '零件编号', width: 80, sort: true },
+                    { field: 'InspectionProcess', title: '检测工序', width: 80, sort: true, filter: true },
+                    { field: 'LastProcess', title: '上道工序', width: 80, sort: true, filter: true },
                     {
                         field: 'Start_Time', title: '计划开始时间', width: 90,
                         templet: function (d) {
@@ -467,7 +467,7 @@
                 url: "/QualityOptimization/QualityEngineering/GetGridJson",
                 height: 220,
                 toolbar: false,/*隐藏打印*/
-                page: false,/*隐藏分页*/
+                page: true,/*隐藏分页*/
                 sqlkey: 'id',//数据库主键
                 cols: [[
                     { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
@@ -490,9 +490,7 @@
                         <i class="fa fa-fire icon"></i>检测计划
                         <button type="button" id="funOne" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
                     </div>
-                    <div class="layui-card-body layui-text">
-                        <table class="layui-hide" id="currentTableId2" lay-filter="currentTableFilter"></table>
-                    </div>
+                    <table class="layui-hide" id="currentTableId2" lay-filter="currentTableFilter"></table>
                 </div>
             </div>
 
@@ -521,7 +519,6 @@
                         <div style="margin-left:50%;width:auto;">
                             <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
                         </div>
-                        
                     </div>
                 </div>
             </div>

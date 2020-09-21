@@ -289,7 +289,7 @@
                 url: "/ProcessScheduling/SchedulingHome/GetGridJson",
                 height: 250,
                 toolbar: false,/*隐藏打印*/
-                page: false,/*隐藏分页*/
+                page: true,/*隐藏分页*/
                 sqlkey: 'id',//数据库主键
                 cols: [[
                     { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
@@ -327,7 +327,7 @@
                 url: "/ProcessScheduling/SchedulingHome/GetGridJsonOne",
                 height: 250,
                 toolbar: false,/*隐藏打印*/
-                page: false,/*隐藏分页*/
+                page: true,/*隐藏分页*/
                 sqlkey: 'id',//数据库主键
                 cols: [[
                     { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
@@ -380,9 +380,7 @@
                         <i class="fa fa-fire icon"></i>待排程版本清单
                         <button type="button" id="funTwo" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
                     </div>
-                    <div class="layui-card-body layui-text">
-                        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
-                    </div>
+                    <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
                 </div>
             </div>
             <div class="layui-col-md6">
@@ -391,9 +389,7 @@
                         <i class="fa fa-fire icon"></i>超期的版本预期清单
                         <button type="button" id="funThree" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
                     </div>
-                    <div class="layui-card-body layui-text">
-                        <table class="layui-hide" id="currentTableIdOne" lay-filter="currentTableFilter"></table>
-                    </div>
+                    <table class="layui-hide" id="currentTableIdOne" lay-filter="currentTableFilter"></table>
                 </div>
             </div>
         </div>
