@@ -1,0 +1,638 @@
+﻿@{
+    ViewBag.Title = " 品质工程师主页";
+    Layout = "~/Views/Shared/_Index.cshtml";
+}
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment env
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<style>
+    .layui-card {
+        border: 1px solid #f2f2f2;
+        border-radius: 5px;
+    }
+
+    .icon {
+        margin-right: 10px;
+        color: #1aa094;
+    }
+
+    .icon-cray {
+        color: #ffb800 !important;
+    }
+
+    .icon-blue {
+        color: #1e9fff !important;
+    }
+
+    .icon-tip {
+        color: #ff5722 !important;
+    }
+
+    .layuimini-qiuck-module {
+        text-align: center;
+        margin-top: 10px
+    }
+
+        .layuimini-qiuck-module a i {
+            display: inline-block;
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            border-radius: 2px;
+            font-size: 30px;
+            background-color: #F8F8F8;
+            color: #333;
+            transition: all .3s;
+            -webkit-transition: all .3s;
+        }
+
+        .layuimini-qiuck-module a cite {
+            position: relative;
+            top: 2px;
+            display: block;
+            color: #666;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+    .welcome-module {
+        width: 40%;
+        height: 100px;
+    }
+
+    .panel {
+        background-color: #fff;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+        box-shadow: 0 1px 1px rgba(0,0,0,.05)
+    }
+
+    .panel-body {
+        padding: 30px
+    }
+
+    .panel-title {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: 12px;
+        color: inherit
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .layui-bg-number {
+        background-color: #F8F8F8;
+    }
+
+    .tmp-layui-col-xs4 {
+        width: 12.5%;
+        float: left;
+        position: relative;
+        display: block;
+        box-sizing: border-box
+    }
+</style>
+<script>
+    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element', 'laydate'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            common = layui.common,
+            layer = layui.layer,
+            echarts = layui.echarts,
+            element = layui.element,
+            laydate = layui.laydate;
+        wcLoading.close();
+        $(function () {
+            loadOne();
+            loadTwo();
+            loadThree();
+            loadFour();
+            loadFive();
+        });
+        laydate.render({
+            elem: '#test1'
+            , range: true,
+            done: (value) => {
+                //赋值
+                $('#test1').val(value);
+                //执行指定方法
+                loadTwo();
+            }
+        });
+        function loadOne() {
+            var listName = new Array();
+            var TotalCost = 0;
+            var str = [];
+            //var keyValue = $('#Type_id option:selected').val();
+            $.ajax({
+                url: "/QualityOptimization/QualityEngineerHome/GetDataQEHAbnormalProportion",
+                //data: { keyValue: keyValue },
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    $(data).each(function (index, item) {
+                        listName.push(item.Name);
+                        var str3 = new Object();
+                        str3.name = item.Name;
+                        str3.value = item.Cost;
+                        str[index] = str3;
+                        TotalCost += item.Cost;
+                    })
+                }
+            });
+
+            var myChart = echarts.init(document.getElementById('chart1'));
+            var option = {
+                title: {//标题组件
+                    text: TotalCost + '次',
+                    top: '45%',
+                    left: '44%',
+                    textStyle: {
+                        color: "#000000",
+                        fontSize: 15,
+                        fontFamily: 'KaiTi',
+                    }
+                },
+                tooltip: { //提示框组件
+                    trigger: 'item', //触发类型(饼状图片就是用这个)
+                    formatter: "{b} : ({c}%)"//"{a} <br/>{b} : {c} ({d}%)" //提示框浮层内容格式器
+                },
+                color: ['#febf37', '#f18533', '#6d48e6', '#ff6139'],  //手动设置每个图例的颜色
+                legend: {
+                    //orient: 'vertical',
+                    left: 'center',
+                    itemWidth: 10,  //图例标记的图形宽度
+                    itemHeight: 10, //图例标记的图形高度
+                    bottom: -5,
+                    icon: "circle",
+                    data: listName,
+                    itemGap: 20,
+                    textStyle: {    //图例文字的样式
+                        color: '#000000',  //文字颜色
+                        fontSize: 12    //文字大小
+                    }
+                },
+                series: [
+                    {
+                        name: '访问来源',
+                        type: 'pie',
+                        center: ['50%', '50%'],
+                        radius: ['50%', '70%'],
+                        data: str
+                        ,
+                        itemStyle: {  //图形样式
+                            normal: { //normal 是图形在默认状态下的样式；emphasis 是图形在高亮状态下的样式，比如在鼠标悬浮或者图例联动高亮时。
+                                borderWidth: 4,
+                                borderColor: '#fff',
+                                //label: {  //饼图图形上的文本标签
+                                //    show: true,  //平常不显示
+                                //    formatter: '{c}%',
+                                //    position: 'inner'
+                                //},
+                                //labelLine: {     //标签的视觉引导线样式
+                                //    show: false  //平常不显示
+                                //}
+                                label: {
+                                    //formatter: '{font|{c}}\n{hr|}\n{font|{d}%}',
+                                    formatter: function (params) {
+                                        var percent = 0;
+                                        var total = 0;
+                                        for (var i = 0; i < str.length; i++) {
+                                            total += str[i].value;
+                                        }
+                                        percent = ((params.value / total) * 100).toFixed(0);
+                                        if (params.name !== '') {
+                                            return params.name + '：' + params.value + '次' + '\n' + '\n' + percent + '%';
+                                        } else {
+                                            return '';
+                                        }
+                                    },
+                                    rich: {
+                                        font: {
+                                            fontSize: 14,
+                                            padding: [5, 0],
+                                            color: '#808080'
+                                        },
+                                        hr: {
+                                            height: 0,
+                                            borderWidth: 1,
+                                            width: '100%',
+                                            borderColor: '#808080'
+                                        }
+                                    }
+                                },
+                                labelLine: {
+                                    length: 10,
+                                    length2: 15,
+                                    show: true,
+                                    color: '#00ffff'
+                                }
+                            },
+                        }
+                    }
+                ]
+            };
+            myChart.setOption(option);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function loadTwo() {
+            common.rendertable({
+                elem: '#currentTableId',
+                id: 'currentTableId',
+                url: "/QualityOptimization/QualityEngineerHome/GetGridJson?keyvalue="+$('#test1').val(),
+                height: 220,
+                toolbar: false,/*隐藏打印*/
+                page: true,/*隐藏分页*/
+                sqlkey: 'id',//数据库主键
+                cols: [[
+                    { field: 'id', title: '序号', sort: true, hide: true, width: 83, hideAlways: true },
+                    { field: 'MouldNo', title: '模具单号', width: 100, sort: true },
+                    { field: 'ModuleNumber', title: '模号', width: 100, sort: true },
+                    { field: 'PartNumber', title: '工件号', width: 100, sort: true },
+                    { field: 'AbnormalJobNumber', title: '异常工号', width: 100, sort: true },
+                    { field: 'TreatmentMethod', title: '处理方式', width: 100, sort: true, filter: true },
+                    {
+                        field: 'AcctDate', title: '处理时间', width: 100,
+                        templet: function (d) {
+                            if (d.AcctDate) {
+                                return new Date(d.AcctDate).Format("yyyy-MM-dd");
+
+                            }
+                        }
+                    },
+                ]]
+            });
+        }
+        function loadThree() {
+            var listName = new Array();
+            var str = [];
+            $.ajax({
+                url: "/QualityOptimization/QualityEngineerHome/GetDataQEHAbnormalRatio",
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    $(data).each(function (index, item) {
+                        listName.push(item.Type);
+                        var str3 = new Object();
+                        str3.name = item.Type;
+                        str3.value = item.Cost;
+                        str[index] = str3;
+                    })
+                }
+            });
+            var myChart = echarts.init(document.getElementById('chart3'));
+
+            var option = {
+                color: ['#f28533', '#6bedfd', '#6d48e6', '#ff6239'],
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{b} : ({c}套)"
+                },
+                legend: {
+                    //orient: 'vertical',
+                    left: 'center',
+                    itemWidth: 10,  //图例标记的图形宽度
+                    itemHeight: 10, //图例标记的图形高度
+                    bottom: 0,
+                    icon: "circle",
+                    data: listName,
+                    itemGap: 20,
+                    textStyle: {    //图例文字的样式
+                        color: '#000000',  //文字颜色
+                        fontSize: 12    //文字大小
+                    }
+                },
+                series: [{
+                    name: '',
+                    type: 'pie',
+                    radius: '70%',
+                    center: ['50%', '50%'],
+                    data: str,
+                    itemStyle: {  //图形样式
+                        normal: { //normal 是图形在默认状态下的样式；emphasis 是图形在高亮状态下的样式，比如在鼠标悬浮或者图例联动高亮时。
+                            label: {  //饼图图形上的文本标签
+                                formatter: function (params) {
+                                    var percent = 0;
+                                    var total = 0;
+                                    for (var i = 0; i < str.length; i++) {
+                                        total += str[i].value;
+                                    }
+                                    percent = ((params.value / total) * 100).toFixed(0);
+                                    if (params.name !== '') {
+                                        return params.name + '：' + params.value + '套' + '\n' + '\n' + percent + '%';
+                                    } else {
+                                        return '';
+                                    }
+                                },
+                                rich: {
+                                    font: {
+                                        fontSize: 14,
+                                        padding: [5, 0],
+                                        color: '#808080'
+                                    },
+                                    hr: {
+                                        height: 0,
+                                        borderWidth: 1,
+                                        width: '100%',
+                                        borderColor: '#808080'
+                                    }
+                                }
+                            },
+                            //labelLine: {     //标签的视觉引导线样式
+                            //    show: false  //平常不显示
+                            //},
+                            labelLine: {
+                                length: 8,
+                                length2: 8,
+                                show: true,
+                                color: '#00ffff'
+                            }
+                        },
+
+                        //emphasis: {   //normal 是图形在默认状态下的样式；emphasis 是图形在高亮状态下的样式，比如在鼠标悬浮或者图例联动高亮时。
+                        //    label: {  //饼图图形上的文本标签
+                        //        show: true,
+                        //        position: 'center',
+                        //        textStyle: {
+                        //            fontSize: '20',
+                        //            fontWeight: 'bold'
+                        //        }
+                        //    },
+                        //    itemStyle: {
+                        //        shadowBlur: 10,
+                        //        shadowOffsetX: 0,
+                        //        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        //    }
+                        //}
+                    }
+                }]
+            };
+            myChart.setOption(option);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function loadFour() {
+            var listDeviceType = new Array();
+            var listDeviceName = new Array();
+            var listAll = new Array();
+            //var keyValue = $('#Types_id option:selected').val();
+            $.ajax({
+                url: "/QualityOptimization/QualityEngineerHome/GetDataQEHAnomaliesNumber",
+                //data: { keyValue: keyValue },
+                dataType: "json",
+                async: false,
+                success: function (da) {
+                    $(da).each(function (index, item) {
+                        listDeviceType.push(item.DeviceType);
+                        listDeviceName.push(item.DeviceName);
+                        listAll.push(item);
+                    })
+                }
+            })
+
+            $.unique(listDeviceType);
+            $.unique(listDeviceName.sort());
+
+            var series = [];
+            $.each(listDeviceName, function (index, value) {
+                var tempName = new Array();
+                var tempArry = new Array();
+                $.each(listAll, function (index1, value1) {
+                    if (value == value1.DeviceName) {
+                        tempName = value1.DeviceName;
+                        tempArry.push(value1.Number);
+                    }
+                });
+                series.push({
+                    name: tempName,
+                    type: 'bar',
+                    barWidth: '6%',
+                    barGap: '80%',
+                    data: tempArry,
+                    itemStyle: {
+                        normal: {
+                            barBorderRadius: [15, 15, 0, 0],
+                            label: {
+                                show: true, //开启显示
+                                position: 'top', //在上方显示
+                                textStyle: { //数值样式
+                                    color: 'red',
+                                    fontSize: 12
+                                }
+                            }
+                        }
+                    },
+                })
+            });
+
+            var myChart = echarts.init(document.getElementById('chart4'));
+
+            var option = {
+                color: ['#6d48e6', '#febe36'],
+                grid: {
+                    top: '10%',
+                    left: '0%',
+                    right: '0',
+                    bottom: '0%',
+                    containLabel: true
+                },
+                //legend: {
+                //    top: -5,
+                //    itemGap: 30,
+                //    data: listDeviceName,
+                //    itemWidth: 10,  //图例标记的图形宽度
+                //    itemHeight: 10, //图例标记的图形高度
+                //    textStyle: {    //图例文字的样式
+                //        color: '#808080',  //文字颜色
+                //        fontSize: 12    //文字大小
+                //    }
+                //},
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                        type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+                    }
+                },
+                xAxis: [
+                    {
+                        //type: 'category',
+                        //axisTick: { show: false },
+                        //axisLabel: {
+                        //    //X轴刻度配置
+                        //    interval: 0 //0：表示全部显示不间隔；auto:表示自动根据刻度个数和宽度自动设置间隔个数
+                        //    , rotate: 0
+                        //},
+                        //data: listDeviceType,
+
+                        type: 'category',
+                        data: listDeviceType,
+                        axisLine: {
+                            show: false,
+                            lineStyle: {
+                                color: '#808080',
+
+                            }
+                        },
+                        axisLabel: {
+                            // interval: 0,
+                            // rotate: 40,
+                            textStyle: {
+                                fontSize: '11'
+                            }
+                        },
+                        axisTick: { //y轴刻度线
+                            show: false
+                        },
+
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value',
+                        axisLine: {
+                            show: false,
+                            lineStyle: {
+                                color: '#f2961d'
+                            }
+                        },
+                        splitLine: {
+                            show: true,
+                            lineStyle: {
+                                //color: "#57617B"
+                                type: 'dashed'
+                            }
+                        },
+                        axisTick: { //y轴刻度线
+                            show: true
+                        },
+                        axisLabel: {}
+                    }
+                ],
+                series: series
+            };
+            myChart.setOption(option, true);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function loadFive() {
+            common.rendertable({
+                elem: '#currentTableId1',
+                id: 'currentTableId1',
+                url: "/QualityOptimization/QualityEngineerHome/GetGridJsonOne",
+                height: 200,
+                toolbar: false,/*隐藏打印*/
+                page: true,/*隐藏分页*/
+                sqlkey: 'id',//数据库主键
+                cols: [[
+                    { field: 'id', title: '序号', sort: true, hide: false, width:83, hideAlways: true },
+                    { field: 'AbnormalOrderNumber', title: '异常单号', width: 200, sort: true },
+                    { field: 'ModuleNumber', title: '模号', width: 200, sort: true },
+                    { field: 'VersionNumber', title: '版本号', width: 200, sort: true },
+                    { field: 'Workpiece', title: '工件', width: 200, sort: true },
+                    { field: 'WorkingProcedure', title: '工序', width: 200, sort: true, filter: true },
+                    { field: 'AbnormalCauses', title: '异常原因', width: 200, sort: true },
+                ]]
+            });
+        }
+    })
+</script>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md8">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>异常处理结果统计、比例
+                        <button type="button" id="funOne" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                        <div class="layui-inline" style="float: right;">
+                            <div class="layui-input-inline">
+                                <input type="text" class="layui-input" id="test1" placeholder=" - " readonly="readonly">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card-body layui-text">
+                        <div style="float:left;width:40%">
+                            <div id="chart1" style="height:230px;"></div>
+                        </div>
+                        <div style="margin-left:40%;">
+                            <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-md4">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>异常严重等级统计、比例
+                        @*<button type="button" id="funTwo" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>*@
+                    </div>
+                    <div class="layui-card-body layui-text">
+                        <div id="chart3" style="height:240px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>异常已处理、待处理数量比例
+                        <button type="button" id="funTwo" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                    </div>
+                    <div class="layui-card-body layui-text">
+                        <div id="chart4" style="height:200px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>待处理异常清单
+                        <button type="button" id="funThree" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                    </div>
+                    <table class="layui-hide" id="currentTableId1" lay-filter="currentTableFilter"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
