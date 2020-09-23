@@ -7,6 +7,15 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <style>
+    .layui-date1 {
+        position: absolute;
+        right: 3px;
+        top: 25%;
+        margin-top: -10px;
+        cursor: pointer;
+        font-size: 28px;
+        color: #1aa094;
+    }
     .layui-card {
         border: 1px solid #f2f2f2;
         border-radius: 5px;
@@ -144,6 +153,8 @@
         laydate.render({
             elem: '#test1'
             , range: true,
+            eventElem: '.layui-date1',
+            trigger: 'click',
             done: (value) => {
                 //赋值
                 $('#test1').val(value);
@@ -585,7 +596,7 @@
                         <button type="button" id="funOne" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
                         <div class="layui-inline" style="float: right;">
                             <div class="layui-input-inline">
-                                <input type="text" class="layui-input" id="test1" placeholder=" - " readonly="readonly">
+                                <input type="text" style="width:200px;" class="layui-input" id="test1" placeholder=" - " readonly="readonly"><i class="layui-icon layui-date1"></i>
                             </div>
                         </div>
                     </div>

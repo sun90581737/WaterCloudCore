@@ -8,6 +8,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <link href="~/lib/layui-v2.5.5/css/layui.css" rel="stylesheet" />
 <style>
+    .layui-date1 {
+        position: absolute;
+        right: 3px;
+        top: 25%;
+        margin-top: -10px;
+        cursor: pointer;
+        font-size: 28px;
+        color: #1aa094;
+    }
+
+    .layui-date2 {
+        position: absolute;
+        right: 3px;
+        top: 25%;
+        margin-top: -10px;
+        cursor: pointer;
+        font-size: 28px;
+        color: #1aa094;
+    }
+
+    .layui-date3 {
+        position: absolute;
+        right: 3px;
+        top: 25%;
+        margin-top: -10px;
+        cursor: pointer;
+        font-size: 28px;
+        color: #1aa094;
+    }
     .layui-card {
         border: 1px solid #f2f2f2;
         border-radius: 5px;
@@ -146,6 +175,8 @@
         laydate.render({
             elem: '#test1'
             , range: true,
+            eventElem: '.layui-date1',
+            trigger: 'click',
             done: (value) => {
                 //赋值
                 $('#test1').val(value);
@@ -157,6 +188,8 @@
         laydate.render({
             elem: '#test2'
             , range: true,
+            eventElem: '.layui-date2',
+            trigger: 'click',
             done: (value) => {
                 //赋值
                 $('#test2').val(value);
@@ -167,6 +200,8 @@
         laydate.render({
             elem: '#test3'
             , range: true,
+            eventElem: '.layui-date3',
+            trigger: 'click',
             done: (value) => {
                 //赋值
                 $('#test3').val(value);
@@ -946,7 +981,7 @@
                         <div class="layui-inline" style="float: right;">
                             日期范围
                             <div class="layui-input-inline">
-                                <input type="text" class="layui-input" id="test1" placeholder=" - " readonly="readonly">
+                                <input type="text" style="width:200px;" class="layui-input" id="test1" placeholder=" - " readonly="readonly"><i class="layui-icon layui-date1"></i>
                             </div>
                         </div>
                     </div>
@@ -971,7 +1006,7 @@
                         <div class="layui-inline" style="float: right;">
                             日期范围
                             <div class="layui-input-inline">
-                                <input type="text" class="layui-input" id="test2" placeholder=" - " readonly="readonly">
+                                <input type="text" style="width:200px;" class="layui-input" id="test2" placeholder=" - " readonly="readonly"><i class="layui-icon layui-date2"></i>
                             </div>
                         </div>
                     </div>
@@ -989,7 +1024,7 @@
                         <div class="layui-inline" style="float: right;">
                             日期范围
                             <div class="layui-input-inline">
-                                <input type="text" class="layui-input" id="test3" placeholder=" - " readonly="readonly">
+                                <input type="text" style="width:200px;" class="layui-input" id="test3" placeholder=" - " readonly="readonly"><i class="layui-icon layui-date3"></i>
                             </div>
                         </div>
                     </div>
