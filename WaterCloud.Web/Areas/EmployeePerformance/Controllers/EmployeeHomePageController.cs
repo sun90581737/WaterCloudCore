@@ -19,6 +19,7 @@ namespace WaterCloud.Web.Areas.EmployeePerformance.Controllers
         private readonly IEHTotalWorkHoursService _TWHservice;
         private readonly IDbContext _context;
         public EHPassRateService _prService { get; set; }
+        public EHMonthlyPerformanceService _mpService { get; set; }
 
         [HttpGet]
         [HandlerAjaxOnly]
@@ -66,6 +67,15 @@ namespace WaterCloud.Web.Areas.EmployeePerformance.Controllers
             data = data.Where(p => p.IsEffective == 1).ToList();
             return Content(data.ToJson());
         }
+        [HttpGet]
+        [HandlerAjaxOnly]
+        public async Task<ActionResult> GetDataEHMonthlyPerformance()
+        {
+            var data = await _mpService.GetList();
+            data = data.Where(p => p.IsEffective == 1).ToList();
+            return Content(data.ToJson());
+        }
+
         public async Task<ActionResult> Image(string p)
         {
             //值为空或图片文件不存在
