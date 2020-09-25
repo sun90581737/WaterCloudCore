@@ -25,7 +25,7 @@ namespace WaterCloud.Service.MouldDesign
             if (!string.IsNullOrEmpty(keyvalue))
             {
                 DateTime startTime = keyvalue.Substring(0, 10).ToDate();
-                DateTime endTime = keyvalue.Remove(0, 13).ToDate();
+                DateTime endTime = keyvalue.Remove(0, 13).ToDate().AddDays(1);
 
                 list = list.Where(t => t.PlanStartTime >= startTime && t.PlanEndTime <= endTime);
             }

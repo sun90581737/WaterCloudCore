@@ -303,7 +303,7 @@
                 dataType: "json",
                 success: function (da) {
                     $(da).each(function (index, item) {
-                        if (item.Month_Day != "") {
+                        if (item.DeviceType != null && item.DeviceType != "") {
                             listDeviceType.push(item.DeviceType);
                             listDeviceName.push(item.DeviceName);
                             listAll.push(item);
