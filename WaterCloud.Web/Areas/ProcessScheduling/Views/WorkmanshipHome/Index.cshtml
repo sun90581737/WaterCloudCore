@@ -1,0 +1,198 @@
+﻿@{
+    ViewBag.Title = " 工艺主页";
+    Layout = "~/Views/Shared/_Index.cshtml";
+}
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment env
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<style>
+    .layui-card {
+        border: 1px solid #f2f2f2;
+        border-radius: 5px;
+    }
+
+    .icon {
+        margin-right: 10px;
+        color: #1aa094;
+    }
+
+    .icon-cray {
+        color: #ffb800 !important;
+    }
+
+    .icon-blue {
+        color: #1e9fff !important;
+    }
+
+    .icon-tip {
+        color: #ff5722 !important;
+    }
+
+    .layuimini-qiuck-module {
+        text-align: center;
+        margin-top: 10px
+    }
+
+        .layuimini-qiuck-module a i {
+            display: inline-block;
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            border-radius: 2px;
+            font-size: 30px;
+            background-color: #F8F8F8;
+            color: #333;
+            transition: all .3s;
+            -webkit-transition: all .3s;
+        }
+
+        .layuimini-qiuck-module a cite {
+            position: relative;
+            top: 2px;
+            display: block;
+            color: #666;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+    .welcome-module {
+        width: 40%;
+        height: 100px;
+    }
+
+    .panel {
+        background-color: #fff;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+        box-shadow: 0 1px 1px rgba(0,0,0,.05)
+    }
+
+    .panel-body {
+        padding: 30px
+    }
+
+    .panel-title {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: 12px;
+        color: inherit
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .layui-bg-number {
+        background-color: #F8F8F8;
+    }
+
+    .tmp-layui-col-xs4 {
+        width: 12.5%;
+        float: left;
+        position: relative;
+        display: block;
+        box-sizing: border-box
+    }
+</style>
+<script>
+    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            common = layui.common,
+            layer = layui.layer,
+            echarts = layui.echarts,
+            element = layui.element;;
+        wcLoading.close();
+        $(function () {
+            gridList();
+        });
+        function gridList() {
+            common.rendertable({
+                elem: '#currentTableId',
+                id: 'currentTableId',
+                url: "/ProcessScheduling/WorkmanshipHome/GetGridJson",
+                height: 570,
+                toolbar: true,/*隐藏打印*/
+                page: true,/*隐藏分页*/
+                sqlkey: 'id',//数据库主键
+                cols: [[
+                    { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
+                    { field: 'MoldNo', title: '模具编号', width: 130, sort: true },
+                    { field: 'TENo', title: 'T/E号', width: 90, sort: true },
+                    { field: 'MoldType', title: '模具类型', width: 100, sort: true },
+                    { field: 'ModelProtection', title: '模保', width: 90, sort: true },
+                    { field: 'MoldState', title: '模具状态', width: 120, sort: true, filter: true },
+                    {
+                        field: 'StartDate', title: '开始日期', width: 110,
+                        templet: function (d) {
+                            if (d.StartDate) {
+                                return new Date(d.StartDate).Format("yyyy-MM-dd");
+
+                            }
+                        }
+                    },
+                    {
+                        field: 'TestDate', title: '试模日期', width: 110,
+                        templet: function (d) {
+                            if (d.TestDate) {
+                                return new Date(d.TestDate).Format("yyyy-MM-dd");
+
+                            }
+                        }
+                    },
+                    { field: 'PartNumber', title: '零件编号', width: 110, sort: true },
+                    { field: 'PartName', title: '零件名称', width: 100},
+                    { field: 'Describe', title: '中文描述', width: 100},
+                    { field: 'Type', title: '类型', width: 100, sort: true, filter: true  },
+                    { field: 'Number', title: '数量', width: 80, sort: true },
+                    { field: 'MaterialScience', title: '材料', width: 100 },
+                    { field: 'Hardness', title: '硬度', width: 100},
+                    { field: 'Specifications', title: '规格', width: 100},
+                    { field: 'Formwork', title: '模架', width: 80},
+                    { field: 'ProductionDeliveryDate', title: '生产交期', width: 100, sort: true },
+                ]]
+            });
+        }
+    })
+</script>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
