@@ -19,6 +19,25 @@ namespace WaterCloud.Code
         public string message { get; set; }
 
     }
+    /// <summary>
+    /// 扩展
+    /// </summary>
+    public class AjaxResultUrl
+    {
+        /// <summary>
+        /// 操作结果类型
+        /// </summary>
+        public object state { get; set; }
+        /// <summary>
+        /// 获取 消息内容
+        /// </summary>
+        public string message { get; set; }
+        /// <summary>
+        /// 根据当前账号登录默认显示
+        /// </summary>
+        public string url { get; set; }
+
+    }
     public class AjaxResult<T>: AjaxResult
     {
         /// <summary>

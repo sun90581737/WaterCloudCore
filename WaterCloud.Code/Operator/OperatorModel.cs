@@ -35,5 +35,6 @@ namespace WaterCloud.Code
         //扩展字段 数据库，2020-06-15
         public string DbString { get; set; }
         public string DBProvider { get; set; }
+        public string DefaultUrl { get; set; }
     }
 }

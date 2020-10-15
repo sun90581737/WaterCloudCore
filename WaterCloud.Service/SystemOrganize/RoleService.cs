@@ -45,6 +45,16 @@ namespace WaterCloud.Service.SystemOrganize
             }
             return cachedata.Where(t => t.F_Category == 1&&t.F_DeleteMark==false).ToList();
         }
+        public async Task<List<RoleEntity>> GetListOne(string keyword = "")
+        {
+            var cachedata = await repository.CheckCacheList(cacheKey + "list");
+            cachedata = cachedata.Where(t => t.F_Category == 2 && t.F_DeleteMark == false).ToList();
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                cachedata = cachedata.Where(t => t.F_Id.Contains(keyword)).ToList();
+            }
+            return cachedata.OrderBy(t => t.F_SortCode).ToList();
+        }
         public async Task<List<RoleEntity>> GetLookList(Pagination pagination, string keyword = "")
         {
             //获取数据权限

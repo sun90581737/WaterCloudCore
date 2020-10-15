@@ -26,6 +26,7 @@ namespace WaterCloud.Web.Controllers
         public LogService _logService { get; set; }
         public SystemSetService _setService { get; set; }
         public IDbContext _context { get; set; }
+        public RoleService _roleService { get; set; }
         [HttpGet]
         public virtual async Task<ActionResult> Index()
         {
@@ -138,6 +139,7 @@ namespace WaterCloud.Web.Controllers
                     throw new Exception("IP受限");
                 }
                 UserEntity userEntity =await _userService.CheckLogin(username, password, localurl);
+                var data = await _roleService.GetListOne(userEntity.F_DutyId);
                 OperatorModel operatorModel = new OperatorModel();
                 operatorModel.UserId = userEntity.F_Id;
                 operatorModel.UserCode = userEntity.F_Account;
@@ -145,6 +147,7 @@ namespace WaterCloud.Web.Controllers
                 operatorModel.CompanyId = userEntity.F_OrganizeId;
                 operatorModel.DepartmentId = userEntity.F_DepartmentId;
                 operatorModel.RoleId = userEntity.F_RoleId;
+                operatorModel.DefaultUrl = data != null ? data[0].F_Description : "";//根据当前账号的“岗位”备注（URL），登录跳转默认首页。
                 operatorModel.LoginIPAddress = WebHelper.Ip;
                 operatorModel.LoginIPAddressName = "本地局域网";//Net.GetLocation(operatorModel.LoginIPAddress);
                 operatorModel.LoginTime = DateTime.Now;
@@ -174,7 +177,7 @@ namespace WaterCloud.Web.Controllers
                 logEntity.F_Result = true;
                 logEntity.F_Description = "登录成功";
                 await _logService.WriteDbLog(logEntity);
-                return Content(new AjaxResult { state = ResultType.success.ToString(), message = "登录成功。"}.ToJson());
+                return Content(new AjaxResultUrl { state = ResultType.success.ToString(), message = "登录成功。", url= operatorModel.DefaultUrl }.ToJson());
             }
             catch (Exception ex)
             {
@@ -183,7 +186,7 @@ namespace WaterCloud.Web.Controllers
                 logEntity.F_Result = false;
                 logEntity.F_Description = "登录失败，" + ex.Message;
                 await _logService.WriteDbLog(logEntity);
-                return Content(new AjaxResult { state = ResultType.error.ToString(), message = ex.Message }.ToJson());
+                return Content(new AjaxResultUrl { state = ResultType.error.ToString(), message = ex.Message, url="" }.ToJson());
             }
         }
         private async Task<bool> CheckIP()
