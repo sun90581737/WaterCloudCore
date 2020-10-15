@@ -602,13 +602,34 @@
         }
         $(document).on('click', "#funOne", function () {
             //layer.msg("按钮点击");
-            window.open("/Home/Index#//OperationMonitoring/EngineeringHomepage/Form");
+            //window.open("/Home/Index#//OperationMonitoring/EngineeringHomepage/Form");
+            common.modalOpen({
+                title: "交期达成率",
+                url: "/OperationMonitoring/EngineeringHomepage/Form",
+                width: "700px",
+                height: "600px",
+                btn: []
+            });
         });
         $(document).on('click', "#funTwo", function () {
-            window.open("/Home/Index#//OperationMonitoring/EngineeringHomepage/Form2");
+            //window.open("/Home/Index#//OperationMonitoring/EngineeringHomepage/Form2");
+            common.modalOpen({
+                title: "在制进度正常、延误比例",
+                url: "/OperationMonitoring/EngineeringHomepage/Form2",
+                width: "700px",
+                height: "600px",
+                btn: []
+            });
         });
         $(document).on('click', "#funThree", function () {
-            window.open("/Home/Index#//OperationMonitoring/EngineeringHomepage/Form3");
+            //window.open("/Home/Index#//OperationMonitoring/EngineeringHomepage/Form3");
+            common.modalOpen({
+                title: "客户清单",
+                url: "/OperationMonitoring/EngineeringHomepage/Form3",
+                width: "700px",
+                height: "600px",
+                btn: []
+            });
         });
     })
 </script>
