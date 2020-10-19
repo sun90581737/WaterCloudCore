@@ -52,7 +52,7 @@ namespace WaterCloud.Web.Controllers
             }
             catch (Exception)
             {
-                ViewBag.ProjectName = "水之云信息系统";
+                ViewBag.ProjectName = "上海爱堃智能数据分析";
                 ViewBag.LogoIcon = "../icon/favicon.ico";
                 return View();
             }
