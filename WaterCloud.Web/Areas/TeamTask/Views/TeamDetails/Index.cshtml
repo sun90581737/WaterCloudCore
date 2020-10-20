@@ -136,6 +136,8 @@
         $(function () {
             loadOne();
             loadTwo();
+
+            loadSix();
         });
         function loadOne() {
             var listDeviceType = new Array();
@@ -447,6 +449,31 @@
             // echarts 窗口缩放自适应
             window.addEventListener("resize", function () {
                 myChart.resize();
+            });
+        }
+        function loadSix() {
+            common.rendertable({
+                elem: '#currentTableId2',
+                id: 'currentTableId2',
+                url: '/TeamTask/TeamDetails/GetGridJsonOne',
+                height: 280,
+                toolbar: false,/*隐藏打印*/
+                page: true,/*隐藏分页*/
+                sqlkey: 'id',//数据库主键
+                cols: [[
+                    { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
+                    { field: 'RepairOrderNo', title: '报修单号', width: 120, sort: true },
+                    { field: 'RepairDepartment', title: '报修部门', width: 120, sort: true },
+                    { field: 'RepairEquipment', title: '报修设备', width: 120, sort: true },
+                    { field: 'RepairPersonnel', title: '报修人员', width: 100, sort: true },
+                    { field: 'FaultDescription', title: '故障描述', width: 120, sort: true },
+                    { field: 'ServiceNumber', title: '维修编号', width: 120, sort: true },
+                    { field: 'ServiceType', title: '维修类型', width: 120, sort: true, filter: true },
+                    { field: 'Supplier', title: '维修人员/外修供应商', width: 120, sort: true },
+                    { field: 'FaultCategory', title: '故障类别', width: 120, sort: true, filter: true },
+                    { field: 'MaintainPrice', title: '外修价格', width: 100, sort: true },
+                    { field: 'State', title: '状态', width: 120, sort: true, filter: true },
+                ]]
             });
         }
     })
