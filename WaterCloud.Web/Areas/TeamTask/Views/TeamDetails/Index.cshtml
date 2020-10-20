@@ -1,1 +1,521 @@
-﻿cccc
+﻿@{
+    ViewBag.Title = "班组详情";
+    Layout = "~/Views/Shared/_Index.cshtml";
+}
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment env
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<style>
+    .layui-card {
+        border: 1px solid #f2f2f2;
+        border-radius: 5px;
+    }
+
+    .icon {
+        margin-right: 10px;
+        color: #1aa094;
+    }
+
+    .icon-cray {
+        color: #ffb800 !important;
+    }
+
+    .icon-blue {
+        color: #1e9fff !important;
+    }
+
+    .icon-tip {
+        color: #ff5722 !important;
+    }
+
+    .layuimini-qiuck-module {
+        text-align: center;
+        margin-top: 10px
+    }
+
+        .layuimini-qiuck-module a i {
+            display: inline-block;
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            border-radius: 2px;
+            font-size: 30px;
+            background-color: #F8F8F8;
+            color: #333;
+            transition: all .3s;
+            -webkit-transition: all .3s;
+        }
+
+        .layuimini-qiuck-module a cite {
+            position: relative;
+            top: 2px;
+            display: block;
+            color: #666;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+    .welcome-module {
+        width: 40%;
+        height: 100px;
+    }
+
+    .panel {
+        background-color: #fff;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+        box-shadow: 0 1px 1px rgba(0,0,0,.05)
+    }
+
+    .panel-body {
+        padding: 30px
+    }
+
+    .panel-title {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: 12px;
+        color: inherit
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .layui-bg-number {
+        background-color: #F8F8F8;
+    }
+
+    .tmp-layui-col-xs4 {
+        width: 12.5%;
+        float: left;
+        position: relative;
+        display: block;
+        box-sizing: border-box
+    }
+</style>
+<script>
+    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            common = layui.common,
+            layer = layui.layer,
+            echarts = layui.echarts,
+            element = layui.element;;
+        wcLoading.close();
+        $(function () {
+            loadOne();
+            loadTwo();
+        });
+        function loadOne() {
+            var listDeviceType = new Array();
+            var listDeviceName = new Array();
+            var listAll = new Array();
+            //var keyValue = $('#Types_id option:selected').val();
+            $.ajax({
+                url: "/TeamTask/TeamDetails/GetTDDepartmentQualifiedRate",
+                //data: { keyValue: keyValue },
+                dataType: "json",
+                async: false,
+                success: function (da) {
+                    $(da).each(function (index, item) {
+                        listDeviceType.push(item.DeviceType);
+                        listDeviceName.push(item.DeviceName);
+                        listAll.push(item);
+                    })
+                }
+            })
+
+            $.unique(listDeviceType);
+            $.unique(listDeviceName.sort());
+
+            var series = [];
+            $.each(listDeviceName, function (index, value) {
+                var tempName = new Array();
+                var tempArry = new Array();
+                $.each(listAll, function (index1, value1) {
+                    if (value == value1.DeviceName) {
+                        tempName = value1.DeviceName;
+                        tempArry.push(value1.Number);
+                    }
+                });
+                series.push({
+                    name: tempName,
+                    type: 'bar',
+                    barWidth: '15%',
+                    barGap: '80%',
+                    data: tempArry,
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true, //开启显示
+                                position: 'top', //在上方显示
+                                textStyle: { //数值样式
+                                    color: 'red',
+                                    fontSize: 12
+                                },
+                                formatter: '{c}%',
+                            },
+                            color: function (params) {
+                                if (params.value <= 40) {
+                                    return "#ff6239";
+                                } else if (params.value > 40) {
+                                    return "#f3961d";
+                                }
+                                return "#febf37";
+                            }
+                        }
+                    },
+                })
+            });
+
+            var myChart = echarts.init(document.getElementById('chart1'));
+
+            var option = {
+                color: ['#f2961f', '#6d48e6', '#f70bfc'],
+                grid: {
+                    top: '10%',
+                    left: '0%',
+                    right: '0',
+                    bottom: '0%',
+                    containLabel: true
+                },
+                //legend: {
+                //    itemGap: 30,
+                //    data: listDeviceName,
+                //    itemWidth: 10,  //图例标记的图形宽度
+                //    itemHeight: 10, //图例标记的图形高度
+                //    textStyle: {    //图例文字的样式
+                //        color: '#808080',  //文字颜色
+                //        fontSize: 12    //文字大小
+                //    }
+                //},
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                        type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+                    },
+                    formatter: function (params) {
+                        var relVal = params[0].name;
+                        for (var i = 0, l = params.length; i < l; i++) {
+                            relVal += '<br/>' + params[i].marker + params[i].seriesName + ' : ' + params[i].value + "%";
+                        }
+                        return relVal;
+                    }
+                },
+                xAxis: [
+                    {
+                        //type: 'category',
+                        //axisTick: { show: false },
+                        //axisLabel: {
+                        //    //X轴刻度配置
+                        //    interval: 0 //0：表示全部显示不间隔；auto:表示自动根据刻度个数和宽度自动设置间隔个数
+                        //    , rotate: 0
+                        //},
+                        //data: listDeviceType,
+
+                        type: 'category',
+                        data: listDeviceType,
+                        axisLine: {
+                            show: false,
+                            lineStyle: {
+                                color: '#808080',
+
+                            }
+                        },
+                        axisLabel: {
+                            // interval: 0,
+                            // rotate: 40,
+                            textStyle: {
+                                fontSize: '11'
+                            }
+                        },
+                        axisTick: { //y轴刻度线
+                            show: false
+                        },
+
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value',
+                        splitNumber: 3,
+                        axisLine: {
+                            show: false,
+                            lineStyle: {
+                                color: '#f2961d'
+                            }
+                        },
+                        splitLine: {
+                            show: true,
+                            lineStyle: {
+                                //color: "#57617B"
+                                type: 'dashed'
+                            }
+                        },
+                        axisTick: { //y轴刻度线
+                            show: true
+                        },
+                        axisLabel: {
+                            formatter: function (value) {
+                                return value + "%";
+                            },
+                            show: true,
+                            textStyle: {
+                                color: '#f2961d'
+                            }
+                        },
+                    }
+                ],
+                series: series
+            };
+            myChart.setOption(option, true);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function loadTwo() {
+            var listDeviceType = new Array();
+            var listDeviceName = new Array();
+            var listAll = new Array();
+            //var keyValue = $('#Types_id option:selected').val();
+            $.ajax({
+                url: "/TeamTask/TeamDetails/GetTDDepartmentLoad",
+                //data: { keyValue: keyValue },
+                dataType: "json",
+                async: false,
+                success: function (da) {
+                    $(da).each(function (index, item) {
+                        listDeviceType.push(item.DeviceType);
+                        listDeviceName.push(item.DeviceName);
+                        listAll.push(item);
+                    })
+                }
+            })
+
+            $.unique(listDeviceType);
+            $.unique(listDeviceName.sort());
+
+            var series = [];
+            $.each(listDeviceName, function (index, value) {
+                var tempName = new Array();
+                var tempArry = new Array();
+                $.each(listAll, function (index1, value1) {
+                    if (value == value1.DeviceName) {
+                        tempName = value1.DeviceName;
+                        tempArry.push(value1.Number);
+                    }
+                });
+                series.push({
+                    name: tempName,
+                    type: 'bar',
+                    barWidth: '15%',
+                    barGap: '80%',
+                    data: tempArry,
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true, //开启显示
+                                position: 'top', //在上方显示
+                                textStyle: { //数值样式
+                                    color: 'red',
+                                    fontSize: 12
+                                }
+                            }
+                        }
+                    },
+                })
+            });
+
+            var myChart = echarts.init(document.getElementById('chart2'));
+
+            var option = {
+                color: ['#f3961d', '#6d48e6'],
+                grid: {
+                    top: '8%',
+                    left: '0%',
+                    right: '0',
+                    bottom: '0%',
+                    containLabel: true
+                },
+                legend: {
+                    top: -5,
+                    itemGap: 30,
+                    data: listDeviceName,
+                    itemWidth: 10,  //图例标记的图形宽度
+                    itemHeight: 10, //图例标记的图形高度
+                    textStyle: {    //图例文字的样式
+                        color: '#808080',  //文字颜色
+                        fontSize: 12    //文字大小
+                    }
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                        type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+                    }
+                },
+                xAxis: [
+                    {
+                        //type: 'category',
+                        //axisTick: { show: false },
+                        //axisLabel: {
+                        //    //X轴刻度配置
+                        //    interval: 0 //0：表示全部显示不间隔；auto:表示自动根据刻度个数和宽度自动设置间隔个数
+                        //    , rotate: 0
+                        //},
+                        //data: listDeviceType,
+
+                        type: 'category',
+                        data: listDeviceType,
+                        axisLine: {
+                            show: false,
+                            lineStyle: {
+                                color: '#808080',
+
+                            }
+                        },
+                        axisLabel: {
+                            // interval: 0,
+                            // rotate: 40,
+                            textStyle: {
+                                fontSize: '11'
+                            }
+                        },
+                        axisTick: { //y轴刻度线
+                            show: false
+                        },
+
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value',
+                        axisLine: {
+                            show: false,
+                            lineStyle: {
+                                color: '#f2961d'
+                            }
+                        },
+                        splitLine: {
+                            show: true,
+                            lineStyle: {
+                                //color: "#57617B"
+                                type: 'dashed'
+                            }
+                        },
+                        axisTick: { //y轴刻度线
+                            show: true
+                        },
+                        axisLabel: {}
+                    }
+                ],
+                series: series
+            };
+            myChart.setOption(option, true);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+    })
+</script>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>各部门合格率
+                        <button type="button" id="funOne" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                    </div>
+                    <div class="layui-card-body layui-text">
+                        <div id="chart1" style="height:240px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>各部门负载
+                        <button type="button" id="funTwo" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                    </div>
+                    <div class="layui-card-body layui-text">
+                        <div id="chart2" style="height:240px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md2">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>稼动率
+                        <button type="button" id="funThree" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                    </div>
+                    <div class="layui-card-body layui-text">
+                        <div id="chart3" style="height:300px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>稼动率趋势
+                        <button type="button" id="funFour" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                    </div>
+                    <div class="layui-card-body layui-text">
+                        <div id="chart4" style="height:300px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>设备清单
+                        <button type="button" id="funFive" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                    </div>
+                    <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+                </div>
+            </div>
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>部门任务概况
+                        <button type="button" id="funThree" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                    </div>
+                    <table class="layui-hide" id="currentTableId2" lay-filter="currentTableFilter"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
