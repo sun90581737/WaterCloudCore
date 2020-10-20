@@ -15,6 +15,7 @@ namespace WaterCloud.Web.Areas.TeamTask.Controllers
     {
         public TDDepartmentQualifiedRateService _dqrService { get; set; }
         public TDDepartmentLoadService _dlService { get; set; }
+        public TDJiadongRateService _jrService { get; set; }
 
 
         public TDDepartmentTasksService _dtService { get; set; }
@@ -35,7 +36,14 @@ namespace WaterCloud.Web.Areas.TeamTask.Controllers
             data = data.Where(p => p.IsEffective == 1).ToList();
             return Content(data.ToJson());
         }
-
+        [HttpGet]
+        [HandlerAjaxOnly]
+        public async Task<ActionResult> GetTDJiadongRate()
+        {
+            var data = await _jrService.GetList();
+            data = data.Where(p => p.IsEffective == 1).ToList();
+            return Content(data.ToJson());
+        }
 
 
         [HttpGet]

@@ -136,6 +136,7 @@
         $(function () {
             loadOne();
             loadTwo();
+            loadThree();
 
             loadSix();
         });
@@ -446,6 +447,89 @@
                 series: series
             };
             myChart.setOption(option, true);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function loadThree() {
+            var listName = new Array();
+            var str = [];
+
+            $.ajax({
+                async: false,
+                url: "/TeamTask/TeamDetails/GetTDJiadongRate",
+                type: "get",
+                dataType: "json",
+                success: function (da) {
+                    $(da).each(function (index, item) {
+                        listName.push(item.Name);
+                        var str3 = new Object();
+                        str3.name = item.Name;
+                        str3.value = item.Number;
+                        str[index] = str3;
+                    })
+                }
+            })
+
+            var myChart = echarts.init(document.getElementById('chart3'));
+            var option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{b} : ({c}%)"
+                },
+                legend: {
+                    itemWidth: 10,  //图例标记的图形宽度
+                    itemHeight: 10, //图例标记的图形高度
+                    bottom: 20,
+                    left: 'center',
+                    icon: "circle",
+                    data: listName,
+                    textStyle: {    //图例文字的样式
+                        color: '#000000',  //文字颜色
+                        fontSize: 12    //文字大小
+                    }
+                },
+                color: ['#f28533', '#ff6239', '#6d48e6', '#6bedfd'],
+                series: [
+                    {
+                        name: '访问来源',
+                        type: 'pie',
+                        radius: '88%',
+                        center: ['50%', '40%'],
+                        data: str
+                        ,
+                        itemStyle: {  //图形样式
+                            normal: { //normal 是图形在默认状态下的样式；emphasis 是图形在高亮状态下的样式，比如在鼠标悬浮或者图例联动高亮时。
+                                label: {  //饼图图形上的文本标签
+                                    show: true,  //平常不显示
+                                    formatter: '{c}%',
+                                    position: 'inner'
+                                },
+                                labelLine: {     //标签的视觉引导线样式
+                                    show: false  //平常不显示
+                                }
+                            },
+                            emphasis: {   //normal 是图形在默认状态下的样式；emphasis 是图形在高亮状态下的样式，比如在鼠标悬浮或者图例联动高亮时。
+                                label: {  //饼图图形上的文本标签
+                                    show: true,
+                                    position: 'center',
+                                    textStyle: {
+                                        fontSize: '20',
+                                        fontWeight: 'bold'
+                                    }
+                                },
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    }
+                ]
+            };
+            myChart.setOption(option);
             // echarts 窗口缩放自适应
             window.addEventListener("resize", function () {
                 myChart.resize();
