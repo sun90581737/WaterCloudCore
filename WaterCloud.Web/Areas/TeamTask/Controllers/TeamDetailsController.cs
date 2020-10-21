@@ -16,8 +16,8 @@ namespace WaterCloud.Web.Areas.TeamTask.Controllers
         public TDDepartmentQualifiedRateService _dqrService { get; set; }
         public TDDepartmentLoadService _dlService { get; set; }
         public TDJiadongRateService _jrService { get; set; }
-
-
+        public TDJiadongRateTrendService _jrtService { get; set; }
+        public TDEquipmentListService _elService { get; set; }
         public TDDepartmentTasksService _dtService { get; set; }
 
         [HttpGet]
@@ -44,8 +44,23 @@ namespace WaterCloud.Web.Areas.TeamTask.Controllers
             data = data.Where(p => p.IsEffective == 1).ToList();
             return Content(data.ToJson());
         }
-
-
+        [HttpGet]
+        [HandlerAjaxOnly]
+        public async Task<ActionResult> GetTDJiadongRateTrend()
+        {
+            var data = await _jrtService.GetList();
+            data = data.Where(p => p.IsEffective == 1).ToList();
+            return Content(data.ToJson());
+        }
+        [HttpGet]
+        [HandlerAjaxOnly]
+        public async Task<ActionResult> GetGridJson(Pagination pagination, string keyword = "")
+        {
+            pagination.order = "desc";
+            pagination.sort = "Number desc";
+            var data = await _elService.GetList(pagination, keyword);
+            return Success(pagination.records, data);
+        }
         [HttpGet]
         [HandlerAjaxOnly]
         public async Task<ActionResult> GetGridJsonOne(Pagination pagination)

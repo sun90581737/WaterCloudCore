@@ -598,6 +598,7 @@
             $.unique(listDeviceType);
             $.unique(listDeviceName.sort());//设备名字
 
+            var tempArryOne = new Array();
             var series = [];
             $.each(listDeviceName, function (index, value) {
                 var tempName = new Array();
@@ -606,8 +607,12 @@
                     if (value == value1.DeviceName) {
                         tempName = value1.DeviceName;
                         tempArry.push(value1.Number);
+
+                        tempArryOne.push(value1);
                     }
                 });
+                var qq = JSON.parse(JSON.stringify(tempArryOne).replace(/Number/g, "value"));
+
                 series.push({
                     name: tempName,
                     type: "line",
@@ -645,7 +650,7 @@
                             opacity: 0.5,
                         }
                     },
-                    data: tempArry,
+                    data: qq,
                 })
             });
 
@@ -676,6 +681,8 @@
                         for (var i = 0, l = params.length; i < l; i++) {
                             //特殊处理
                             relVal += params[i].marker + params[i].seriesName + ' : ' + params[i].value + "分";
+                            relVal += '<br/>' + params[i].marker + "出勤" + ' : ' + params[i].data.Spare + "分";
+                            relVal += '<br/>' + params[i].marker + "合格率" + ' : ' + params[i].data.Spare1 + "%";
                             relVal += '<br/>' + params[i].marker + "有效工时" + ' : ' + params[0].name + "h";
                         }
                         return relVal;

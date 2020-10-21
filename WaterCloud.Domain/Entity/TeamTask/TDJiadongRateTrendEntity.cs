@@ -14,6 +14,7 @@ namespace WaterCloud.Domain.Entity.TeamTask
         public string DeviceName { get; set; }
         public int? Number { get; set; }
         public string Spare { get; set; }
+        public string Spare1 { get; set; }
         public DateTime? CreationTime { get; set; }
         public int? IsEffective { get; set; }
     }
