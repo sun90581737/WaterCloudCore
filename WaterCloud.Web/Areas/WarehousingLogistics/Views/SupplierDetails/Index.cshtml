@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = " 仓库管理主页";
+    ViewBag.Title = "供应商详情";
     Layout = "~/Views/Shared/_Index.cshtml";
 }
 @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment env
@@ -7,6 +7,20 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <style>
+    .layui-table-cell {
+        height: auto !important;
+        white-space: normal;
+    }
+
+    .layui-date1 {
+        position: absolute;
+        right: 3px;
+        top: 25%;
+        margin-top: -10px;
+        cursor: pointer;
+        font-size: 28px;
+        color: #1aa094;
+    }
     .layui-card {
         border: 1px solid #f2f2f2;
         border-radius: 5px;
@@ -124,28 +138,39 @@
     }
 </style>
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element'], function () {
+    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element', 'laydate'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table,
             common = layui.common,
             layer = layui.layer,
             echarts = layui.echarts,
-            element = layui.element;;
+            element = layui.element,
+            laydate = layui.laydate;
         wcLoading.close();
         $(function () {
             loadOne();
-            gridList();
-            gridListOne();
+        });
+        laydate.render({
+            elem: '#test1'
+            , range: true,
+            eventElem: '.layui-date1',
+            trigger: 'click',
+            done: (value) => {
+                //赋值
+                $('#test1').val(value);
+                //执行指定方法
+                loadOne();
+            }
         });
         function loadOne() {
             var listDeviceType = new Array();
             var listDeviceName = new Array();
             var listAll = new Array();
-            //var keyValue = $('#Types_id option:selected').val();
+            var keyValue = $('#test1').val();
             $.ajax({
-                url: "/WarehousingLogistics/MaterialsHome/GetDataMHInventoryProfile",
-                //data: { keyValue: keyValue },
+                url: "/WarehousingLogistics/SupplierDetails/GetDataSDDeliveryPassRate",
+                data: { keyValue: keyValue },
                 dataType: "json",
                 async: false,
                 success: function (da) {
@@ -184,8 +209,17 @@
                                 textStyle: { //数值样式
                                     color: 'red',
                                     fontSize: 12
-                                }
-                            }
+                                },
+                                formatter: '{c}%',
+                            },
+                            //color: function (params) {
+                            //    if (params.value <= 40) {
+                            //        return "#ff6239";
+                            //    } else if (params.value > 40) {
+                            //        return "#f3961d";
+                            //    }
+                            //    return "#febf37";
+                            //}
                         }
                     },
                 })
@@ -194,16 +228,15 @@
             var myChart = echarts.init(document.getElementById('chart1'));
 
             var option = {
-                color: ['#febe36', '#6d48e6'],
+                color: ['#f29400', '#6d48e6'],
                 grid: {
-                    top:'8%',
+                    top: '10%',
                     left: '0%',
                     right: '0',
                     bottom: '0%',
                     containLabel: true
                 },
                 legend: {
-                    top:-5,
                     itemGap: 30,
                     data: listDeviceName,
                     itemWidth: 10,  //图例标记的图形宽度
@@ -217,6 +250,13 @@
                     trigger: 'axis',
                     axisPointer: { // 坐标轴指示器，坐标轴触发有效
                         type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+                    },
+                    formatter: function (params) {
+                        var relVal = params[0].name;
+                        for (var i = 0, l = params.length; i < l; i++) {
+                            relVal += '<br/>' + params[i].marker + params[i].seriesName + ' : ' + params[i].value + "%";
+                        }
+                        return relVal;
                     }
                 },
                 xAxis: [
@@ -255,6 +295,7 @@
                 yAxis: [
                     {
                         type: 'value',
+                        splitNumber: 4,
                         axisLine: {
                             show: false,
                             lineStyle: {
@@ -271,7 +312,15 @@
                         axisTick: { //y轴刻度线
                             show: true
                         },
-                        axisLabel: {}
+                        axisLabel: {
+                            formatter: function (value) {
+                                return value + "%";
+                            },
+                            show: true,
+                            textStyle: {
+                                color: '#f2961d'
+                            }
+                        },
                     }
                 ],
                 series: series
@@ -282,82 +331,6 @@
                 myChart.resize();
             });
         }
-        function gridList() {
-            common.rendertable({
-                elem: '#currentTableId',
-                id: 'currentTableId',
-                url: "/WarehousingLogistics/MaterialsHome/GetGridJson",
-                height: 250,
-                toolbar: false,/*隐藏打印*/
-                page: true,/*隐藏分页*/
-                sqlkey: 'id',//数据库主键
-                cols: [[
-                    { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
-                    { field: 'MoldNumber', title: '模具编号', width: 100, sort: true },
-                    { field: 'PartNumber', title: '零件编号', width: 100, sort: true },
-                    { field: 'PlannedEquipment', title: '计划设备', width: 100, sort: true },
-                    {
-                        field: 'StartTime', title: '开始时间', width: 100,
-                        templet: function (d) {
-                            if (d.StartTime) {
-                                return new Date(d.StartTime).Format("yyyy-MM-dd");
-
-                            }
-                        }
-                    },
-                    {
-                        field: 'ENDTime', title: '结束时间', width: 100,
-                        templet: function (d) {
-                            if (d.ENDTime) {
-                                return new Date(d.ENDTime).Format("yyyy-MM-dd");
-
-                            }
-                        }
-                    },
-                    { field: 'WorkingHours', title: '标准工时', width: 100, sort: true },
-                    { field: 'Customer', title: '客户', width: 100, sort: true, filter: true },
-                    { field: 'MoldKernelMaterial', title: '模仁材质', width: 100, sort: true },
-                ]]
-            });
-        }
-        function gridListOne() {
-            common.rendertable({
-                elem: '#currentTableIdOne',
-                id: 'currentTableIdOne',
-                url: "/WarehousingLogistics/MaterialsHome/GetGridJsonOne",
-                height: 250,
-                toolbar: false,/*隐藏打印*/
-                page: true,/*隐藏分页*/
-                sqlkey: 'id',//数据库主键
-                cols: [[
-                    { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
-                    { field: 'MoldNumber', title: '模具编号', width: 100, sort: true },
-                    { field: 'PartNumber', title: '零件编号', width: 100, sort: true },
-                    { field: 'PlannedEquipment', title: '计划设备', width: 100, sort: true },
-                    {
-                        field: 'StartTime', title: '开始时间', width: 100,
-                        templet: function (d) {
-                            if (d.StartTime) {
-                                return new Date(d.StartTime).Format("yyyy-MM-dd");
-
-                            }
-                        }
-                    },
-                    {
-                        field: 'ENDTime', title: '结束时间', width: 100,
-                        templet: function (d) {
-                            if (d.ENDTime) {
-                                return new Date(d.ENDTime).Format("yyyy-MM-dd");
-
-                            }
-                        }
-                    },
-                    { field: 'WorkingHours', title: '标准工时', width: 100, sort: true },
-                    { field: 'Customer', title: '客户', width: 100, sort: true, filter: true },
-                    { field: 'MoldKernelMaterial', title: '模仁材质', width: 100, sort: true },
-                ]]
-            });
-        }
     })
 </script>
 <div class="layuimini-container">
@@ -366,30 +339,17 @@
             <div class="layui-col-md12">
                 <div class="layui-card">
                     <div class="layui-card-header">
-                        <i class="fa fa-fire icon"></i>各部门负载
-                        <button type="button" id="funOne" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                        <i class="fa fa-fire icon"></i>按期交付率与交付合格率
+                        @*<button type="button" id="funOne" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>*@
+                        <div class="layui-inline" style="float: right;">
+                            <div class="layui-input-inline">
+                                <input type="text" style="width:200px;" class="layui-input" id="test1" placeholder=" - " readonly="readonly"><i class="layui-icon layui-date1"></i>
+                            </div>
+                        </div>
                     </div>
                     <div class="layui-card-body layui-text">
-                        <div id="chart1" style="height:240px;"></div>
+                        <div id="chart1" style="height:520px;"></div>
                     </div>
-                </div>
-            </div>
-            <div class="layui-col-md6">
-                <div class="layui-card">
-                    <div class="layui-card-header">
-                        <i class="fa fa-fire icon"></i>待备料工件清单
-                        <button type="button" id="funTwo" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
-                    </div>
-                    <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
-                </div>
-            </div>
-            <div class="layui-col-md6">
-                <div class="layui-card">
-                    <div class="layui-card-header">
-                        <i class="fa fa-fire icon"></i>外协工件清单
-                        <button type="button" id="funThree" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
-                    </div>
-                    <table class="layui-hide" id="currentTableIdOne" lay-filter="currentTableFilter"></table>
                 </div>
             </div>
         </div>
