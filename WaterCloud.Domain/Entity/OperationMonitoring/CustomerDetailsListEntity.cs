@@ -10,6 +10,7 @@ namespace WaterCloud.Domain.Entity.OperationMonitoring
     {
         [ColumnAttribute("id", IsPrimaryKey = true)]
         public int? id { get; set; }
+        public string ParentId { get; set; }
         public string CustomerName { get; set; }
         public string OrderNumber { get; set; }
         public string NumberOfOrders { get; set; }

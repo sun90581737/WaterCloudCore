@@ -22,7 +22,19 @@ namespace WaterCloud.Service.OperationMonitoring
             //return GetFieldsFilterData(await repository.OrderList(list, pagination), className.Substring(0, className.Length - 7));
 
             var list = repository.IQueryable();
-            list = list.Where(t => t.IsEffective == 1);
+            list = list.Where(t => t.IsEffective == 1 && t.ParentId == "0");
+            return await repository.OrderList(list, pagination);
+        }
+
+        public async Task<List<CustomerDetailsListEntity>> GetListKey(Pagination pagination, string keyvalue)
+        {
+            ////获取数据权限
+            //var list = GetDataPrivilege("u", className.Substring(0, className.Length - 7));
+
+            //list = list.Where(t => t.IsEffective == 1);
+            //return GetFieldsFilterData(await repository.OrderList(list, pagination), className.Substring(0, className.Length - 7));
+            var list = repository.IQueryable();
+            list = list.Where(t => t.IsEffective == 1 && t.ParentId == keyvalue);
             return await repository.OrderList(list, pagination);
         }
     }

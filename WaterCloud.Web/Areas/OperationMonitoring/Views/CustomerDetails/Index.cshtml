@@ -315,7 +315,7 @@
                 page: true,/*隐藏分页*/
                 sqlkey: 'id',//数据库主键
                 cols: [[
-                    { field: 'id', title: 'ID', sort: false, hide: false, width: 60, hideAlways: true },
+                    { field: 'id', title: 'ID', sort: false, hide: true, width: 60, hideAlways: true },
                     { field: 'CustomerName', title: '客户名称', width: 120, sort: true },
                     { field: 'OrderNumber', title: '订单编号', width: 120, sort: false },
                     { field: 'NumberOfOrders', title: '订单数', width: 120, sort: false },
@@ -350,6 +350,17 @@
                     },
                     { field: 'NewOldModel', title: '新模/旧模', width: 120, sort: false, filter: true },
                 ]]
+            });
+            //监听行双击事件
+            table.on('rowDouble(currentTableFilter)', function (obj) {
+                //obj 同上
+                common.modalOpen({
+                    title: "客户清单子表",
+                    url: "/OperationMonitoring/CustomerDetails/Form?keyValue=" + obj.data.id,
+                    width: "700px",
+                    height: "600px",
+                    btn: []
+                });
             });
         }
     })

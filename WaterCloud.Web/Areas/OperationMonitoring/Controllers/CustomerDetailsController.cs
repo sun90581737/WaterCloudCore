@@ -33,5 +33,15 @@ namespace WaterCloud.Web.Areas.OperationMonitoring.Controllers
             var data = await _crlService.GetList(pagination);
             return Success(pagination.records, data);
         }
+
+        [HttpGet]
+        [HandlerAjaxOnly]
+        public async Task<ActionResult> GetGridJsonKey(Pagination pagination, string keyvalue)
+        {
+            pagination.order = "desc";
+            pagination.sort = "CustomerName desc";
+            var data = await _crlService.GetListKey(pagination, keyvalue);
+            return Success(pagination.records, data);
+        }
     }
 }
