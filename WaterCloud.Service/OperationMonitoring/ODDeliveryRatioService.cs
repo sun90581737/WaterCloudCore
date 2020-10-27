@@ -4,23 +4,23 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using WaterCloud.DataBase;
-using WaterCloud.Domain.Entity.WarehousingLogistics;
+using WaterCloud.Domain.Entity.OperationMonitoring;
 using WaterCloud.Service.Infrastructure;
 
-namespace WaterCloud.Service.WarehousingLogistics
+namespace WaterCloud.Service.OperationMonitoring
 {
-    public class SDDeliveryPassRateService : RepositoryBase, ISDDeliveryPassRateService
+    public class ODDeliveryRatioService : RepositoryBase, IODDeliveryRatioService
     {
-        public SDDeliveryPassRateService(IDbContext context) : base(context)
+        public ODDeliveryRatioService(IDbContext context) : base(context)
         {
         }
-        public async Task<List<SDDeliveryPassRateEntity>> GetTableFieldList(string GetTime)
+        public async Task<List<ODDeliveryRatioEntity>> GetTableFieldList(string GetTime)
         {
             StringBuilder strSql = new StringBuilder();
             var parameter = new List<DbParam>();
             if (string.IsNullOrEmpty(GetTime))
             {
-                strSql.Append(@"SELECT DeviceType, DeviceName, SUM(Number)Number FROM	Sys_SDDeliveryPassRate WHERE IsEffective=1  GROUP BY DeviceType, DeviceName ORDER BY DeviceType ASC");
+                strSql.Append(@"SELECT DeviceType, DeviceName, SUM(Number)Number FROM	Sys_ODDeliveryRatio WHERE IsEffective=1  GROUP BY DeviceType, DeviceName ORDER BY DeviceType ASC");
                 parameter.Add(new DbParam("", ""));
             }
             else
@@ -28,14 +28,14 @@ namespace WaterCloud.Service.WarehousingLogistics
                 var starttime = GetTime.Substring(0, 10);
                 var endtime = GetTime.Remove(0, 13);
 
-                strSql.Append(@"SELECT DeviceType, DeviceName, SUM(Number)Number FROM	Sys_SDDeliveryPassRate
+                strSql.Append(@"SELECT DeviceType, DeviceName, SUM(Number)Number FROM	Sys_ODDeliveryRatio
                 WHERE IsEffective=1 AND AcctDate between @starttime AND @endtime  GROUP BY DeviceType, DeviceName ORDER BY DeviceType ASC");
 
                 parameter.Add(new DbParam("@starttime", starttime.ToString()));
                 parameter.Add(new DbParam("@endtime", endtime.ToString()));
 
             }
-            var list = await FindList<SDDeliveryPassRateEntity>(strSql.ToString(), parameter.ToArray());
+            var list = await FindList<ODDeliveryRatioEntity>(strSql.ToString(), parameter.ToArray());
             return list;
         }
     }

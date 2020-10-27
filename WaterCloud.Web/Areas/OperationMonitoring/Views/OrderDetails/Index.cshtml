@@ -1,0 +1,800 @@
+﻿@{
+    ViewBag.Title = "订单详情";
+    Layout = "~/Views/Shared/_Index.cshtml";
+}
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment env
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<style>
+    .layui-table-cell {
+        height: auto !important;
+        white-space: normal;
+    }
+
+    .layui-date1 {
+        position: absolute;
+        right: 3px;
+        top: 25%;
+        margin-top: -10px;
+        cursor: pointer;
+        font-size: 28px;
+        color: #1aa094;
+    }
+
+    .layui-date2 {
+        position: absolute;
+        right: 3px;
+        top: 25%;
+        margin-top: -10px;
+        cursor: pointer;
+        font-size: 28px;
+        color: #1aa094;
+    }
+
+    .layui-date3 {
+        position: absolute;
+        right: 3px;
+        top: 25%;
+        margin-top: -10px;
+        cursor: pointer;
+        font-size: 28px;
+        color: #1aa094;
+    }
+
+    .layui-card {
+        border: 1px solid #f2f2f2;
+        border-radius: 5px;
+    }
+
+    .icon {
+        margin-right: 10px;
+        color: #1aa094;
+    }
+
+    .icon-cray {
+        color: #ffb800 !important;
+    }
+
+    .icon-blue {
+        color: #1e9fff !important;
+    }
+
+    .icon-tip {
+        color: #ff5722 !important;
+    }
+
+    .layuimini-qiuck-module {
+        text-align: center;
+        margin-top: 10px
+    }
+
+        .layuimini-qiuck-module a i {
+            display: inline-block;
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            border-radius: 2px;
+            font-size: 30px;
+            background-color: #F8F8F8;
+            color: #333;
+            transition: all .3s;
+            -webkit-transition: all .3s;
+        }
+
+        .layuimini-qiuck-module a cite {
+            position: relative;
+            top: 2px;
+            display: block;
+            color: #666;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+    .welcome-module {
+        width: 40%;
+        height: 100px;
+    }
+
+    .panel {
+        background-color: #fff;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+        box-shadow: 0 1px 1px rgba(0,0,0,.05)
+    }
+
+    .panel-body {
+        padding: 30px
+    }
+
+    .panel-title {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: 12px;
+        color: inherit
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .layui-bg-number {
+        background-color: #F8F8F8;
+    }
+
+    .tmp-layui-col-xs4 {
+        width: 12.5%;
+        float: left;
+        position: relative;
+        display: block;
+        box-sizing: border-box
+    }
+</style>
+<script type="text/html" id="imgTpl">
+    <img style="" src="{{ d.Workpiece }}">
+</script>
+<script>
+    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element', 'laydate'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            common = layui.common,
+            layer = layui.layer,
+            echarts = layui.echarts,
+            element = layui.element,
+            laydate = layui.laydate;
+        wcLoading.close();
+        $(function () {
+            loadOne();
+            //loadTwo();
+            //loadThree();
+            //loadFour();
+        });
+        laydate.render({
+            elem: '#test1'
+            , range: true,
+            eventElem: '.layui-date1',
+            trigger: 'click',
+            done: (value) => {
+                //赋值
+                $('#test1').val(value);
+                //执行指定方法
+                loadOne();
+            }
+        });
+        laydate.render({
+            elem: '#test2'
+            , range: true,
+            eventElem: '.layui-date2',
+            trigger: 'click',
+            done: (value) => {
+                //赋值
+                $('#test2').val(value);
+                //执行指定方法
+                loadTwo();
+            }
+        });
+        laydate.render({
+            elem: '#test3'
+            , range: true,
+            eventElem: '.layui-date3',
+            trigger: 'click',
+            done: (value) => {
+                //赋值
+                $('#test3').val(value);
+                //执行指定方法
+                loadThree();
+            }
+        });
+        function loadOne() {
+            common.rendertable({
+                elem: '#currentTableId',
+                id: 'currentTableId',
+                url: "/OperationMonitoring/OrderDetails/GetGridJsonOne?keyvalue=" + $('#test1').val(),
+                height: 880,
+                toolbar: false,/*隐藏打印*/
+                page: true,/*隐藏分页*/
+                sqlkey: 'id',//数据库主键
+                cols: [[
+                    { field: 'id', title: '序号', hide: false, width: 60, hideAlways: true },
+                    { field: 'WorkingProcedure', title: '工序', width: 70 },
+                    { field: 'Workpiece', title: '工件', width: 115, templet:'#imgTpl' },
+                    {
+                        field: 'StartTime', title: '计划开始时间', width: 160,
+                        templet: function (d) {
+                            if (d.StartTime) {
+                                return new Date(d.StartTime).Format("yyyy-MM-dd hh:mm:ss");
+
+                            }
+                        }
+                    },
+                    {
+                        field: 'EndTime', title: '计划完成时间', width: 160,
+                        templet: function (d) {
+                            if (d.EndTime) {
+                                return new Date(d.EndTime).Format("yyyy-MM-dd hh:mm:ss");
+
+                            }
+                        }
+                    },
+                    { field: 'Duration', title: '时长', width: 60 },
+                ]]
+            });
+        }
+        function loadTwo() {
+            var listDeviceType = new Array();
+            var listDeviceName = new Array();
+            var listAll = new Array();
+            var keyValue = $('#test2').val();
+            $.ajax({
+                url: "/EmployeePerformance/EmployeeHomePage/GetDataEHTotalWorkHours",
+                data: { keyValue: keyValue },
+                dataType: "json",
+                async: false,
+                success: function (da) {
+                    $(da).each(function (index, item) {
+                        listDeviceType.push(item.DeviceType);
+                        listDeviceName.push(item.DeviceName);
+                        listAll.push(item);
+                    })
+                }
+            })
+
+            $.unique(listDeviceType);
+            $.unique(listDeviceName.sort());
+
+            var series = [];
+            $.each(listDeviceName, function (index, value) {
+                var tempName = new Array();
+                var tempArry = new Array();
+                $.each(listAll, function (index1, value1) {
+                    if (value == value1.DeviceName) {
+                        tempName = value1.DeviceName;
+                        tempArry.push(value1.Number);
+                    }
+                });
+                series.push({
+                    name: tempName,
+                    type: 'bar',
+                    barWidth: '15%',
+                    barGap: '80%',
+                    data: tempArry,
+                    itemStyle: {
+                        normal: {
+                            barBorderRadius: [15, 15, 0, 0],
+                            label: {
+                                show: true, //开启显示
+                                position: 'top', //在上方显示
+                                textStyle: { //数值样式
+                                    color: 'red',
+                                    fontSize: 12
+                                }
+                            }
+                        }
+                    },
+                })
+            });
+
+            var myChart = echarts.init(document.getElementById('chart2'));
+
+            var option = {
+                color: ['#f3961d', '#6d48e6', '#ff6239'],
+                grid: {
+                    left: '0%',
+                    right: '0',
+                    bottom: '0%',
+                    containLabel: true
+                },
+                legend: {
+                    itemGap: 30,
+                    data: listDeviceName,
+                    itemWidth: 10,  //图例标记的图形宽度
+                    itemHeight: 10, //图例标记的图形高度
+                    textStyle: {    //图例文字的样式
+                        color: '#808080',  //文字颜色
+                        fontSize: 12    //文字大小
+                    }
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                        type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+                    }
+                },
+                xAxis: [
+                    {
+                        //type: 'category',
+                        //axisTick: { show: false },
+                        //axisLabel: {
+                        //    //X轴刻度配置
+                        //    interval: 0 //0：表示全部显示不间隔；auto:表示自动根据刻度个数和宽度自动设置间隔个数
+                        //    , rotate: 0
+                        //},
+                        //data: listDeviceType,
+
+                        type: 'category',
+                        data: listDeviceType,
+                        axisLine: {
+                            show: false,
+                            lineStyle: {
+                                color: '#808080',
+
+                            }
+                        },
+                        axisLabel: {
+                            // interval: 0,
+                            // rotate: 40,
+                            textStyle: {
+                                fontSize: '11'
+                            }
+                        },
+                        axisTick: { //y轴刻度线
+                            show: false
+                        },
+
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value',
+                        axisLine: {
+                            show: false,
+                            lineStyle: {
+                                color: '#f2961d'
+                            }
+                        },
+                        splitLine: {
+                            show: true,
+                            lineStyle: {
+                                //color: "#57617B"
+                                type: 'dashed'
+                            }
+                        },
+                        axisTick: { //y轴刻度线
+                            show: true
+                        },
+                        axisLabel: {}
+                    }
+                ],
+                series: series
+            };
+            myChart.setOption(option, true);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function loadThree() {
+            var listDeviceType = new Array();
+            var listAll = new Array();
+            var listDeviceName = new Array();
+            var keyValue = $('#test3').val();
+            $.ajax({
+                async: false,
+                url: "/EmployeePerformance/EmployeeHomePage/GetDataEHPassRate",
+                data: { keyValue: keyValue },
+                dataType: "json",
+                success: function (da) {
+                    $(da).each(function (index, item) {
+                        if (item.DeviceType != null && item.DeviceType != "") {
+                            listDeviceType.push(item.DeviceType);
+                            listDeviceName.push(item.DeviceName);
+                            listAll.push(item);
+                        }
+                    })
+                }
+            })
+                ;
+            $.unique(listDeviceType);
+            $.unique(listDeviceName.sort());//设备名字
+
+            var series = [];
+            $.each(listDeviceName, function (index, value) {
+                var tempName = new Array();
+                var tempArry = new Array();
+                $.each(listAll, function (index1, value1) {
+                    if (value == value1.DeviceName) {
+                        tempName = value1.DeviceName;
+                        tempArry.push(value1.Number);
+                    }
+                });
+                series.push({
+                    name: tempName,
+                    type: "line",
+                    symbolSize: 3,//标记的大小，可以设置成诸如 10 这样单一的数字，也可以用数组分开表示宽和高，例如 [20, 10] 表示标记宽为20，高为10[ default: 4 ]
+                    symbol: 'circle',//标记的图形。ECharts 提供的标记类型包括 'circle', 'rect', 'roundRect', 'triangle', 'diamond', 'pin', 'arrow'
+                    smooth: true, //是否平滑曲线显示
+                    showSymbol: false, //是否显示 symbol, 如果 false 则只有在 tooltip hover 的时候显示
+                    areaStyle: {
+                        normal: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                offset: 0,
+                                color: '#f3961d'
+                            }, {
+                                offset: 0.8,
+                                color: '#fde9d0'
+                            }], false),
+                            shadowColor: 'transparent',
+                            shadowBlur: 10,
+                            opacity: 0.3,
+                        }
+                    },
+                    itemStyle: {
+                        normal: {
+                            color: '#f3961d',
+                            lineStyle: {
+                                width: 1,
+                                type: 'solid' //'dotted'虚线 'solid'实线
+                            },
+                            borderColor: '#f3961d', //图形的描边颜色。支持的格式同 color
+                            borderWidth: 8,//描边线宽。为 0 时无描边。[ default: 0 ]
+                            barBorderRadius: 0,
+                            label: {
+                                show: true,
+                            },
+                            opacity: 0.5,
+                        }
+                    },
+                    data: tempArry,
+                })
+            });
+
+            // 基于准备好的dom，初始化echarts实例
+
+            var myChart = null;
+
+            if (myChart && myChart.dispose) {
+                myChart.dispose();
+            }
+            myChart = echarts.init(document.getElementById('chart3'));
+
+            option = {
+                //backgroundColor: "#141f56",
+                tooltip: {
+                    trigger: "axis",
+                    axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                        type: 'line', // 默认为直线，可选为：'line' | 'shadow'
+                        lineStyle: {
+                            color: '#57617B'
+                        }
+                    },
+                    backgroundColor: 'rgba(0,0,0,0.7)', // 背景
+                    padding: [8, 10], //内边距
+                    extraCssText: 'box-shadow: 0 0 3px rgba(255, 255, 255, 0.4);', //添加阴影
+                    formatter: function (params) {
+                        var relVal = params[0].name;
+                        for (var i = 0, l = params.length; i < l; i++) {
+                            relVal += '<br/>' + params[i].marker + params[i].seriesName + ' : ' + params[i].value + "%";
+                        }
+                        return relVal;
+                    }
+                },
+                grid: {
+                    top: '10%',
+                    left: '0%',
+                    right: '5%',
+                    bottom: '0%',
+                    containLabel: true
+                },
+                xAxis: [{
+                    boundaryGap: false, //坐标轴两边留白策略，类目轴和非类目轴的设置和表现不一样
+                    type: 'category',
+                    data: listDeviceType,
+                    axisLine: {
+                        show: false,
+                        lineStyle: {
+                            color: '#808080',
+
+                        }
+                    },
+                    axisLabel: {
+                        interval: 0,
+                        rotate: 0,
+                        textStyle: {
+                            fontSize: '11'
+                        }
+                    },
+                    axisTick: { //y轴刻度线
+                        show: false
+                    },
+                }],
+                yAxis: {
+                    type: 'value',
+                    axisLine: {
+                        show: false,
+                        lineStyle: {
+                            color: '#f2961d'
+                        }
+                    },
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            //color: "#57617B"
+                            type: 'dashed'
+                        }
+                    },
+                    axisTick: { //y轴刻度线
+                        show: false
+                    },
+                    axisLabel: {
+                        formatter: '{value}%',
+                    },
+                },
+                series: series,
+            }
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function loadFour() {
+            var listDeviceType = new Array();
+            var listAll = new Array();
+            var listDeviceName = new Array();
+            //var keyValue = $('#test3').val();
+            $.ajax({
+                async: false,
+                url: "/EmployeePerformance/EmployeeHomePage/GetDataEHMonthlyPerformance",
+                //data: { keyValue: keyValue },
+                dataType: "json",
+                success: function (da) {
+                    $(da).each(function (index, item) {
+                        if (item.DeviceType != null && item.DeviceType != "") {
+                            listDeviceType.push(item.DeviceType);
+                            listDeviceName.push(item.DeviceName);
+                            listAll.push(item);
+                        }
+                    })
+                }
+            })
+                ;
+            $.unique(listDeviceType);
+            $.unique(listDeviceName.sort());//设备名字
+
+            var tempArryOne = new Array();
+            var series = [];
+            $.each(listDeviceName, function (index, value) {
+                var tempName = new Array();
+                var tempArry = new Array();
+                $.each(listAll, function (index1, value1) {
+                    if (value == value1.DeviceName) {
+                        tempName = value1.DeviceName;
+                        tempArry.push(value1.Number);
+
+                        tempArryOne.push(value1);
+                    }
+                });
+                var qq = JSON.parse(JSON.stringify(tempArryOne).replace(/Number/g, "value"));
+
+                series.push({
+                    name: tempName,
+                    type: "line",
+                    symbolSize: 3,//标记的大小，可以设置成诸如 10 这样单一的数字，也可以用数组分开表示宽和高，例如 [20, 10] 表示标记宽为20，高为10[ default: 4 ]
+                    symbol: 'circle',//标记的图形。ECharts 提供的标记类型包括 'circle', 'rect', 'roundRect', 'triangle', 'diamond', 'pin', 'arrow'
+                    smooth: true, //是否平滑曲线显示
+                    showSymbol: false, //是否显示 symbol, 如果 false 则只有在 tooltip hover 的时候显示
+                    areaStyle: {
+                        normal: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                offset: 0,
+                                color: '#f3961d'
+                            }, {
+                                offset: 0.8,
+                                color: '#fde9d0'
+                            }], false),
+                            shadowColor: 'transparent',
+                            shadowBlur: 10,
+                            opacity: 0.3,
+                        }
+                    },
+                    itemStyle: {
+                        normal: {
+                            color: '#f3961d',
+                            lineStyle: {
+                                width: 1,
+                                type: 'solid' //'dotted'虚线 'solid'实线
+                            },
+                            borderColor: '#f3961d', //图形的描边颜色。支持的格式同 color
+                            borderWidth: 8,//描边线宽。为 0 时无描边。[ default: 0 ]
+                            barBorderRadius: 0,
+                            label: {
+                                show: true,
+                            },
+                            opacity: 0.5,
+                        }
+                    },
+                    data: qq,
+                })
+            });
+
+            // 基于准备好的dom，初始化echarts实例
+
+            var myChart = null;
+
+            if (myChart && myChart.dispose) {
+                myChart.dispose();
+            }
+            myChart = echarts.init(document.getElementById('chart4'));
+
+            option = {
+                //backgroundColor: "#141f56",
+                tooltip: {
+                    trigger: "axis",
+                    axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                        type: 'line', // 默认为直线，可选为：'line' | 'shadow'
+                        lineStyle: {
+                            color: '#57617B'
+                        }
+                    },
+                    backgroundColor: 'rgba(0,0,0,0.7)', // 背景
+                    padding: [8, 10], //内边距
+                    extraCssText: 'box-shadow: 0 0 3px rgba(255, 255, 255, 0.4);', //添加阴影
+                    formatter: function (params) {
+                        var relVal ="";
+                        for (var i = 0, l = params.length; i < l; i++) {
+                            //特殊处理
+                            relVal += params[i].marker + params[i].seriesName + ' : ' + params[i].value + "分";
+                            relVal += '<br/>' + params[i].marker + "出勤" + ' : ' + params[i].data.Spare + "分";
+                            relVal += '<br/>' + params[i].marker + "合格率" + ' : ' + params[i].data.Spare1 + "%";
+                            relVal += '<br/>' + params[i].marker + "有效工时" + ' : ' + params[0].name + "h";
+                        }
+                        return relVal;
+                    }
+                },
+                grid: {
+                    top: '10%',
+                    left: '0%',
+                    right: '5%',
+                    bottom: '0%',
+                    containLabel: true
+                },
+                xAxis: [{
+                    boundaryGap: false, //坐标轴两边留白策略，类目轴和非类目轴的设置和表现不一样
+                    type: 'category',
+                    data: listDeviceType,
+                    axisLine: {
+                        show: false,
+                        lineStyle: {
+                            color: '#808080',
+
+                        }
+                    },
+                    axisLabel: {
+                        interval: 0,
+                        rotate: 0,
+                        textStyle: {
+                            fontSize: '11'
+                        }
+                    },
+                    axisTick: { //y轴刻度线
+                        show: false
+                    },
+                }],
+                yAxis: {
+                    type: 'value',
+                    axisLine: {
+                        show: false,
+                        lineStyle: {
+                            color: '#f2961d'
+                        }
+                    },
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            //color: "#57617B"
+                            type: 'dashed'
+                        }
+                    },
+                    axisTick: { //y轴刻度线
+                        show: false
+                    },
+                    axisLabel: {
+                        formatter: '{value}',
+                    },
+                },
+                series: series,
+            }
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+    })
+</script>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>模具清单
+                        <div class="layui-inline">
+                            <div class="layui-input-inline">
+                                <input type="text" style="width:200px;" class="layui-input" id="test1" placeholder=" - " readonly="readonly"><i class="layui-icon layui-date1"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+                </div>
+            </div>
+
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>已交付模具的交期达成率
+                        <button type="button" id="funThree" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                        <div class="layui-inline" style="float: right;">
+                            <div class="layui-input-inline">
+                                <input type="text" style="width:200px;" class="layui-input" id="test2" placeholder=" - " readonly="readonly"><i class="layui-icon layui-date2"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card-body layui-text">
+                        <div id="chart2" style="height:240px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>在制模具进度
+                        <button type="button" id="funThree" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                    </div>
+                    <div class="layui-card-body layui-text">
+                        <div id="chart3" style="height:240px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>订单状态、交付比率
+                        <button type="button" id="funOne" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                        <div class="layui-inline" style="float: right;">
+                            <div class="layui-input-inline">
+                                <input type="text" style="width:200px;" class="layui-input" id="test3" placeholder=" - " readonly="readonly"><i class="layui-icon layui-date3"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card-body layui-text">
+                        <div id="chart4" style="height:240px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
