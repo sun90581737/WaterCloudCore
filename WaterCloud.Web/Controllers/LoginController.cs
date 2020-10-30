@@ -147,7 +147,7 @@ namespace WaterCloud.Web.Controllers
                 operatorModel.CompanyId = userEntity.F_OrganizeId;
                 operatorModel.DepartmentId = userEntity.F_DepartmentId;
                 operatorModel.RoleId = userEntity.F_RoleId;
-                operatorModel.DefaultUrl = data != null ? data[0].F_Description : "";//根据当前账号的“岗位”备注（URL），登录跳转默认首页。
+                operatorModel.DefaultUrl = data != null && data.Count>0 ? data[0].F_Description : "";//根据当前账号的“岗位”备注（URL），登录跳转默认首页。
                 operatorModel.LoginIPAddress = WebHelper.Ip;
                 operatorModel.LoginIPAddressName = "本地局域网";//Net.GetLocation(operatorModel.LoginIPAddress);
                 operatorModel.LoginTime = DateTime.Now;
