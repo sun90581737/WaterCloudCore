@@ -1,15 +1,15 @@
 ﻿html, body {
     width: 100%;
     height: 100%;
-    overflow: hidden
+    overflow: hidden;
 }
 
 body {
-    background-image: url(/images/moon.jpg);
+    background-image: url(/images/login.png);
     background-size: cover;
     font-family: 'Open Sans', sans-serif;
     background-attachment: fixed;
-    background-position: center;
+    /*background-position: center;*/
 }
 
     body:after {
@@ -63,6 +63,8 @@ body {
     border-radius: 3px;
     padding: 14px 20px;
     box-shadow: 0 0 8px #eeeeee;
+    left: 150%;
+    position: relative;
 }
 
     .login-form .layui-form-item {
@@ -118,7 +120,7 @@ body {
         padding-right: 5px;
     }
 
-#starsBox {
+/*#starsBox {
     position: fixed;
     top: 0;
     left: 0;
@@ -126,15 +128,15 @@ body {
     bottom: 0;
     background: rgba(0, 0, 0, 0.75);
     opacity: .5;
-}
+}*/
 
-    #starsBox span {
-        display: inline-block;
-        width: auto;
-        position: absolute;
-        border-radius: 100%;
-        transition: 100s linear;
-    }
+#starsBox span {
+    display: inline-block;
+    width: auto;
+    position: absolute;
+    border-radius: 100%;
+    transition: 100s linear;
+}
 
 p {
     position: fixed;
