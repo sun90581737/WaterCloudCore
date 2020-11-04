@@ -253,6 +253,15 @@ layui.define(["jquery", "miniMenu", "element", "miniTab", "miniTheme"], function
                 var loading = layer.load(0, { shade: false, time: 2 * 1000 });
                 sessionStorage.clear();
 
+                var sUserAgent = navigator.userAgent.toLowerCase();
+                var bIsIpad = sUserAgent.match(/ipad/i) == "ipad";
+                var bIsIphoneOs = sUserAgent.match(/iphone os/i) == "iphone os";
+                var bIsMidp = sUserAgent.match(/midp/i) == "midp";
+                var bIsUc7 = sUserAgent.match(/rv:1.2.3.4/i) == "rv:1.2.3.4";
+                var bIsUc = sUserAgent.match(/ucweb/i) == "ucweb";
+                var bIsAndroid = sUserAgent.match(/android/i) == "android";
+                var bIsCE = sUserAgent.match(/windows ce/i) == "windows ce";
+                var bIsWM = sUserAgent.match(/windows mobile/i) == "windows mobile";
                 // 判断是否清理服务端
                 var clearUrl = $(this).attr('data-href');
                 if (clearUrl != undefined && clearUrl != '' && clearUrl != null) {
@@ -264,7 +273,15 @@ layui.define(["jquery", "miniMenu", "element", "miniTab", "miniTheme"], function
                             miniAdmin.success(data.msg);
                             var setTime1 = setTimeout(function () {
                                 clearTimeout(setTime1);
-                                window.location.href = document.location.origin + '/Login/Index';
+
+                                if (bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM) {
+                                    //跳转移动端页面
+                                    window.location.href = document.location.origin + '/Login/Form';
+                                } else {
+                                    //跳转pc端页面
+                                    window.location.href = document.location.origin + '/Login/Index';
+                                }
+                                
                             }, 300);
 
                             return false;

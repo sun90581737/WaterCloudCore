@@ -58,6 +58,37 @@ namespace WaterCloud.Web.Controllers
             }
 
         }
+        [HttpGet]
+        public virtual async Task<ActionResult> Form()
+        {
+            //登录页获取logo和项目名称
+            try
+            {
+                var systemset = await _setService.GetFormByHost("");
+                if (systemset.F_DBProvider != GlobalContext.SystemConfig.DBProvider || systemset.F_DbString != GlobalContext.SystemConfig.DBConnectionString)
+                {
+                    SystemSetEntity temp = new SystemSetEntity();
+                    temp.F_DBProvider = GlobalContext.SystemConfig.DBProvider;
+                    temp.F_DbString = GlobalContext.SystemConfig.DBConnectionString;
+                    await _setService.SubmitForm(temp, systemset.F_Id);
+                }
+                if (GlobalContext.SystemConfig.Demo)
+                {
+                    ViewBag.UserName = Define.SYSTEM_USERNAME;
+                    ViewBag.Password = Define.SYSTEM_USERPWD;
+                }
+                ViewBag.ProjectName = systemset.F_ProjectName;
+                ViewBag.LogoIcon = "../icon/" + systemset.F_Logo;
+                return View();
+            }
+            catch (Exception)
+            {
+                ViewBag.ProjectName = "上海爱堃智能数据分析";
+                ViewBag.LogoIcon = "../icon/favicon.ico";
+                return View();
+            }
+
+        }
         /// <summary>
         /// 验证码获取（此接口已弃用）
         /// </summary>
