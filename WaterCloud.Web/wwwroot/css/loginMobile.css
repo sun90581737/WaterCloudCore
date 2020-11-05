@@ -53,7 +53,7 @@ body {
 }
 
     .logo-title h1 {
-        color: #FFFFCE;
+        color: #ffbd6e;
         font-size: 25px;
         font-weight: bold;
     }
@@ -62,7 +62,8 @@ body {
     border: 1px solid #fff;
     border-radius: 3px;
     padding: 14px 20px;
-    box-shadow: 0 0 8px #eeeeee;
+    /*box-shadow: 0 0 8px #eeeeee;*/
+    background: #fff;
 }
 
     .login-form .layui-form-item {
