@@ -5,7 +5,7 @@
     <title>@ViewBag.ProjectName</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta http-equiv="Access-Control-Allow-Origin" content="*">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
@@ -96,7 +96,7 @@
         <div id="k1" style="position: absolute; width: 4%;height: 20%;transform: rotate(60deg); left: 63%; top: 57%;"></div>
         <img id="k2" src="/images/login-bj/11.png" style="pointer-events: none;display:none; width: 223px; height: 150px; position: absolute; left: 61%; top: 69%; background: url('/images/login-bj/11.png') 0 0 / 100% 100% no-repeat; " />
     </div>
-    <style type="text/css">
+    <style>
     </style>
     <script src="~/lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
     <script src="~/js/cookie/jquery.cookie.js"></script>
@@ -107,6 +107,11 @@
     <script src="~/js/framework-ui.js?v=@WaterCloud.Code.GlobalContext.GetVersion()"></script>
     <script>
         (function ($) {
+            var s = window.screen.width / 1920;
+            document.body.style.transformOrigin = '0 0';
+            document.body.style.transform = 'scale(' + s + ',' + s + ')';
+            document.body.style.width = window.innerWidth / s + 'px';
+            document.body.style.height = window.innerHeight / s + 'px';
 
             var sUserAgent = navigator.userAgent.toLowerCase();
             var bIsIpad = sUserAgent.match(/ipad/i) == "ipad";
@@ -121,7 +126,7 @@
             if (bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM) {
                 //跳转移动端页面
                 top.location.href = "/Login/Form";
-            } 
+            }
             $('#a1').hover(function () {
                 $('#a2').fadeIn('slow');
             }, function () {
