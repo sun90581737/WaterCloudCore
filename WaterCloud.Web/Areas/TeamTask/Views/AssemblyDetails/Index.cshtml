@@ -1,0 +1,447 @@
+﻿@{
+    ViewBag.Title = "装配详情";
+    Layout = "~/Views/Shared/_Index.cshtml";
+}
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment env
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<style>
+    .layui-table-cell {
+        height: auto !important;
+        white-space: normal;
+    }
+
+    .layui-date1 {
+        position: absolute;
+        right: 3px;
+        top: 25%;
+        margin-top: -10px;
+        cursor: pointer;
+        font-size: 28px;
+        color: #1aa094;
+    }
+
+    .layui-date2 {
+        position: absolute;
+        right: 3px;
+        top: 25%;
+        margin-top: -10px;
+        cursor: pointer;
+        font-size: 28px;
+        color: #1aa094;
+    }
+
+    .layui-date3 {
+        position: absolute;
+        right: 3px;
+        top: 25%;
+        margin-top: -10px;
+        cursor: pointer;
+        font-size: 28px;
+        color: #1aa094;
+    }
+
+    .layui-date4 {
+        position: absolute;
+        right: 3px;
+        top: 25%;
+        margin-top: -10px;
+        cursor: pointer;
+        font-size: 28px;
+        color: #1aa094;
+    }
+
+    .layui-card {
+        border: 1px solid #f2f2f2;
+        border-radius: 5px;
+    }
+
+    .icon {
+        margin-right: 10px;
+        color: #1aa094;
+    }
+
+    .icon-cray {
+        color: #ffb800 !important;
+    }
+
+    .icon-blue {
+        color: #1e9fff !important;
+    }
+
+    .icon-tip {
+        color: #ff5722 !important;
+    }
+
+    .layuimini-qiuck-module {
+        text-align: center;
+        margin-top: 10px
+    }
+
+        .layuimini-qiuck-module a i {
+            display: inline-block;
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            border-radius: 2px;
+            font-size: 30px;
+            background-color: #F8F8F8;
+            color: #333;
+            transition: all .3s;
+            -webkit-transition: all .3s;
+        }
+
+        .layuimini-qiuck-module a cite {
+            position: relative;
+            top: 2px;
+            display: block;
+            color: #666;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+    .welcome-module {
+        width: 40%;
+        height: 100px;
+    }
+
+    .panel {
+        background-color: #fff;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+        box-shadow: 0 1px 1px rgba(0,0,0,.05)
+    }
+
+    .panel-body {
+        padding: 30px
+    }
+
+    .panel-title {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: 12px;
+        color: inherit
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .layui-bg-number {
+        background-color: #F8F8F8;
+    }
+
+    .tmp-layui-col-xs4 {
+        width: 12.5%;
+        float: left;
+        position: relative;
+        display: block;
+        box-sizing: border-box
+    }
+</style>
+<script type="text/html" id="imgTpl">
+    <img style="" src="{{ d.Workpiece }}">
+</script>
+<script>
+    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element', 'laydate'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            common = layui.common,
+            layer = layui.layer,
+            echarts = layui.echarts,
+            element = layui.element,
+            laydate = layui.laydate;
+        wcLoading.close();
+        $(function () {
+            loadOne();
+            loadTwo();
+            loadThree();
+            loadFour();
+        });
+        laydate.render({
+            elem: '#test1'
+            , range: true,
+            eventElem: '.layui-date1',
+            trigger: 'click',
+            done: (value) => {
+                //赋值
+                $('#test1').val(value);
+                //执行指定方法
+                loadOne();
+            }
+        });
+        laydate.render({
+            elem: '#test2'
+            , range: true,
+            eventElem: '.layui-date2',
+            trigger: 'click',
+            done: (value) => {
+                //赋值
+                $('#test2').val(value);
+                //执行指定方法
+                loadTwo();
+            }
+        });
+        laydate.render({
+            elem: '#test3'
+            , range: true,
+            eventElem: '.layui-date3',
+            trigger: 'click',
+            done: (value) => {
+                //赋值
+                $('#test3').val(value);
+                //执行指定方法
+                loadThree();
+            }
+        });
+        laydate.render({
+            elem: '#test4'
+            , range: true,
+            eventElem: '.layui-date4',
+            trigger: 'click',
+            done: (value) => {
+                //赋值
+                $('#test4').val(value);
+                //执行指定方法
+                loadFour();
+            }
+        });
+        function loadOne() {
+            common.rendertable({
+                elem: '#currentTableId',
+                id: 'currentTableId',
+                url: "/TeamTask/AssemblyDetails/GetGridJsonOne?keyvalue=" + $('#test1').val(),
+                height: 740,
+                toolbar: false,/*隐藏打印*/
+                page: true,/*隐藏分页*/
+                sqlkey: 'id',//数据库主键
+                cols: [[
+                    { field: 'id', title: '序号', hide: false, width: 80, hideAlways: true, align: 'center'},
+                    { field: 'WorkingProcedure', title: '工序', width: 150, sort: true},
+                    { field: 'Workpiece', title: '工件', width: 140, templet:'#imgTpl' },
+                    {
+                        field: 'StartTime', title: '计划开始时间', width: 180,
+                        templet: function (d) {
+                            if (d.StartTime) {
+                                return new Date(d.StartTime).Format("yyyy-MM-dd hh:mm:ss");
+
+                            }
+                        }
+                    },
+                    {
+                        field: 'EndTime', title: '计划完成时间', width: 180,
+                        templet: function (d) {
+                            if (d.EndTime) {
+                                return new Date(d.EndTime).Format("yyyy-MM-dd hh:mm:ss");
+
+                            }
+                        }
+                    },
+                    { field: 'Duration', title: '时长', width: 80, sort: true},
+                ]]
+            });
+        }
+        function loadTwo() {
+            common.rendertable({
+                elem: '#currentTableId2',
+                id: 'currentTableId2',
+                url: "/TeamTask/AssemblyDetails/GetGridJsonTwo?keyvalue=" + $('#test2').val(),
+                height: 193,
+                toolbar: false,/*隐藏打印*/
+                page: true,/*隐藏分页*/
+                sqlkey: 'id',//数据库主键
+                cols: [[
+                    { field: 'id', title: '', hide: false, width: 50, hideAlways: true, align: 'center' },
+                    { field: 'MoldNo', title: '模具编号', width: 100, sort: false },
+                    { field: 'WorkpieceNo', title: '工件编号', width: 100 },
+                    { field: 'WorkpieceName', title: '工件名称', width: 90 },
+                    { field: 'Material', title: '材料', width: 90 },
+                    { field: 'Hardness', title: '硬度', width: 80 },
+                    { field: 'Specifications', title: '规格', width: 80 },
+                    {
+                        field: 'PlannedDeliveryDate', title: '计划交期', width: 110,
+                        templet: function (d) {
+                            if (d.PlannedDeliveryDate) {
+                                return new Date(d.PlannedDeliveryDate).Format("yyyy-MM-dd");
+
+                            }
+                        }
+                    },
+                    {
+                        field: 'ActualDeliveryDate', title: '实际交期', width: 110,
+                        templet: function (d) {
+                            if (d.ActualDeliveryDate) {
+                                return new Date(d.ActualDeliveryDate).Format("yyyy-MM-dd");
+
+                            }
+                        }
+                    },
+                ]]
+            });
+        }
+        function loadThree() {
+            common.rendertable({
+                elem: '#currentTableId3',
+                id: 'currentTableId3',
+                url: "/TeamTask/AssemblyDetails/GetGridJsonWL?keyvalue=" + $('#test3').val(),
+                height: 193,
+                toolbar: false,/*隐藏打印*/
+                page: true,/*隐藏分页*/
+                sqlkey: 'id',//数据库主键
+                cols: [[
+                    { field: 'id', title: '', hide: false, width: 50, hideAlways: true, align: 'center' },
+                    { field: 'MoldNo', title: '模具编号', width: 100, sort: false },
+                    { field: 'TENo', title: 'T/E号', width: 100 },
+                    { field: 'PartNumber', title: '零件编号', width: 100 },
+                    { field: 'PartName', title: '零件名称', width: 90 },
+                    { field: 'Type', title: '类型', width: 90 },
+                    { field: 'Number', title: '数量', width: 80 },
+                    { field: 'Brand', title: '品牌', width: 80 },
+                    { field: 'Material', title: '材料', width: 80 },
+                    { field: 'Hardness', title: '硬度', width: 80 },
+                    { field: 'Specifications', title: '规格', width: 80 },
+                    { field: 'Receiver', title: '接收人员', width: 100 },
+                    {
+                        field: 'ReceivingTime', title: '接收时间', width: 110,
+                        templet: function (d) {
+                            if (d.ReceivingTime) {
+                                return new Date(d.ReceivingTime).Format("yyyy-MM-dd");
+
+                            }
+                        }
+                    },
+                ]]
+            });
+        }
+        function loadFour() {
+            common.rendertable({
+                elem: '#currentTableId4',
+                id: 'currentTableId4',
+                url: "/TeamTask/AssemblyDetails/GetGridJsonZZ?keyvalue=" + $('#test4').val(),
+                height: 193,
+                toolbar: false,/*隐藏打印*/
+                page: true,/*隐藏分页*/
+                sqlkey: 'id',//数据库主键
+                cols: [[
+                    { field: 'id', title: '', hide: false, width: 50, hideAlways: true, align: 'center' },
+                    { field: 'MoldNo', title: '模具编号', width: 100, sort: false },
+                    { field: 'TENo', title: 'T/E号', width: 100 },
+                    { field: 'PartNumber', title: '零件编号', width: 100 },
+                    { field: 'PartName', title: '零件名称', width: 100 },
+                    { field: 'Type', title: '类型', width: 90 },
+                    { field: 'Number', title: '数量', width: 80 },
+                    { field: 'Brand', title: '品牌', width: 80 },
+                    { field: 'Material', title: '材料', width: 80 },
+                    { field: 'Hardness', title: '硬度', width: 80 },
+                    { field: 'Specifications', title: '规格', width: 80 },
+                    { field: 'Receiver', title: '接收人员', width: 100 },
+                    {
+                        field: 'ReceivingTime', title: '接收时间', width: 110,
+                        templet: function (d) {
+                            if (d.ReceivingTime) {
+                                return new Date(d.ReceivingTime).Format("yyyy-MM-dd");
+
+                            }
+                        }
+                    },
+                ]]
+            });
+        }
+    })
+</script>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>加工异常比例
+                        <div id="txtDuration" style="float: right;"></div>
+                        @*<button type="button" id="funTwo" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>*@
+                        <div class="layui-inline">
+                            <div class="layui-input-inline">
+                                <input type="text" style="width:200px;" class="layui-input" id="test1" placeholder=" - " readonly="readonly"><i class="layui-icon layui-date1"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+                </div>
+            </div>
+
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>外协件清单及返厂时间
+                        <button type="button" id="funThree" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                        <div class="layui-inline" style="float: right;">
+                            <div class="layui-input-inline">
+                                <input type="text" style="width:200px;" class="layui-input" id="test2" placeholder=" - " readonly="readonly"><i class="layui-icon layui-date2"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="layui-hide" id="currentTableId2" lay-filter="currentTableFilter"></table>
+                </div>
+            </div>
+
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>物料清单及到货时间
+                        <button type="button" id="funThree" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                        <div class="layui-inline" style="float: right;">
+                            <div class="layui-input-inline">
+                                <input type="text" style="width:200px;" class="layui-input" id="test3" placeholder=" - " readonly="readonly"><i class="layui-icon layui-date3"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="layui-hide" id="currentTableId3" lay-filter="currentTableFilter"></table>
+                </div>
+            </div>
+
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>自制件加工进度
+                        <button type="button" id="funThree" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                        <div class="layui-inline" style="float: right;">
+                            <div class="layui-input-inline">
+                                <input type="text" style="width:200px;" class="layui-input" id="test4" placeholder=" - " readonly="readonly"><i class="layui-icon layui-date4"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="layui-hide" id="currentTableId4" lay-filter="currentTableFilter"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

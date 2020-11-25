@@ -227,11 +227,11 @@
                 page: true,/*隐藏分页*/
                 sqlkey: 'id',//数据库主键
                 cols: [[
-                    { field: 'id', title: '序号', hide: false, width: 60, hideAlways: true },
-                    { field: 'WorkingProcedure', title: '工序', width: 70 },
-                    { field: 'Workpiece', title: '工件', width: 115, templet:'#imgTpl' },
+                    { field: 'id', title: '序号', hide: false, width: 80, hideAlways: true, align: 'center' },
+                    { field: 'WorkingProcedure', title: '工序', width: 130 },
+                    { field: 'Workpiece', title: '工件', width: 150, templet:'#imgTpl' },
                     {
-                        field: 'StartTime', title: '计划开始时间', width: 160,
+                        field: 'StartTime', title: '计划开始时间', width: 180,
                         templet: function (d) {
                             if (d.StartTime) {
                                 return new Date(d.StartTime).Format("yyyy-MM-dd hh:mm:ss");
@@ -240,7 +240,7 @@
                         }
                     },
                     {
-                        field: 'EndTime', title: '计划完成时间', width: 160,
+                        field: 'EndTime', title: '计划完成时间', width: 180,
                         templet: function (d) {
                             if (d.EndTime) {
                                 return new Date(d.EndTime).Format("yyyy-MM-dd hh:mm:ss");
@@ -248,7 +248,7 @@
                             }
                         }
                     },
-                    { field: 'Duration', title: '时长', width: 60 },
+                    { field: 'Duration', title: '时长', width: 80 },
                 ]]
             });
         }
@@ -519,15 +519,15 @@
                 url: '/OperationMonitoring/OrderDetails/GetGridJson',
                 height: 200,
                 toolbar: false,/*隐藏打印*/
-                page: false,/*隐藏分页*/
+                page: true,/*隐藏分页*/
                 sqlkey: 'id',//数据库主键
                 cols: [[
                     { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
-                    { field: 'MoldNo', title: '模具编号', width: 90, sort: false },
-                    { field: 'Customers', title: '客户', width: 70, sort: false, filter: false },
-                    { field: 'Type', title: '类型', width: 60, sort: false },
+                    { field: 'MoldNo', title: '模具编号', width: 100, sort: false },
+                    { field: 'Customers', title: '客户', width: 90, sort: false, filter: false },
+                    { field: 'Type', title: '类型', width: 80, sort: false },
                     {
-                        field: 'PlannedDeliveryDate', title: '计划交期', width: 80,
+                        field: 'PlannedDeliveryDate', title: '计划交期', width: 110,
                         templet: function (d) {
                             if (d.PlannedDeliveryDate) {
                                 return new Date(d.PlannedDeliveryDate).Format("yyyy-MM-dd");
