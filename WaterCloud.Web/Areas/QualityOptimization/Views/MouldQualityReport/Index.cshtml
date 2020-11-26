@@ -340,7 +340,6 @@
 
             let data = {
                 value: 45,
-                key:90,
             }
             var option = {
                 title: [{
@@ -370,34 +369,7 @@
                         lineHeight: 30,
                         fontSize: 15
                     }
-                }, {
-                        text: '{num|' + data.key + '}{key|(个)}',
-                        subtext: data.name,
-                        x: '25%',
-                        y: '10%',
-                        textAlign: 'center',
-                        textStyle: {
-                            rich: {
-                                num: {
-                                    fontWeight: 'bold',
-                                    color: '#000000',
-                                    fontFamily: '微软雅黑',
-                                    fontSize: 25,
-                                },
-                                key: {
-                                    fontWeight: 'bold',
-                                    color: '#000000',
-                                    fontFamily: '微软雅黑',
-                                    fontSize: 15,
-                                }
-                            }
-
-                        },
-                        subtextStyle: {
-                            lineHeight: 30,
-                            fontSize: 15
-                        }
-                    }],
+                }],
                 data: [{
                     name: data.name,
                 }],
@@ -724,7 +696,7 @@
                     <div class="layui-card-body layui-text">
                         <div style="float:left;width:50%">
                             <div id="chart2" style="height:240px;"></div>
-                            <div style="text-align:center;font-size:13px;color:#808080;">已处理</div>
+                            <div style="text-align:center;font-size:13px;color:#808080;">总异常数量</div>
                         </div>
                         <div style="margin-left:50%;">
                             <div id="chart3" style="height:240px;"></div>
