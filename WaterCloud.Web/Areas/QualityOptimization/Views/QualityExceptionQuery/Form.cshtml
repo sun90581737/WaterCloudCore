@@ -1,0 +1,181 @@
+﻿@{
+    ViewBag.Title = "品质异常查询详情";
+    Layout = "~/Views/Shared/_Index.cshtml";
+}
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment env
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<style>
+    .layui-card {
+        border: 1px solid #f2f2f2;
+        border-radius: 5px;
+    }
+
+    .icon {
+        margin-right: 10px;
+        color: #1aa094;
+    }
+
+    .icon-cray {
+        color: #ffb800 !important;
+    }
+
+    .icon-blue {
+        color: #1e9fff !important;
+    }
+
+    .icon-tip {
+        color: #ff5722 !important;
+    }
+
+    .layuimini-qiuck-module {
+        text-align: center;
+        margin-top: 10px
+    }
+
+        .layuimini-qiuck-module a i {
+            display: inline-block;
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            border-radius: 2px;
+            font-size: 30px;
+            background-color: #F8F8F8;
+            color: #333;
+            transition: all .3s;
+            -webkit-transition: all .3s;
+        }
+
+        .layuimini-qiuck-module a cite {
+            position: relative;
+            top: 2px;
+            display: block;
+            color: #666;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+    .welcome-module {
+        width: 40%;
+        height: 100px;
+    }
+
+    .panel {
+        background-color: #fff;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+        box-shadow: 0 1px 1px rgba(0,0,0,.05)
+    }
+
+    .panel-body {
+        padding: 30px
+    }
+
+    .panel-title {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: 12px;
+        color: inherit
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .layui-bg-number {
+        background-color: #F8F8F8;
+    }
+
+    .tmp-layui-col-xs4 {
+        width: 12.5%;
+        float: left;
+        position: relative;
+        display: block;
+        box-sizing: border-box
+    }
+</style>
+<script>
+    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            common = layui.common,
+            layer = layui.layer,
+            echarts = layui.echarts,
+            element = layui.element;;
+        var keyValue = $.request("keyValue");
+        wcLoading.close();
+        $(function () {
+            loadTwo();
+        });
+        function loadTwo() {
+            if (!!keyValue) {
+            common.rendertable({
+                elem: '#currentTableId2',
+                id: 'currentTableId2',
+                url: "/QualityOptimization/QualityExceptionQuery/GetGridJsonKey?keyvalue=" + keyValue,
+                height: 680,
+                toolbar: true,/*隐藏打印*/
+                page: true,/*隐藏分页*/
+                sqlkey: 'id',//数据库主键
+                cols: [[
+                    { field: 'id', title: 'ID', sort: false, hide: false, width: 60, hideAlways: true },
+                    { field: 'QualityNo', title: '品质单号', width: 120, sort: true },
+                    { field: 'MoldNo', title: '模具编号', width: 150, sort: false },
+                    { field: 'WorkpieceNo', title: '工件编号', width: 140, sort: false },
+                    { field: 'WorkpieceName', title: '工件名称', width: 130, sort: false },
+                    { field: 'ProcessingProcedure', title: '加工工序', width: 120, sort: false },
+                    { field: 'ResponsibleDepartment', title: '责任部门', width: 120, sort: false, filter: true },
+                    { field: 'PersonLiable', title: '责任人', width: 100, sort: false },
+                    { field: 'QualityInspectionType', title: '质检类型', width: 110, sort: false },
+                    { field: 'TestContent', title: '检测内容', width: 120, sort: false },
+                    { field: 'DetectionResult', title: '检测结果', width: 100, sort: false },
+                    { field: 'Judge', title: '判定人', width: 100, sort: false },
+                    { field: 'ExceptionType', title: '异常类型', width: 160, sort: false },
+                    { field: 'ProcessingResults', title: '处理结果', width: 120, sort: false },
+                ]]
+            });
+            }
+        }
+    })
+</script>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <table class="layui-hide" id="currentTableId2" lay-filter="currentTableFilter"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
