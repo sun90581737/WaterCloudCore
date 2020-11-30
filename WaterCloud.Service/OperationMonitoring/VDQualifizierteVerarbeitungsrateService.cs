@@ -1,18 +1,19 @@
 ﻿using Chloe;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WaterCloud.Domain.Entity.OperationMonitoring;
 
 namespace WaterCloud.Service.OperationMonitoring
 {
-    public class MSDCostRatioService : DataFilterService<MSDCostRatioEntity>, IDenpendency
+    public class VDQualifizierteVerarbeitungsrateService : DataFilterService<VDQualifizierteVerarbeitungsrateEntity>, IDenpendency
     {
-        public MSDCostRatioService(IDbContext context) : base(context)
+        public VDQualifizierteVerarbeitungsrateService(IDbContext context) : base(context)
         {
         }
-        public async Task<List<MSDCostRatioEntity>> GetList()
+        public async Task<List<VDQualifizierteVerarbeitungsrateEntity>> GetList()
         {
             return repository.IQueryable().ToList();
         }
