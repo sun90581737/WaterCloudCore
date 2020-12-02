@@ -1,0 +1,375 @@
+﻿@{
+    ViewBag.Title = " 新模设变详情";
+    Layout = "~/Views/Shared/_Index.cshtml";
+}
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment env
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<style>
+    .layui-date1 {
+        position: absolute;
+        right: 3px;
+        top: 25%;
+        margin-top: -10px;
+        cursor: pointer;
+        font-size: 28px;
+        color: #1aa094;
+    }
+
+    .layui-date2 {
+        position: absolute;
+        right: 3px;
+        top: 25%;
+        margin-top: -10px;
+        cursor: pointer;
+        font-size: 28px;
+        color: #1aa094;
+    }
+
+    .layui-date3 {
+        position: absolute;
+        right: 3px;
+        top: 25%;
+        margin-top: -10px;
+        cursor: pointer;
+        font-size: 28px;
+        color: #1aa094;
+    }
+
+    .layui-card {
+        border: 1px solid #f2f2f2;
+        border-radius: 5px;
+    }
+
+    .icon {
+        margin-right: 10px;
+        color: #1aa094;
+    }
+
+    .icon-cray {
+        color: #ffb800 !important;
+    }
+
+    .icon-blue {
+        color: #1e9fff !important;
+    }
+
+    .icon-tip {
+        color: #ff5722 !important;
+    }
+
+    .layuimini-qiuck-module {
+        text-align: center;
+        margin-top: 10px
+    }
+
+        .layuimini-qiuck-module a i {
+            display: inline-block;
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            border-radius: 2px;
+            font-size: 30px;
+            background-color: #F8F8F8;
+            color: #333;
+            transition: all .3s;
+            -webkit-transition: all .3s;
+        }
+
+        .layuimini-qiuck-module a cite {
+            position: relative;
+            top: 2px;
+            display: block;
+            color: #666;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+    .welcome-module {
+        width: 40%;
+        height: 100px;
+    }
+
+    .panel {
+        background-color: #fff;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+        box-shadow: 0 1px 1px rgba(0,0,0,.05)
+    }
+
+    .panel-body {
+        padding: 30px
+    }
+
+    .panel-title {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: 12px;
+        color: inherit
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .layui-bg-number {
+        background-color: #F8F8F8;
+    }
+
+    .tmp-layui-col-xs4 {
+        width: 12.5%;
+        float: left;
+        position: relative;
+        display: block;
+        box-sizing: border-box
+    }
+</style>
+<script>
+    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element', 'laydate'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            common = layui.common,
+            layer = layui.layer,
+            echarts = layui.echarts,
+            element = layui.element,
+            laydate = layui.laydate;
+        wcLoading.close();
+        $(function () {
+            loadOne();
+            loadTwo();
+            loadThree();
+        });
+        laydate.render({
+            elem: '#test1'
+            , range: true,
+            eventElem: '.layui-date1',
+            trigger: 'click',
+            done: (value) => {
+                //赋值
+                $('#test1').val(value);
+                //执行指定方法
+                loadOne();
+            }
+        });
+        laydate.render({
+            elem: '#test2'
+            , range: true,
+            eventElem: '.layui-date2',
+            trigger: 'click',
+            done: (value) => {
+                //赋值
+                $('#test2').val(value);
+                //执行指定方法
+                loadTwo();
+            }
+        });
+        laydate.render({
+            elem: '#test3'
+            , range: true,
+            eventElem: '.layui-date3',
+            trigger: 'click',
+            done: (value) => {
+                //赋值
+                $('#test3').val(value);
+                //执行指定方法
+                loadThree();
+            }
+        });
+        function loadOne() {
+            common.rendertable({
+                elem: '#currentTableId1',
+                id: 'currentTableId1',
+                url: "/ProductionManage/NewModularDesign/GetGridJson?keyvalue=" + $('#test1').val(),
+                height: 240,
+                toolbar: false,/*隐藏打印*/
+                page: true,/*隐藏分页*/
+                sqlkey: 'id',//数据库主键
+                cols: [[
+                    { field: 'id', title: '', sort: false, hide: false, hideAlways: true, width: 60, align: 'center' },
+                    { field: 'MoldNo', title: '模具编号', width: 180, sort: true },
+                    { field: 'DCSource', title: '设变来源', width: 180, sort: true },
+                    { field: 'DCContent', title: '设变内容', width: 180, sort: true },
+                    {
+                        field: 'DCTime', title: '开始时间', width: 150,
+                        templet: function (d) {
+                            if (d.DCTime) {
+                                return new Date(d.DCTime).Format("yyyy-MM-dd");
+
+                            }
+                        }
+                    },
+                    { field: 'ChangeOrderNo', title: '更改单号', width: 100, sort: false },
+                    { field: 'ChangeDescription', title: '更改内容描述', width: 180 },
+                    { field: 'ReasonForChange', title: '更改原因', width: 180 },
+
+                    { field: 'RelatedTests', title: '相关测试情况', width: 140 },
+                    { field: 'ChangeType', title: '更改类型', width: 160 },
+                    {
+                        field: 'EstimatedTime', title: '预计时间', width: 150,
+                        templet: function (d) {
+                            if (d.EstimatedTime) {
+                                return new Date(d.EstimatedTime).Format("yyyy-MM-dd");
+
+                            }
+                        }
+                    },
+                ]]
+            });
+        }
+        function loadTwo() {
+            common.rendertable({
+                elem: '#currentTableId2',
+                id: 'currentTableId2',
+                url: "/ProductionManage/NewModularDesign/GetGridJsonTwo?keyvalue=" + $('#test2').val(),
+                height: 240,
+                toolbar: false,/*隐藏打印*/
+                page: true,/*隐藏分页*/
+                sqlkey: 'id',//数据库主键
+                cols: [[
+                    { field: 'id', title: '', sort: false, hide: false, hideAlways: true, width: 60, align: 'center' },
+                    { field: 'MoldNo', title: '模具编号', width: 180, sort: true },
+                    { field: 'Customer', title: '客户', width: 150, sort: true },
+                    { field: 'MoldType', title: '模具类型', width: 120, sort: true },
+                    {
+                        field: 'MoldOpeningDate', title: '开模日期', width: 130,
+                        templet: function (d) {
+                            if (d.MoldOpeningDate) {
+                                return new Date(d.MoldOpeningDate).Format("yyyy-MM-dd");
+
+                            }
+                        }
+                    },
+                    {
+                        field: 'MoldTestDate', title: '试模日期', width: 130,
+                        templet: function (d) {
+                            if (d.MoldTestDate) {
+                                return new Date(d.MoldTestDate).Format("yyyy-MM-dd");
+
+                            }
+                        }
+                    },
+                    { field: 'PersonInCharge', title: '负责人', width: 120, sort: false },
+                    { field: 'MachineTonnage', title: '机台吨位', width: 180 },
+                    { field: 'MoldTestTimes', title: '试模次数', width: 160 },
+                    { field: 'FitterLeader', title: '钳工组长', width: 140 },
+                    { field: 'FitterInCharge', title: '负责钳工', width: 130 },
+                    { field: 'IsApproval', title: '模具客户是否承认', width: 160 },
+                ]]
+            });
+        }
+        function loadThree() {
+            common.rendertable({
+                elem: '#currentTableId3',
+                id: 'currentTableId3',
+                url: "/ProductionManage/NewModularDesign/GetGridJsonThree?keyvalue=" + $('#test3').val(),
+                height: 240,
+                toolbar: false,/*隐藏打印*/
+                page: true,/*隐藏分页*/
+                sqlkey: 'id',//数据库主键
+                cols: [[
+                    { field: 'id', title: '', sort: false, hide: false, hideAlways: true, width: 60, align: 'center' },
+                    { field: 'WorkingGroup', title: '工作组', width: 120, sort: true },
+                    { field: 'ProcessName', title: '工序名称', width: 120, sort: true },
+                    { field: 'Operator', title: '作业员', width: 120, sort: true },
+                    { field: 'MoldNo', title: '模具编号', width: 130, sort: false },
+                    { field: 'VersionNumber', title: '版本号', width: 125 },
+                    { field: 'WorkpieceNumber', title: '工件编号', width: 120 },
+                    { field: 'NumberOfWorkpieces', title: '工件数量', width: 100 },
+                    { field: 'PartName', title: '零件名称', width: 130 },
+                    { field: 'ProcessManHour', title: '工艺工时', width: 90 },
+                    { field: 'ActualWorkingHours', title: '实际工时', width: 90 },
+                    { field: 'OutputHours', title: '产出工时', width: 90 },
+                    { field: 'ProcessingEfficiency', title: '加工效率', width: 90 },
+                    { field: 'AssignPersonnel', title: '分配人员', width: 100 },
+                    {
+                        field: 'AllocateTime', title: '分配时间', width: 170,
+                        templet: function (d) {
+                            if (d.AllocateTime) {
+                                return new Date(d.AllocateTime).Format("yyyy-MM-dd hh:mm:ss");
+
+                            }
+                        }
+                    },
+                ]]
+            });
+        }
+    })
+</script>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>设变详细信息
+                        <button type="button" id="funThree" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                        <div class="layui-inline" style="float: right;">
+                            日期：<div class="layui-input-inline">
+                                <input type="text" style="width:220px;" class="layui-input" id="test1" placeholder=" - " readonly="readonly"><i class="layui-icon layui-date1"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="layui-hide" id="currentTableId1" lay-filter="currentTableFilter"></table>
+                </div>
+            </div>
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>版本清单
+                        <button type="button" id="funThree" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                        <div class="layui-inline" style="float: right;">
+                            日期：<div class="layui-input-inline">
+                                <input type="text" style="width:220px;" class="layui-input" id="test2" placeholder=" - " readonly="readonly"><i class="layui-icon layui-date2"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="layui-hide" id="currentTableId2" lay-filter="currentTableFilter"></table>
+                </div>
+            </div>
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>加工成本
+                        <button type="button" id="funThree" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                        <div class="layui-inline" style="float: right;">
+                            日期：<div class="layui-input-inline">
+                                <input type="text" style="width:220px;" class="layui-input" id="test3" placeholder=" - " readonly="readonly"><i class="layui-icon layui-date3"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="layui-hide" id="currentTableId3" lay-filter="currentTableFilter"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
