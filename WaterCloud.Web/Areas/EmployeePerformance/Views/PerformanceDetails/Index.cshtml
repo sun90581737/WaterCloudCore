@@ -1,0 +1,597 @@
+﻿@{
+    ViewBag.Title = "绩效详情";
+    Layout = "~/Views/Shared/_Index.cshtml";
+}
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment env
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<style>
+    .layui-table-cell {
+        height: auto !important;
+        white-space: normal;
+    }
+
+    .layui-date1 {
+        position: absolute;
+        right: 3px;
+        top: 25%;
+        margin-top: -10px;
+        cursor: pointer;
+        font-size: 28px;
+        color: #1aa094;
+    }
+
+    .layui-date2 {
+        position: absolute;
+        right: 3px;
+        top: 25%;
+        margin-top: -10px;
+        cursor: pointer;
+        font-size: 28px;
+        color: #1aa094;
+    }
+
+    .layui-card {
+        border: 1px solid #f2f2f2;
+        border-radius: 5px;
+    }
+
+    .icon {
+        margin-right: 10px;
+        color: #1aa094;
+    }
+
+    .icon-cray {
+        color: #ffb800 !important;
+    }
+
+    .icon-blue {
+        color: #1e9fff !important;
+    }
+
+    .icon-tip {
+        color: #ff5722 !important;
+    }
+
+    .layuimini-qiuck-module {
+        text-align: center;
+        margin-top: 10px
+    }
+
+        .layuimini-qiuck-module a i {
+            display: inline-block;
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            border-radius: 2px;
+            font-size: 30px;
+            background-color: #F8F8F8;
+            color: #333;
+            transition: all .3s;
+            -webkit-transition: all .3s;
+        }
+
+        .layuimini-qiuck-module a cite {
+            position: relative;
+            top: 2px;
+            display: block;
+            color: #666;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+    .welcome-module {
+        width: 40%;
+        height: 100px;
+    }
+
+    .panel {
+        background-color: #fff;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+        box-shadow: 0 1px 1px rgba(0,0,0,.05)
+    }
+
+    .panel-body {
+        padding: 30px
+    }
+
+    .panel-title {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: 12px;
+        color: inherit
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .label {
+        display: inline;
+        padding: .2em .6em .3em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: .25em;
+        margin-top: .3em;
+    }
+
+    .layui-bg-number {
+        background-color: #F8F8F8;
+    }
+
+    .tmp-layui-col-xs4 {
+        width: 12.5%;
+        float: left;
+        position: relative;
+        display: block;
+        box-sizing: border-box
+    }
+</style>
+
+<script>
+    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element', 'laydate'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            common = layui.common,
+            layer = layui.layer,
+            echarts = layui.echarts,
+            element = layui.element,
+            laydate = layui.laydate;
+        wcLoading.close();
+        $(function () {
+            loadOne();
+            loadTwo();
+        });
+        laydate.render({
+            elem: '#test1',
+            eventElem: '.layui-date1',
+            type: 'month',
+            trigger: 'click',
+            done: (value) => {
+                //赋值
+                $('#test1').val(value);
+                //执行指定方法
+                loadOne();
+            }
+        });
+        laydate.render({
+            elem: '#test2',
+            eventElem: '.layui-date2',
+            type: 'month',
+            trigger: 'click',
+            done: (value) => {
+                //赋值
+                $('#test2').val(value);
+                //执行指定方法
+                loadTwo();
+            }
+        });
+        form.on('select', function (data) {
+            loadOne();
+        });
+        function loadOne() {
+            var listDeviceType = new Array();
+            var listDeviceName = new Array();
+            var listAll = new Array();
+            var keyValue = $('#test1').val();
+            var keyVue = $('#Type_id').val();
+            $.ajax({
+                url: "/EmployeePerformance/PerformanceDetails/GetPDMonthlyPerformanceComparison",
+                data: { keyValue: keyValue, keyVue: keyVue },
+                dataType: "json",
+                async: false,
+                success: function (da) {
+                    $(da).each(function (index, item) {
+                        listDeviceType.push(item.DeviceType);
+                        listDeviceName.push(item.DeviceName);
+                        listAll.push(item);
+                    })
+                }
+            })
+
+            $.unique(listDeviceType);
+            $.unique(listDeviceName.sort());
+
+            var series = [];
+            $.each(listDeviceName, function (index, value) {
+                var tempName = new Array();
+                var tempArry = new Array();
+                $.each(listAll, function (index1, value1) {
+                    if (value == value1.DeviceName) {
+                        tempName = value1.DeviceName;
+                        tempArry.push(value1.Number);
+                    }
+                });
+                series.push({
+                    name: tempName,
+                    type: 'bar',
+                    barWidth: '15%',
+                    barGap: '80%',
+                    data: tempArry,
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true, //开启显示
+                                position: 'top', //在上方显示
+                                textStyle: { //数值样式
+                                    color: 'red',
+                                    fontSize: 12
+                                },
+                                formatter: '{c}%',
+                            },
+                            //color: function (params) {
+                            //    if (params.value <= 40) {
+                            //        return "#ff6239";
+                            //    } else if (params.value > 40) {
+                            //        return "#f3961d";
+                            //    }
+                            //    return "#febf37";
+                            //}
+                        }
+                    },
+                })
+            });
+
+            var myChart = echarts.init(document.getElementById('chart1'));
+
+            var option = {
+                color: ['#f29400', '#6d48e6'],
+                grid: {
+                    top: '10%',
+                    left: '0%',
+                    right: '0',
+                    bottom: '0%',
+                    containLabel: true
+                },
+                //legend: {
+                //    itemGap: 30,
+                //    data: listDeviceName,
+                //    itemWidth: 10,  //图例标记的图形宽度
+                //    itemHeight: 10, //图例标记的图形高度
+                //    textStyle: {    //图例文字的样式
+                //        color: '#808080',  //文字颜色
+                //        fontSize: 12    //文字大小
+                //    }
+                //},
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                        type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+                    },
+                    formatter: function (params) {
+                        var relVal = params[0].name;
+                        for (var i = 0, l = params.length; i < l; i++) {
+                            relVal += '<br/>' + params[i].marker + params[i].seriesName + ' : ' + params[i].value + "%";
+                        }
+                        return relVal;
+                    }
+                },
+                xAxis: [
+                    {
+                        //type: 'category',
+                        //axisTick: { show: false },
+                        //axisLabel: {
+                        //    //X轴刻度配置
+                        //    interval: 0 //0：表示全部显示不间隔；auto:表示自动根据刻度个数和宽度自动设置间隔个数
+                        //    , rotate: 0
+                        //},
+                        //data: listDeviceType,
+
+                        type: 'category',
+                        data: listDeviceType,
+                        axisLine: {
+                            show: false,
+                            lineStyle: {
+                                color: '#808080',
+
+                            }
+                        },
+                        axisLabel: {
+                            // interval: 0,
+                            // rotate: 40,
+                            textStyle: {
+                                fontSize: '11'
+                            }
+                        },
+                        axisTick: { //y轴刻度线
+                            show: false
+                        },
+
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value',
+                        splitNumber: 4,
+                        axisLine: {
+                            show: false,
+                            lineStyle: {
+                                color: '#f2961d'
+                            }
+                        },
+                        splitLine: {
+                            show: true,
+                            lineStyle: {
+                                //color: "#57617B"
+                                type: 'dashed'
+                            }
+                        },
+                        axisTick: { //y轴刻度线
+                            show: true
+                        },
+                        axisLabel: {
+                            formatter: function (value) {
+                                return value + "%";
+                            },
+                            show: true,
+                            textStyle: {
+                                color: '#f2961d'
+                            }
+                        },
+                    }
+                ],
+                series: series
+            };
+            myChart.setOption(option, true);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function loadTwo() {
+            var listDeviceType = new Array();
+            var listDeviceName = new Array();
+            var listAll = new Array();
+            var keyValue = $('#test2').val();
+            $.ajax({
+                url: "/EmployeePerformance/PerformanceDetails/GetPDMonthlyPerformance",
+                data: { keyValue: keyValue },
+                dataType: "json",
+                async: false,
+                success: function (da) {
+                    $(da).each(function (index, item) {
+                        listDeviceType.push(item.DeviceType);
+                        listDeviceName.push(item.DeviceName);
+                        listAll.push(item);
+                    })
+                }
+            })
+
+            $.unique(listDeviceType);
+            $.unique(listDeviceName.sort());
+
+            var series = [];
+            $.each(listDeviceName, function (index, value) {
+                var tempName = new Array();
+                var tempArry = new Array();
+                $.each(listAll, function (index1, value1) {
+                    if (value == value1.DeviceName) {
+                        tempName = value1.DeviceName;
+                        tempArry.push(value1.Number);
+                    }
+                });
+                series.push({
+                    name: tempName,
+                    type: 'bar',
+                    barWidth: '10%',
+                    barGap: '80%',
+                    data: tempArry,
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: false, //开启显示
+                                position: 'top', //在上方显示
+                                textStyle: { //数值样式
+                                    color: 'red',
+                                    fontSize: 12
+                                },
+                                formatter: '{c}%',
+                            }
+                        }
+                    },
+                })
+            });
+
+            var myChart = echarts.init(document.getElementById('chart2'));
+
+            var option = {
+                color: ['#ffbe6a', '#ff613a', '#6d48e6'],
+                grid: {
+                    top: '7%',
+                    left: '0%',
+                    right: '0',
+                    bottom: '0%',
+                    containLabel: true
+                },
+                legend: {
+                    top: -2,
+                    itemGap: 30,
+                    data: listDeviceName,
+                    icon: "circle",
+                    itemWidth: 10,  //图例标记的图形宽度
+                    itemHeight: 10, //图例标记的图形高度
+                    textStyle: {    //图例文字的样式
+                        color: '#808080',  //文字颜色
+                        fontSize: 12    //文字大小
+                    }
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                        type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+                    },
+                    formatter: function (params) {
+                        var relVal = params[0].name;
+                        for (var i = 0, l = params.length; i < l; i++) {
+                            relVal += '<br/>' + params[i].marker + params[i].seriesName + ' : ' + params[i].value + "%";
+                        }
+                        return relVal;
+                    }
+                },
+                xAxis: [
+                    {
+                        //type: 'category',
+                        //axisTick: { show: false },
+                        //axisLabel: {
+                        //    //X轴刻度配置
+                        //    interval: 0 //0：表示全部显示不间隔；auto:表示自动根据刻度个数和宽度自动设置间隔个数
+                        //    , rotate: 0
+                        //},
+                        //data: listDeviceType,
+
+                        type: 'category',
+                        data: listDeviceType,
+                        axisLine: {
+                            show: false,
+                            lineStyle: {
+                                color: '#808080',
+
+                            }
+                        },
+                        axisLabel: {
+                            // interval: 0,
+                            // rotate: 40,
+                            textStyle: {
+                                fontSize: '11'
+                            }
+                        },
+                        axisTick: { //y轴刻度线
+                            show: false
+                        },
+
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value',
+                        splitNumber: 4,
+                        axisLine: {
+                            show: false,
+                            lineStyle: {
+                                color: '#f2961d'
+                            }
+                        },
+                        splitLine: {
+                            show: true,
+                            lineStyle: {
+                                //color: "#57617B"
+                                type: 'dashed'
+                            }
+                        },
+                        axisTick: { //y轴刻度线
+                            show: true
+                        },
+                        axisLabel: {
+                            formatter: function (value) {
+                                return value + "%";
+                            },
+                            show: true,
+                            textStyle: {
+                                color: '#f2961d'
+                            }
+                        },
+                    }
+                ],
+                series: series
+            };
+            myChart.setOption(option, true);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+    })
+</script>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>月度绩效横向对比
+                        <div class="layui-form" style="margin: -40px; margin-left: 74%; margin-right: 17%;">
+                            <select id="Type_id" name="Type_id" lay-filter="brickType">
+                                <option value=""></option>
+                                <option value="人事部">人事部</option>
+                                <option value="CAM">CAM组</option>
+                                <option value="CNC">CNC组</option>
+                                <option value="热处理">热处理</option>
+                                <option value="EDM">EDM组</option>
+                                <option value="磨床组">磨床组</option>
+                                <option value="钳工组">钳工组</option>
+                                <option value="线割组">线割组</option>
+                                <option value="业务部">业务部</option>
+                                <option value="设计部">设计部</option>
+                                <option value="仓库">仓库</option>
+                                <option value="总经办">总经办</option>
+                                <option value="采购部">采购部</option>
+                                <option value="仓管">仓管</option>
+                                <option value="总务">总务</option>
+                                <option value="注塑部">注塑部</option>
+                                <option value="工程部">工程部</option>
+                                <option value="财务部">财务部</option>
+                                <option value="外协">外协</option>
+                                <option value="打标组">打标组</option>
+                                <option value="试模组">试模组</option>
+                                <option value="生产管理">生产管理</option>
+                                <option value="工艺设计">工艺设计</option>
+                                <option value="品管部">品管部</option>
+                                <option value="CNC供应商">CNC供应商</option>
+                                <option value="放电供应商">放电供应商</option>
+                                <option value="快丝">快丝</option>
+                                <option value="刻字">刻字</option>
+                            </select>
+                        </div>
+                        <button type="button" id="funOne" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                        <div class="layui-inline" style="float: right;">
+                            <div class="layui-input-inline">
+                                <input type="text" style="width:150px;" class="layui-input" id="test1" placeholder=" - " readonly="readonly"><i class="layui-icon layui-date1"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card-body layui-text">
+                        <div id="chart1" style="height:330px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="fa fa-fire icon"></i>月度绩效成绩
+                        <button type="button" id="funTwo" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
+                        <div class="layui-inline" style="float: right;">
+                            <div class="layui-input-inline">
+                                <input type="text" style="width:150px;" class="layui-input" id="test2" placeholder=" - " readonly="readonly"><i class="layui-icon layui-date2"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-card-body layui-text">
+                        <div id="chart2" style="height:330px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
