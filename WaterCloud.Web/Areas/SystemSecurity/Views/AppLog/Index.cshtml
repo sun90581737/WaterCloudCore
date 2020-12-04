@@ -17,9 +17,9 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
 
-            <fieldset class="table-search-fieldset">
+            <fieldset class="table-search-fieldset layui-hide" id="searchField">
                 @*<legend>搜索信息</legend>*@
-                <div style="margin: 10px 10px 10px 10px">
+                <div>
                     <form class="layui-form layui-form-pane" action="">
                         <div class="layui-form-item">
                             <div class="layui-inline">
@@ -50,17 +50,18 @@
         </div>
     </div>
     <script>
-        layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer"], function () {
+        layui.use(['jquery', 'form', 'table', 'common', 'layer', 'optimizeSelectOption', 'commonTable'], function () {
             var $ = layui.jquery,
                 form = layui.form,
                 table = layui.table,
                 layer = layui.layer,
+                commonTable = layui.commonTable,
                 common = layui.common;
             //加载数据
             wcLoading.close();
             //权限控制(js是值传递)
             toolbarDemo.innerHTML = common.authorizeButtonNew(toolbarDemo.innerHTML);
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId',
                 id: 'currentTableId',
                 url: '/SystemSecurity/AppLog/GetGridJson',
@@ -88,7 +89,7 @@
             });
             // 监听搜索操作
             form.on('submit(data-search-btn)', function (data) {
-                common.reloadtable({
+                commonTable.reloadtable({
                     elem: 'currentTableId',
                     curr: 1,
                     where: { timetype: data.field.time_horizon }
@@ -110,6 +111,13 @@
                         return false;
                     }
                     var html = "";
+                    //高度宽度超出就适应屏幕
+                    var _width = document.body.clientWidth >500 ? '500px' : document.body.clientWidth - 20 + 'px';
+                    var _height = document.body.clientHeight > 500 ? '500px' : document.body.clientHeight - 20 + 'px';
+                    if (common.currentWindow()) {
+                        _width = common.currentWindow().document.body.clientWidth > 500 ? '500px' : common.currentWindow().document.body.clientWidth - 20 + 'px';
+                        _height = common.currentWindow().document.body.clientHeight > 500 ? '500px' : common.currentWindow().document.body.clientHeight - 20 + 'px';
+                    }
                     common.ajax({
                         url: "/SystemSecurity/AppLog/GetFormJson",
                         dataType: "json",
@@ -123,7 +131,7 @@
                                 title: '查看日志',
                                 isOutAnim: true,//关闭动画
                                 fix: false,
-                                area: ["500px", "500px"],
+                                area: [_width, _height],
                                 content: html,
                                 success: function (layero, index) {
                                     $(layero).addClass("scroll-wrapper");//苹果 iframe 滚动条失效解决方式
@@ -131,6 +139,14 @@
                             });
                         }
                     });
+                }
+                else if (obj.event === 'TABLE_SEARCH') {
+                    var _that = $("#searchField");
+                    if (_that.hasClass("layui-hide")) {
+                        _that.removeClass('layui-hide');
+                    } else {
+                        _that.addClass('layui-hide');
+                    }
                 }
                 return false;
             });

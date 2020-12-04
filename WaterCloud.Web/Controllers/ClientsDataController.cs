@@ -13,11 +13,8 @@ using System.Text;
 using System;
 using WaterCloud.Domain;
 using WaterCloud.Service.SystemSecurity;
-using Serenity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using CSRedis;
-using WaterCloud.Code.Model;
 using WaterCloud.Service.SystemOrganize;
 using WaterCloud.Domain.SystemOrganize;
 using WaterCloud.Service.InfoManage;
@@ -77,7 +74,7 @@ namespace WaterCloud.Web.Controllers
         {
             try
             {
-                if (_setService.currentuser.UserCode != Define.SYSTEM_USERNAME)
+                if (_setService.currentuser.UserId != GlobalContext.SystemConfig.SysemUserId)
                 {
                     return Content(new { code = 0, msg = "此功能需要管理员权限" }.ToJson());
                 }
@@ -160,6 +157,10 @@ namespace WaterCloud.Web.Controllers
         {
             var currentuser = _userService.currentuser;
             var userId = currentuser.UserId;
+            if (currentuser.UserId == null)
+            {
+                return Content("");
+            }
             Dictionary<string, string > data =await CacheHelper.Get<Dictionary<string, string>>(initcacheKey + "list");
             if (data == null)
             {
@@ -200,6 +201,10 @@ namespace WaterCloud.Web.Controllers
         public async Task<ActionResult> GetUserCode()
         {
             var currentuser = _userService.currentuser;
+            if (currentuser.UserId==null)
+            {
+                return Content("");
+            }
             var data =await _userService.GetForm(currentuser.UserId);
             var msglist= await _msgService.GetUnReadListJson();
             data.MsgCout = msglist.Count();
@@ -442,6 +447,10 @@ namespace WaterCloud.Web.Controllers
             var rolelist = roleId.Split(',');
             Dictionary<string, Dictionary<string, List<ModuleButtonEntity>>> dictionary = await CacheHelper.Get<Dictionary<string, Dictionary<string, List<ModuleButtonEntity>>>>(initcacheKey + "modulebutton_list");
             var dictionarylist = new Dictionary<string, List<ModuleButtonEntity>>();
+            if (currentuser.UserId == null)
+            {
+                return dictionarylist;
+            }
             foreach (var roles in rolelist)
             {
                 var dictionarytemp = new Dictionary<string, List<ModuleButtonEntity>>();
@@ -497,6 +506,10 @@ namespace WaterCloud.Web.Controllers
             var rolelist = roleId.Split(',');
             Dictionary<string, Dictionary<string, List<ModuleFieldsEntity>>> dictionary = await CacheHelper.Get<Dictionary<string, Dictionary<string, List<ModuleFieldsEntity>>>>(initcacheKey + "modulefields_list");
             var dictionarylist = new Dictionary<string, List<ModuleFieldsEntity>>();
+            if (currentuser.UserId == null)
+            {
+                return dictionarylist;
+            }
             foreach (var roles in rolelist)
             {
                 var dictionarytemp = new Dictionary<string, List<ModuleFieldsEntity>>();

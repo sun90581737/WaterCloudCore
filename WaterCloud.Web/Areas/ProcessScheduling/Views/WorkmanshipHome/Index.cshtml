@@ -124,24 +124,23 @@
     }
 </style>
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element'], function () {
+    layui.use(['jquery', 'form', 'table', 'common', 'optimizeSelectOption', "echarts", 'commonTable'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table,
-            common = layui.common,
-            layer = layui.layer,
+            commonTable = layui.commonTable,
             echarts = layui.echarts,
-            element = layui.element;;
+            common = layui.common;
         wcLoading.close();
         $(function () {
             gridList();
         });
         function gridList() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId',
                 id: 'currentTableId',
                 url: "/ProcessScheduling/WorkmanshipHome/GetGridJson",
-                height: 570,
+                height: 750,
                 toolbar: true,/*隐藏打印*/
                 page: true,/*隐藏分页*/
                 sqlkey: 'id',//数据库主键

@@ -133,12 +133,12 @@
     }
 </style>
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element', 'laydate'], function () {
+    layui.use(['jquery', 'form', 'table', 'common', 'optimizeSelectOption', "echarts", 'commonTable', 'element', 'laydate'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table,
             common = layui.common,
-            layer = layui.layer,
+            commonTable = layui.commonTable,
             echarts = layui.echarts,
             element = layui.element,
             laydate = layui.laydate;
@@ -282,7 +282,7 @@
             });
         }
         function loadTwo() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId',
                 id: 'currentTableId',
                 url: "/QualityOptimization/QualityEngineerHome/GetGridJson?keyvalue="+$('#test1').val(),
@@ -292,13 +292,13 @@
                 sqlkey: 'id',//数据库主键
                 cols: [[
                     { field: 'id', title: '序号', sort: true, hide: true, width: 83, hideAlways: true },
-                    { field: 'MouldNo', title: '模具单号', width: 100, sort: true },
+                    { field: 'MouldNo', title: '模具单号', width: 110, sort: true },
                     { field: 'ModuleNumber', title: '模号', width: 100, sort: true },
                     { field: 'PartNumber', title: '工件号', width: 100, sort: true },
-                    { field: 'AbnormalJobNumber', title: '异常工号', width: 100, sort: true },
-                    { field: 'TreatmentMethod', title: '处理方式', width: 100, sort: true, filter: true },
+                    { field: 'AbnormalJobNumber', title: '异常工号', width: 110, sort: true },
+                    { field: 'TreatmentMethod', title: '处理方式', width: 110, sort: true, filter: true },
                     {
-                        field: 'AcctDate', title: '处理时间', width: 100,
+                        field: 'AcctDate', title: '处理时间', width: 110,
                         templet: function (d) {
                             if (d.AcctDate) {
                                 return new Date(d.AcctDate).Format("yyyy-MM-dd");
@@ -306,7 +306,9 @@
                             }
                         }
                     },
-                ]]
+                ]], filter: {
+                    bottom: false
+                }
             });
         }
         function loadThree() {
@@ -565,7 +567,7 @@
             });
         }
         function loadFive() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId1',
                 id: 'currentTableId1',
                 url: "/QualityOptimization/QualityEngineerHome/GetGridJsonOne",
@@ -575,13 +577,15 @@
                 sqlkey: 'id',//数据库主键
                 cols: [[
                     { field: 'id', title: '序号', sort: true, hide: false, width:83, hideAlways: true },
-                    { field: 'AbnormalOrderNumber', title: '异常单号', width: 200, sort: true },
-                    { field: 'ModuleNumber', title: '模号', width: 200, sort: true },
-                    { field: 'VersionNumber', title: '版本号', width: 200, sort: true },
-                    { field: 'Workpiece', title: '工件', width: 200, sort: true },
-                    { field: 'WorkingProcedure', title: '工序', width: 200, sort: true, filter: true },
-                    { field: 'AbnormalCauses', title: '异常原因', width: 200, sort: true },
-                ]]
+                    { field: 'AbnormalOrderNumber', title: '异常单号', width: 250, sort: true },
+                    { field: 'ModuleNumber', title: '模号', width: 250, sort: true },
+                    { field: 'VersionNumber', title: '版本号', width: 250, sort: true },
+                    { field: 'Workpiece', title: '工件', width: 250, sort: true },
+                    { field: 'WorkingProcedure', title: '工序', width: 250, sort: true, filter: true },
+                    { field: 'AbnormalCauses', title: '异常原因', width: 320, sort: true },
+                ]], filter: {
+                    bottom: false
+                }
             });
         }
     })

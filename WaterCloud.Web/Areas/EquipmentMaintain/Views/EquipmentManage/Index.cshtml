@@ -144,12 +144,12 @@
     }
 </style>
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element', 'laydate'], function () {
+    layui.use(['jquery', 'form', 'table', 'common', 'optimizeSelectOption', "echarts", 'commonTable', 'element', 'laydate'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table,
             common = layui.common,
-            layer = layui.layer,
+            commonTable = layui.commonTable,
             echarts = layui.echarts,
             element = layui.element,
             laydate = layui.laydate;
@@ -287,7 +287,7 @@
             });
         }
         function loadTwo() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId',
                 id: 'currentTableId',
                 url: "/EquipmentMaintain/EquipmentManage/GetGridJson",
@@ -297,13 +297,13 @@
                 sqlkey: 'id',//数据库主键
                 cols: [[
                     { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
-                    { field: 'Number', title: '编号', width: 150, sort: true },
-                    { field: 'Name', title: '名称', width: 150, sort: true },
-                    { field: 'Brand', title: '品牌', width: 150, sort: true },
-                    { field: 'Department', title: '部门', width: 150, sort: true, filter: true },
-                    { field: 'State', title: '状态', width: 140, sort: true, filter: true },
+                    { field: 'Number', title: '编号', width: 200, sort: true },
+                    { field: 'Name', title: '名称', width: 200, sort: true },
+                    { field: 'Brand', title: '品牌', width: 200, sort: true },
+                    { field: 'Department', title: '部门', width: 200, sort: true, filter: true },
+                    { field: 'State', title: '状态', width: 150, sort: true, filter: true },
                     {
-                        field: 'DateArrival', title: '入厂日期', width: 105,
+                        field: 'DateArrival', title: '入厂日期', width: 150,
                         templet: function (d) {
                             if (d.DateArrival) {
                                 return new Date(d.DateArrival).Format("yyyy-MM-dd");
@@ -311,12 +311,14 @@
                             }
                         }
                     },
-                ]]
+                ]], filter: {
+                    bottom: false
+                }
             });
             // 监听搜索操作
             form.on('submit(data-search-btn1)', function (data) {
                 //执行搜索重载
-                common.reloadtable({
+                commonTable.reloadtable({
                     elem: 'currentTableId',
                     curr: 1,
                     where: { keyword: $('#txt_keyword').val() }
@@ -326,7 +328,7 @@
             });
         }
         function loadThree() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId1',
                 id: 'currentTableId1',
                 url: "/EquipmentMaintain/EquipmentManage/GetDataEMMaintainPlan",
@@ -336,8 +338,8 @@
                 sqlkey: 'id',//数据库主键
                 cols: [[
                     { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
-                    { field: 'EquipmentNumber', title: '设备编号', width: 100, sort: true },
-                    { field: 'EquipmentName', title: '设备名称', width: 100, sort: true },
+                    { field: 'EquipmentNumber', title: '设备编号', width: 110, sort: true },
+                    { field: 'EquipmentName', title: '设备名称', width: 110, sort: true },
                     { field: 'Department', title: '部门', width: 100, sort: true, filter: true },
                     { field: 'MaintainPlan', title: '保养计划', width: 100, sort: true },
                     { field: 'MaintainType', title: '保养类型', width: 100, sort: true },
@@ -360,12 +362,14 @@
                         }
                     },
                     { field: 'Remarks', title: '保养备注', width: 100, sort: true, filter: true },
-                ]]
+                ]], filter: {
+                    bottom: false
+                }
             });
             // 监听搜索操作
             form.on('submit(data-search-btn2)', function (data) {
                 //执行搜索重载
-                common.reloadtable({
+                commonTable.reloadtable({
                     elem: 'currentTableId1',
                     curr: 1,
                     where: { keyvalue: $('#test1').val(), keyword: $('#txt_keyword1').val() }
@@ -375,7 +379,7 @@
             });
         }
         function loadFour() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId2',
                 id: 'currentTableId2',
                 url: "/EquipmentMaintain/EquipmentManage/GetDataEMMaintainHistory",
@@ -385,8 +389,8 @@
                 sqlkey: 'id',//数据库主键
                 cols: [[
                     { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
-                    { field: 'EquipmentNumber', title: '设备编号', width: 100, sort: true },
-                    { field: 'EquipmentName', title: '设备名称', width: 100, sort: true },
+                    { field: 'EquipmentNumber', title: '设备编号', width: 110, sort: true },
+                    { field: 'EquipmentName', title: '设备名称', width: 110, sort: true },
                     { field: 'Department', title: '部门', width: 100, sort: true, filter: true },
                     { field: 'MaintainPlan', title: '保养计划', width: 100, sort: true },
                     { field: 'MaintainType', title: '保养类型', width: 100, sort: true },
@@ -401,12 +405,14 @@
                         }
                     },
                     { field: 'MaintainRecord', title: '保养记录', width: 100, sort: true, filter: true },
-                ]]
+                ]], filter: {
+                    bottom: false
+                }
             });
             // 监听搜索操作
             form.on('submit(data-search-btn3)', function (data) {
                 //执行搜索重载
-                common.reloadtable({
+                commonTable.reloadtable({
                     elem: 'currentTableId2',
                     curr: 1,
                     where: { keyvalue: $('#test2').val(), keyword: $('#txt_keyword2').val() }
@@ -785,7 +791,7 @@
             });
         }
         function loadEight() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId3',
                 id: 'currentTableId3',
                 url: '/EquipmentMaintain/EquipmentManage/GetGridJsonOne',
@@ -795,18 +801,20 @@
                 sqlkey: 'id',//数据库主键
                 cols: [[
                     { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
-                    { field: 'RepairOrderNo', title: '报修单号', width: 120, sort: true },
-                    { field: 'RepairDepartment', title: '报修部门', width: 120, sort: true },
-                    { field: 'RepairEquipment', title: '报修设备', width: 120, sort: true },
-                    { field: 'RepairPersonnel', title: '报修人员', width: 100, sort: true },
-                    { field: 'FaultDescription', title: '故障描述', width: 120, sort: true },
-                    { field: 'ServiceNumber', title: '维修编号', width: 130, sort: true },
-                    { field: 'ServiceType', title: '维修类型', width: 120, sort: true, filter: true },
-                    { field: 'Supplier', title: '维修人员/外修供应商', width: 120, sort: true },
-                    { field: 'FaultCategory', title: '故障类别', width: 120, sort: true, filter: true },
-                    { field: 'MaintainPrice', title: '外修价格', width: 100, sort: true },
-                    { field: 'State', title: '状态', width: 120, sort: true, filter: true },
-                ]]
+                    { field: 'RepairOrderNo', title: '报修单号', width: 150, sort: true },
+                    { field: 'RepairDepartment', title: '报修部门', width: 150, sort: true },
+                    { field: 'RepairEquipment', title: '报修设备', width: 150, sort: true },
+                    { field: 'RepairPersonnel', title: '报修人员', width: 150, sort: true },
+                    { field: 'FaultDescription', title: '故障描述', width: 150, sort: true },
+                    { field: 'ServiceNumber', title: '维修编号', width: 150, sort: true },
+                    { field: 'ServiceType', title: '维修类型', width: 150, sort: true, filter: true },
+                    { field: 'Supplier', title: '维修人员/外修供应商', width: 170, sort: false },
+                    { field: 'FaultCategory', title: '故障类别', width: 150, sort: true, filter: true },
+                    { field: 'MaintainPrice', title: '外修价格', width: 150, sort: true },
+                    { field: 'State', title: '状态', width: 150, sort: true, filter: true },
+                ]], filter: {
+                    bottom: false
+                }
             });
         }
     })

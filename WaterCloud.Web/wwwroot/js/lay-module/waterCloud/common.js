@@ -4,90 +4,35 @@
  * version:1.6
  * description:watercloud 主体框架扩展
  */
-layui.define(["jquery", "layer", 'form', 'table', 'tablePlug','treeTable', 'xmSelect', 'miniTab'], function (exports) {
+layui.define(["jquery", "layer", 'table', 'treeTable', 'xmSelect', 'miniTab'], function (exports) {
     var $ = layui.jquery,
-        form = layui.form,
         miniTab = layui.miniTab,
         layer = layui.layer,
         treeTable = layui.treeTable,
-        //tablePlug不可与其他table插件共用
-        tablePlug = layui.tablePlug,
-        xmSelect = layui.xmSelect,
-        table = layui.table;
+        xmSelect = layui.xmSelect;
 
     var obj = {
-        //table渲染封装里面有字段权限
-        rendertable: function (options) {
-            var defaults = {
-                elem: '#currentTableId',//主键
-                toolbar: '#toolbarDemo',//工具栏
-                defaultToolbar: ['filter', 'exports', 'print'],//默认工具栏
-                method: 'get',//请求方法
-                cellMinWidth: 100,//最小宽度
-                limit: 10,//每页数据 默认
-                limits: [10, 20, 30, 40, 50],
-                id:'currentTableId',
-                height: 'full-130',
-                loading: false,
-                sqlkey: 'F_Id',//数据库主键
-                page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
-                    layout: ['skip', 'prev', 'page', 'next', 'limit', 'count'] //自定义分页布局
-                    ,curr: 1 //设定初始在第 1 页
-                    , groups: 3 //只显示 1 个连续页码
-                    , first: false //不显示首页
-                    , last: false //不显示尾页
-                },
-                smartReloadModel: true, // 是否开启智能reload的模式 tablePlug
-                request: {
-                    pageName: 'page' //页码的参数名称，默认：page
-                    , limitName: 'rows' //每页数据量的参数名，默认：limit
-                },
-                parseData: function (res) { //res 即为原始返回的数据
-                    return {
-                        "code": res.state, //解析接口状态
-                        "msg": res.message, //解析提示文本
-                        "count": res.count, //解析数据长度
-                        "data": res.data //解析数据列表
-                    };
-                }
-            };
-            var doneCallback = options.done;
-            var options = $.extend(defaults, options);
-            //ie缓存问题
-            options.url = obj.urlAddTime(options.url);
-            //字段权限
-            options.cols = obj.tableAuthorizeFields(options.cols, options.sqlkey);
-            options.done = function (res, curr, count) {
-                //关闭加载
-                //layer.closeAll('loading');
-                //固定列引发的问题
-                //table.resize(options.id);
-                //obj.tableResize(options.id);
-                if (doneCallback) {
-                    doneCallback(res, curr, count);
-                }
-            };
-            return table.render(options);
-        },
         //tabletree渲染封装里面有字段权限
         rendertreetable: function (options) {
             //样式不协调，先不加
             var defaults = {
                 elem: '#currentTableId',//主键
                 toolbar: '#toolbarDemo',//工具栏
+                defaultToolbar: ['filter', 'exports', 'print'],//默认工具栏
+                search: true,//搜索按钮
                 loading: false,
                 tree: {
-                    iconIndex: 1,           // 折叠图标显示在第几列  多选等记得修改
+                    iconIndex: 0,           // 折叠图标显示在第几列  多选等记得修改
                     isPidData: true,        // 是否是id、pid形式数据
                     idName: 'F_Id',  // id字段名称
                     pidName: 'F_ParentId',     // pid字段名称
                     arrowType: 'arrow2',
                     getIcon: 'ew-tree-icon-style2',
                 },
-                height: 'full-130',
+                height: 'full-60',
                 method: 'get',//请求方法
-                sqlkey: 'F_Id',//数据库主键
-                cellMinWidth: 60,//最小宽度     
+                cellMinWidth: 60,//最小宽度
+                authorizeFields: true, // 字段权限开关
                 parseData: function (res) { //res 即为原始返回的数据
                     return {
                         "code": res.state, //解析接口状态
@@ -99,10 +44,28 @@ layui.define(["jquery", "layer", 'form', 'table', 'tablePlug','treeTable', 'xmSe
             };
             var doneCallback = options.done;
             var options = $.extend(defaults, options);
+            if (document.body.clientWidth < 500 && !!options.defaultToolbar) {
+                for (var i = 0; i < options.defaultToolbar.length; i++) {
+                    if (options.defaultToolbar[i] == "print") {
+                        options.defaultToolbar.splice(i, 1);
+                    }
+                }
+            }
+            //搜索框按钮
+            if (options.search) {
+                options.defaultToolbar = !options.defaultToolbar? [] : options.defaultToolbar;
+                options.defaultToolbar.push({
+                    title: '搜索',
+                    layEvent: 'TABLE_SEARCH',
+                    icon: 'layui-icon-search'
+                });
+            }   
             //ie缓存问题
             options.url = obj.urlAddTime(options.url);
             //字段权限
-            options.cols = obj.tableAuthorizeFields(options.cols, options.sqlkey);
+            if (options.authorizeFields) {
+                options.cols = obj.tableAuthorizeFields(options.cols);
+            }
             options.done = function (res, curr, count) {
                 //关闭加载
                 //layer.closeAll('loading');
@@ -111,39 +74,6 @@ layui.define(["jquery", "layer", 'form', 'table', 'tablePlug','treeTable', 'xmSe
                 }
             };
             return treeTable.render(options);
-        },
-        //table刷新
-        reloadtable: function (options) {
-            var loading = layer.load(0, { shade: false });
-            var defaults = {
-                elem: 'currentTableId',//主键
-                page: true,//分页参数
-                curr: 1,//当前页
-                where: {}
-            };
-            var options = $.extend(defaults, options);
-            options.where.time = new Date().Format("yyyy-MM-dd hh:mm:ss");
-            if (options.page) {
-                //执行搜索重载
-                table.reload(options.elem, {
-                    page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
-                        layout: ['skip', 'prev', 'page', 'next', 'limit', 'count'] //自定义分页布局
-                        , groups: 3 //只显示 1 个连续页码
-                        , first: false //不显示首页
-                        , last: false, //不显示尾页
-                        curr: options.curr
-                    }
-                    , where: options.where
-                }, 'data');
-            }
-            else {
-                //执行搜索重载
-                table.reload(options.elem, {
-                    where: options.where
-                }, 'data');
-            }
-            //关闭加载
-            layer.closeAll('loading');
         },
         //treetable刷新
         reloadtreetable: function (tree, options) {
@@ -312,7 +242,7 @@ layui.define(["jquery", "layer", 'form', 'table', 'tablePlug','treeTable', 'xmSe
             options.url = obj.urlAddTime(options.url);
             window.setTimeout(function () {
                 if ($('[name=__RequestVerificationToken]').length > 0) {
-                    options.param["__RequestVerificationToken"] = $('[name=__RequestVerificationToken]').val();
+                    var csrfToken = $('[name=__RequestVerificationToken]').val();
                 }
                 var index = parent.layer.load(0, {
                     shade: [0.5, '#000'], //0.1透明度的背景
@@ -322,6 +252,9 @@ layui.define(["jquery", "layer", 'form', 'table', 'tablePlug','treeTable', 'xmSe
                     data: options.param,
                     type: "post",
                     dataType: "json",
+                    headers: {
+                        "X-CSRF-TOKEN": csrfToken
+                    },
                     success: function (data) {
                         if (data.state == "success") {
                             options.success(data);
@@ -400,7 +333,7 @@ layui.define(["jquery", "layer", 'form', 'table', 'tablePlug','treeTable', 'xmSe
             //ie缓存问题
             options.url = obj.urlAddTime(options.url);
             if ($('[name=__RequestVerificationToken]').length > 0) {
-                options.param["__RequestVerificationToken"] = $('[name=__RequestVerificationToken]').val();
+                var csrfToken = $('[name=__RequestVerificationToken]').val();
             }
             obj.modalConfirm(options.prompt, function (r) {
                 if (r) {
@@ -413,6 +346,9 @@ layui.define(["jquery", "layer", 'form', 'table', 'tablePlug','treeTable', 'xmSe
                             data: options.param,
                             type: "post",
                             dataType: "json",
+                            headers: {
+                                "X-CSRF-TOKEN": csrfToken
+                            },
                             success: function (data) {
                                 if (data.state == "success") {
                                     options.success(data);
@@ -452,7 +388,7 @@ layui.define(["jquery", "layer", 'form', 'table', 'tablePlug','treeTable', 'xmSe
             //ie缓存问题
             options.url = obj.urlAddTime(options.url);
             if ($('[name=__RequestVerificationToken]').length > 0) {
-                options.param["__RequestVerificationToken"] = $('[name=__RequestVerificationToken]').val();
+                var csrfToken = $('[name=__RequestVerificationToken]').val();
             }
             obj.modalConfirm(options.prompt, function (r) {
                 if (r) {
@@ -465,6 +401,9 @@ layui.define(["jquery", "layer", 'form', 'table', 'tablePlug','treeTable', 'xmSe
                             data: options.param,
                             type: "post",
                             dataType: "json",
+                            headers: {
+                                "X-CSRF-TOKEN": csrfToken
+                            },
                             success: function (data) {
                                 if (data.state == "success") {
                                     options.success(data);
@@ -545,9 +484,6 @@ layui.define(["jquery", "layer", 'form', 'table', 'tablePlug','treeTable', 'xmSe
                         break;
                 }
             });
-            if ($('[name=__RequestVerificationToken]').length > 0) {
-                postdata["__RequestVerificationToken"] = $('[name=__RequestVerificationToken]').val();
-            }
             return postdata;
         },
         //父窗体刷新（按钮刷新）
@@ -590,8 +526,12 @@ layui.define(["jquery", "layer", 'form', 'table', 'tablePlug','treeTable', 'xmSe
         authorizeButtonNew: function (innerHTML) {
             //行操作权限控制
             var moduleId = top.$(".layui-tab-title>.layui-this").attr("lay-id");
-            var dataJson = top.clients.authorizeButton[moduleId.split("?")[0]];
             var returnhtml = '';
+            //没有就全清
+            if (!top.clients || !top.clients.authorizeButton) {
+                return returnhtml;
+            }
+            var dataJson = top.clients.authorizeButton[moduleId.split("?")[0]];
             if (innerHTML.indexOf('</button>') > -1) {
                 var tempList = innerHTML.split('</button>');
                 for (var i = 0; i < tempList.length; i++) {
@@ -650,6 +590,14 @@ layui.define(["jquery", "layer", 'form', 'table', 'tablePlug','treeTable', 'xmSe
         //权限按钮(控制dom)
         authorizeButton: function (id) {
             var moduleId = top.$(".layui-tab-title>.layui-this").attr("lay-id");
+            //没有就全清
+            if (!top.clients || !top.clients.authorizeButton) {
+                $element.find('button[authorize=yes]').attr('authorize', 'no');
+                $element.find("[authorize=no]").parents('button').prev('.split').remove();
+                $element.find("[authorize=no]").parents('button').remove();
+                $element.find('[authorize=no]').remove();
+                return false;
+            }
             var dataJson = top.clients.authorizeButton[moduleId.split("?")[0]];
             var $element = $('#' + id);
             $element.find('button[authorize=yes]').attr('authorize', 'no');
@@ -667,6 +615,13 @@ layui.define(["jquery", "layer", 'form', 'table', 'tablePlug','treeTable', 'xmSe
         authorizeFields: function (filter) {
             var moduleId = top.$(".layui-tab-title>.layui-this").attr("lay-id");
             var element = $('div[lay-filter=' + filter + ']');
+            //没有就全清
+            if (!top.clients || !top.clients.moduleFields) {
+                element.find('input,select,textarea').each(function (r) {
+                    $this.parent().parent().remove();
+                });
+                return false;
+            }
             if (!!top.clients.moduleFields[moduleId.split("?")[0]] && top.clients.moduleFields[moduleId.split("?")[0]] == true) {
                 var dataJson = top.clients.authorizeFields[moduleId.split("?")[0]];
                 element.find('input,select,textarea').each(function (r) {
@@ -781,7 +736,7 @@ layui.define(["jquery", "layer", 'form', 'table', 'tablePlug','treeTable', 'xmSe
         ajax: function (options) {
             var defaults = {
                 dataType: "json",
-                async: false,
+                async: true,
                 type: "GET"
             };
             var options = $.extend(defaults, options);
@@ -828,9 +783,12 @@ layui.define(["jquery", "layer", 'form', 'table', 'tablePlug','treeTable', 'xmSe
             }
         },
         //表格权限字段(过滤cols)
-        tableAuthorizeFields: function (cols, sqlkey) {
-            var keys = !!sqlkey ? sqlkey : 'F_Id';
+        tableAuthorizeFields: function (cols) {
             var moduleId = top.$(".layui-tab-title>.layui-this").attr("lay-id");
+            //没有权限就返回无
+            if (!top.clients||!top.clients.moduleFields) {
+                return [];
+            }
             if (!!top.clients.moduleFields[moduleId.split("?")[0]] && top.clients.moduleFields[moduleId.split("?")[0]] == true) {
                 var dataJson = top.clients.authorizeFields[moduleId.split("?")[0]];
                 var array = [];
@@ -839,9 +797,6 @@ layui.define(["jquery", "layer", 'form', 'table', 'tablePlug','treeTable', 'xmSe
                     if (!!cols[0][i].type && cols[0][i].type != 'normal') {
                         array.push(cols[0][i]);
                     } else if (!cols[0][i].field && cols[0][i].title == "操作") {
-                        array.push(cols[0][i]);
-                    }
-                    if (cols[0][i].field == keys) {
                         array.push(cols[0][i]);
                     }
                     if (!!dataJson) {

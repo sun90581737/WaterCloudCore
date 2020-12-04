@@ -4,8 +4,8 @@
  }
  <div class="layuimini-container">
      <div class="layuimini-main">
-         <fieldset class="table-search-fieldset">
-             <div style="margin: 10px 10px 10px 10px">
+         <fieldset class="table-search-fieldset layui-hide" id="searchField">
+             <div>
                  <form class="layui-form layui-form-pane" >
                      <div class="layui-form-item">
                          <div class="layui-inline">
@@ -32,22 +32,19 @@
      </div>
  </div>
  <script>
-     layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', 'layer'], function () {
-         var $ = layui.jquery,
-             form = layui.form,
-             layer = layui.layer,
+     layui.use(['jquery', 'form', 'table', 'common', 'layer', 'optimizeSelectOption'], function () {
+         var form = layui.form,
+             commonTable = layui.commonTable,
              table = layui.table,
              common = layui.common;
          wcLoading.close();
          //权限控制(js是值传递)
          toolbarDemo.innerHTML = common.authorizeButtonNew(toolbarDemo.innerHTML);
-         common.rendertable({
+         commonTable.rendertable({
              elem: '#currentTableId',
              id: 'currentTableId',
              url: '/SystemOrganize/SystemSet/GetGridJson',
-             sqlkey: 'F_Id',//数据库主键
              cols: [[
-                 { field: 'F_Id', title: 'ID', sort: true, hide: true, hideAlways: true },
                  //此处需修改
                  { field: 'F_ProjectName', title: '项目名称', width: 120, sort: true },
                  { field: 'F_CompanyName', title: '公司名称', width: 120, sort: true },
@@ -66,6 +63,7 @@
                              var time = new Date(d.F_CreatorTime);
                              return time.Format("yyyy-MM-dd");
                          }
+                         return '';
                      }
                  },
                  {
@@ -74,15 +72,16 @@
                              var time = new Date(d.F_EndTime);
                              return time.Format("yyyy-MM-dd");
                          }
+                         return '';
                      }
                  },
                  {
-                     field: 'F_EnabledMark', title: '有效', Width: 80, sort: true,
+                     field: 'F_EnabledMark', title: '状态', width: 80, sort: true,
                      templet: function (d) {
                          if (d.F_EnabledMark == true) {
-                             return "<input type='checkbox' checked='' lay-skin='primary' name='true' valuer='true'>";
+                             return "<span class='layui-btn layui-btn-normal layui-btn-xs'>有效</span>";
                          } else {
-                             return "<input type='checkbox' name='false'  lay-skin='primary' valuer='false'>";
+                             return "<span class='layui-btn layui-btn-warm layui-btn-xs'>无效</span>";
                          }
                      }
                  },
@@ -92,7 +91,7 @@
          // 监听搜索操作
          form.on('submit(data-search-btn)', function (data) {
              //执行搜索重载
-             common.reloadtable({
+             commonTable.reloadtable({
                  elem: 'currentTableId',
                  curr: 1,
                  where: { keyword: data.field.txt_keyword }
@@ -139,6 +138,14 @@
                      height: "500px",
                      btn: []
                  });
+             }
+             else if (obj.event === 'TABLE_SEARCH') {
+                 var _that = $("#searchField");
+                 if (_that.hasClass("layui-hide")) {
+                     _that.removeClass('layui-hide');
+                 } else {
+                     _that.addClass('layui-hide');
+                 }
              }
              return false;
          });

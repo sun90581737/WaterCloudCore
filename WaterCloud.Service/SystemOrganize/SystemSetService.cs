@@ -18,6 +18,7 @@ namespace WaterCloud.Service.SystemOrganize
         private IDbContext _context;
         private string cacheKey = "watercloud_systemsetdata_";
         private string cacheKeyOperator = "watercloud_operator_";// +登录者token
+        private string cacheKeyUser = "watercloud_userdata_";
         private string className = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.FullName.Split('.')[3];
         public SystemSetService(IDbContext context) : base(context)
         {
@@ -65,12 +66,12 @@ namespace WaterCloud.Service.SystemOrganize
             }
             else
             {
-                cachedata = cachedata.Where(t => t.F_Id==Define.SYSTEM_MASTERPROJECT).ToList();
+                cachedata = cachedata.Where(t => t.F_Id==GlobalContext.SystemConfig.SysemMasterProject).ToList();
             }
             if (cachedata.Count==0)
             {
                 cachedata = await repository.CheckCacheList(cacheKey + "list");
-                cachedata = cachedata.Where(t => t.F_Id == Define.SYSTEM_MASTERPROJECT).ToList();
+                cachedata = cachedata.Where(t => t.F_Id == GlobalContext.SystemConfig.SysemMasterProject).ToList();
             }
             return cachedata.Where(t => t.F_DeleteMark == false).FirstOrDefault();
         }
@@ -107,7 +108,8 @@ namespace WaterCloud.Service.SystemOrganize
             IRepositoryBase ibs = new RepositoryBase(_context);
             if (string.IsNullOrEmpty(keyValue))
             {
-                    //此处需修改
+                entity.F_DeleteMark = false;
+                //此处需修改
                 entity.Create();
                 await repository.Insert(entity);
                 await CacheHelper.Remove(cacheKey + "list");
@@ -116,7 +118,7 @@ namespace WaterCloud.Service.SystemOrganize
             {
                     //此处需修改
                 entity.Modify(keyValue);
-                if (entity.F_Id != Define.SYSTEM_MASTERPROJECT)
+                if (currentuser.UserId != GlobalContext.SystemConfig.SysemUserId || currentuser.UserId == null)
                 {
                     var setentity = await repository.FindEntity(entity.F_Id);
                     uniwork.BeginTrans();
@@ -128,6 +130,7 @@ namespace WaterCloud.Service.SystemOrganize
                     {
                         F_Account = entity.F_AdminAccount
                     });
+                    await CacheHelper.Remove(cacheKeyUser + user.F_Id);
                     await uniwork.Update<UserLogOnEntity>(a => a.F_Id == userinfo.F_Id, a => new UserLogOnEntity
                     {
                         F_UserPassword = userinfo.F_UserPassword,
@@ -148,6 +151,10 @@ namespace WaterCloud.Service.SystemOrganize
             var set=await ibs.FindEntity<SystemSetEntity>(entity.F_Id);
             var tempkey=new RepositoryBase(DBContexHelper.Contex(set.F_DbString, set.F_DBProvider)).IQueryable<UserEntity>().Where(a => a.F_IsAdmin == true && a.F_OrganizeId == keyValue).FirstOrDefault().F_Id;
             await CacheHelper.Remove(cacheKeyOperator + "info_" + tempkey);
+            if (currentuser.UserId == null)
+            {
+                _context.Dispose();
+            }
         }
 
         public async Task DeleteForm(string keyValue)

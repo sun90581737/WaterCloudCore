@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/_Index.cshtml";
 }
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', 'treeTable', "layer"], function () {
+    layui.use(['jquery', 'form', 'table', 'common', 'treeTable', "layer"], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table,
@@ -17,11 +17,10 @@
         toolbarDemo.innerHTML = common.authorizeButtonNew(toolbarDemo.innerHTML);
         wcLoading.close();
         var rendertree = common.rendertreetable({
-            elem: '#currentTableId',
-            sqlkey: 'F_Id',//数据库主键
+            elem: '#currentTableId',          
             //懒加载设置
             tree: {
-                iconIndex: 1,           // 折叠图标显示在第几列
+                iconIndex: 0,           // 折叠图标显示在第几列
                 idName: 'F_Id',  // id字段名称
                 arrowType: 'arrow2',
                 getIcon: 'ew-tree-icon-style2',
@@ -40,20 +39,19 @@
                     }
                 });
             },
-            cols: [[
-                { field: 'F_Id', title: 'ID', sort: true, fixed: "left", hide: true, hideAlways: true },
+            cols: [[                
                 { field: 'F_FullName', title: '名称', width: 200 },
                 { field: 'F_EnCode', title: '编号', width: 150 },
                 {
-                    field: 'F_EnabledMark', title: '有效', width: 60,
+                    field: 'F_EnabledMark', title: '状态', width: 80,
                     templet: function (d) {
                         if (d.F_EnabledMark == true) {
-                            return "<input type='checkbox' checked='' lay-skin='primary' name='true' valuer='true'>";
+                            return "<span class='layui-btn layui-btn-normal layui-btn-xs'>有效</span>";
                         } else {
-                            return "<input type='checkbox' name='false'  lay-skin='primary' valuer='false'>";
+                            return "<span class='layui-btn layui-btn-warm layui-btn-xs'>无效</span>";
                         }
                     }
-                },
+                }, 
                 {
                     field: 'F_CreatorTime', title: '创建时间', width: 120,
                     templet: function (d) {
@@ -61,6 +59,7 @@
                             var time = new Date(d.F_CreatorTime);
                             return time.Format("yyyy-MM-dd");
                         }
+                        return '';
                     }
                 },
                 { field: 'F_Description', title: '备注', minWidth: 150 },
@@ -128,15 +127,23 @@
                     btn:[]
                 });
             }
+            else if (obj.event === 'TABLE_SEARCH') {
+                var _that = $("#searchField");
+                if (_that.hasClass("layui-hide")) {
+                    _that.removeClass('layui-hide');
+                } else {
+                    _that.addClass('layui-hide');
+                }
+            }
             return false;
         });
     });
 </script>
 <div class="layuimini-container">
     <div class="layuimini-main">
-        <fieldset class="table-search-fieldset">
+        <fieldset class="table-search-fieldset layui-hide" id="searchField">
             @*<legend>搜索信息</legend>*@
-            <div style="margin: 10px 10px 10px 10px">
+            <div>
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
                         <div class="layui-inline">

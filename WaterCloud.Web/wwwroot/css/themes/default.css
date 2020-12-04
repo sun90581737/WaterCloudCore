@@ -35,7 +35,7 @@
 
 /**头部右侧更多下拉配置色 headerRightNavMoreBg headerRightNavMoreColor */
 .layui-header .layui-nav .layui-nav-child dd.layui-this a, .layui-header .layui-nav-child dd.layui-this, .layui-layout-admin .layui-header .layui-nav .layui-nav-item .layui-nav-child .layui-this a {
-    background-color: #1E9FFF !important;
+    background-color: #f3961d !important;
     color: #ffffff !important;
 }
 

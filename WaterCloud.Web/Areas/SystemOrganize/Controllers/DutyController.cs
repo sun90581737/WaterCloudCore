@@ -8,13 +8,10 @@ using WaterCloud.Service.SystemOrganize;
 using WaterCloud.Code;
 using WaterCloud.Domain.SystemOrganize;
 using System.Linq;
-using WaterCloud.Domain.SystemSecurity;
 using WaterCloud.Service;
-using WaterCloud.Service.SystemSecurity;
 using System;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Serenity;
 using System.IO;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
@@ -31,20 +28,21 @@ namespace WaterCloud.Web.Areas.SystemOrganize.Controllers
     {
         private string className = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.FullName.Split('.')[5];
         public DutyService _service { get; set; }
-        public LogService _logService { get; set; }
         public SystemSetService _setService { get; set; }
         public virtual ActionResult Import()
         {
             return View();
         }
-        [HttpGet]
         [HandlerAjaxOnly]
-        public async Task<ActionResult> GetGridJson(Pagination pagination, string keyword)
+        public async Task<ActionResult> GetGridJson(SoulPage<RoleEntity> pagination, string keyword)
         {
-            pagination.order = "asc";
-            pagination.sort = "F_EnCode asc";
+            if (string.IsNullOrEmpty(pagination.field))
+            {
+                pagination.field = "F_CreatorTime";
+                pagination.order = "desc";
+            }
             var data =await _service.GetLookList(pagination,keyword);
-            return Success(pagination.records, data);
+            return Content(pagination.setData(data).ToJson());
         }
         [HttpGet]
         [HandlerAjaxOnly]
@@ -105,74 +103,37 @@ namespace WaterCloud.Web.Areas.SystemOrganize.Controllers
         }
         [HttpPost]
         [HandlerAjaxOnly]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> SubmitForm(RoleEntity roleEntity, string keyValue)
         {
-            LogEntity logEntity;
-            if (string.IsNullOrEmpty(keyValue))
-            {
-                roleEntity.F_DeleteMark = false;
-                roleEntity.F_AllowEdit = false;
-                roleEntity.F_AllowDelete = false;
-                logEntity = await _logService.CreateLog(className, DbLogType.Create.ToString());
-                logEntity.F_Description += DbLogType.Create.ToDescription();
-            }
-            else
-            {
-                logEntity = await _logService.CreateLog(className, DbLogType.Update.ToString());
-                logEntity.F_Description += DbLogType.Update.ToDescription();
-                logEntity.F_KeyValue = keyValue;
-            }
             try
             {
-                logEntity.F_Account = _service.currentuser.UserCode;
-                logEntity.F_NickName = _service.currentuser.UserName;
                 await _service.SubmitForm(roleEntity, keyValue);
-                logEntity.F_Description += "操作成功";
-                await _logService.WriteDbLog(logEntity);
-                return Success("操作成功。");
+                return await Success("操作成功。", className, keyValue);
             }
             catch (Exception ex)
             {
-                logEntity.F_Result = false;
-                logEntity.F_Description += "操作失败，" + ex.Message;
-                await _logService.WriteDbLog(logEntity);
-                return Error(ex.Message);
+                return await Error(ex.Message, className, keyValue);
             }
         }
         [HttpPost]
         [HandlerAjaxOnly]
         [ServiceFilter(typeof(HandlerAuthorizeAttribute))]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteForm(string keyValue)
         {
-            LogEntity logEntity = await _logService.CreateLog(className, DbLogType.Delete.ToString()); 
-            logEntity.F_Description += DbLogType.Delete.ToDescription();
             try
             {
-                logEntity.F_Account = _service.currentuser.UserCode;
-                logEntity.F_NickName = _service.currentuser.UserName;
                 await _service.DeleteForm(keyValue);
-                logEntity.F_Description += "操作成功";
-                await _logService.WriteDbLog(logEntity);
-                return Success("操作成功。");
+                return await Success("操作成功。", className, keyValue, DbLogType.Delete);
             }
             catch (Exception ex)
             {
-                logEntity.F_Result = false;
-                logEntity.F_Description += "操作失败，" + ex.Message;
-                await _logService.WriteDbLog(logEntity);
-                return Error(ex.Message);
+                return await Error(ex.Message, className, keyValue, DbLogType.Delete);
             }
         }
         [HttpPost]
         [HandlerAjaxOnly]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> ImportForm(string listData)
         {
-            LogEntity logEntity;
-            logEntity = await _logService.CreateLog(className, DbLogType.Create.ToString());
-            logEntity.F_Description += DbLogType.Create.ToDescription();
             var filterList = JsonConvert.DeserializeObject<List<RoleEntity>>(listData);
             if (filterList == null || filterList.Count == 0)
             {
@@ -184,19 +145,12 @@ namespace WaterCloud.Web.Areas.SystemOrganize.Controllers
             }
             try
             {
-                logEntity.F_Account = _service.currentuser.UserCode;
-                logEntity.F_NickName = _service.currentuser.UserName;
                 await _service.ImportForm(filterList);
-                logEntity.F_Description += "操作成功";
-                await _logService.WriteDbLog(logEntity);
-                return Success("操作成功。");
+                return await Success("导入成功。", className, "");
             }
             catch (Exception ex)
             {
-                logEntity.F_Result = false;
-                logEntity.F_Description += "操作失败，" + ex.Message;
-                await _logService.WriteDbLog(logEntity);
-                return Error(ex.Message);
+                return await Error("导入失败，" + ex.Message, className, "");
             }
         }
         [HttpGet]

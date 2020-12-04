@@ -124,14 +124,14 @@
     }
 </style>
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element'], function () {
+    layui.use(['jquery', 'form', 'table', 'common', 'optimizeSelectOption', "echarts", 'commonTable', 'element'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table,
             common = layui.common,
-            layer = layui.layer,
+            commonTable = layui.commonTable,
             echarts = layui.echarts,
-            element = layui.element;;
+            element = layui.element;
         wcLoading.close();
         $(function () {
             gridListOne();
@@ -140,11 +140,11 @@
             gridList();
         });
         function gridListOne() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId2',
                 id: 'currentTableId2',
                 url: "/QualityOptimization/QualityEngineering/GetGridJsonOn",
-                height: 240,
+                height: 300,
                 toolbar: false,/*隐藏打印*/
                 page: true,/*隐藏分页*/
                 sqlkey: 'id',//数据库主键
@@ -158,13 +158,13 @@
                         }
                     },
                     //{ field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
-                    { field: 'MoldNumber', title: '模具号', width: 80, sort: true },
-                    { field: 'Edition', title: '版本', width: 70, sort: true },
-                    { field: 'PartNumber', title: '零件编号', width: 80, sort: true },
-                    { field: 'InspectionProcess', title: '检测工序', width: 80, sort: true, filter: true },
-                    { field: 'LastProcess', title: '上道工序', width: 80, sort: true, filter: true },
+                    { field: 'MoldNumber', title: '模具号', width: 100, sort: true },
+                    { field: 'Edition', title: '版本', width: 100, sort: true , filter: true},
+                    { field: 'PartNumber', title: '零件编号', width: 100, sort: true },
+                    { field: 'InspectionProcess', title: '检测工序', width: 110, sort: true },
+                    { field: 'LastProcess', title: '上道工序', width: 110, sort: true },
                     {
-                        field: 'Start_Time', title: '计划开始时间', width: 90,
+                        field: 'Start_Time', title: '计划开始时间', width: 120,
                         templet: function (d) {
                             if (d.Start_Time) {
                                 return new Date(d.Start_Time).Format("yyyy-MM-dd");
@@ -173,7 +173,7 @@
                         }
                     },
                     {
-                        field: 'END_Time', title: '计划结束时间', width: 90,
+                        field: 'END_Time', title: '计划结束时间', width: 120,
                         templet: function (d) {
                             if (d.END_Time) {
                                 return new Date(d.END_Time).Format("yyyy-MM-dd");
@@ -181,7 +181,9 @@
                             }
                         }
                     },
-                ]]
+                ]], filter: {
+                    bottom: false
+                }
             });
         }
         function loadTwo() {
@@ -461,22 +463,24 @@
             });
         }
         function gridList() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId',
                 id: 'currentTableId',
                 url: "/QualityOptimization/QualityEngineering/GetGridJson",
-                height: 220,
+                height: 280,
                 toolbar: false,/*隐藏打印*/
                 page: true,/*隐藏分页*/
                 sqlkey: 'id',//数据库主键
                 cols: [[
                     { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
-                    { field: 'ProjectNo', title: '项目单号', width: 140, sort: true },
-                    { field: 'ModuleNumber', title: '模号', width: 110, sort: true },
-                    { field: 'WorkpieceNo', title: '工件号', width: 100, sort: true },
-                    { field: 'ExceptionalProcedure', title: '异常工序', width: 130, sort: true, filter: true },
-                    { field: 'TreatmentMethod', title: '处理方式', width: 130, sort: true, filter: true },
-                ]]
+                    { field: 'ProjectNo', title: '项目单号', width: 180, sort: true },
+                    { field: 'ModuleNumber', title: '模号', width: 180, sort: true },
+                    { field: 'WorkpieceNo', title: '工件号', width: 150, sort: true },
+                    { field: 'ExceptionalProcedure', title: '异常工序', width: 150, sort: true, filter: true },
+                    { field: 'TreatmentMethod', title: '处理方式', width: 150, sort: true, filter: true },
+                ]], filter: {
+                    bottom: false
+                }
             });
         }
     })
@@ -501,7 +505,7 @@
                         <button type="button" id="funTwo" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
                     </div>
                     <div class="layui-card-body layui-text">
-                        <div id="chart2" style="height:240px;"></div>
+                        <div id="chart2" style="height:300px;"></div>
                     </div>
                 </div>
             </div>
@@ -514,7 +518,7 @@
                     </div>
                     <div class="layui-card-body layui-text">
                         <div style="float:left;width:50%">
-                            <div id="chart3" style="height:240px;"></div>
+                            <div id="chart3" style="height:300px;"></div>
                         </div>
                         <div style="margin-left:50%;width:auto;">
                             <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>

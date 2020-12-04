@@ -33,12 +33,11 @@
                                 <select id="NodeRejectType" lay-filter="NodeRejectType" name="NodeRejectType" required lay-verify="required">
                                     <option value="0">上一步</option>
                                     <option value="1">第一步</option>
-                                    <option value="2">指定步骤</option>
-                                    <option value="3">不处理</option>
+                                    @*<option value="2">指定步骤</option>
+                                    <option value="3">不处理</option>*@
                                 </select>
                             </div>
                         </div>
-
                         <div class="layui-form-item" v-if="isFork()">
                             <label class="layui-form-label">会签方式</label>
                             <div class="layui-input-block">
@@ -65,8 +64,10 @@
                                 <input type="radio" name="NodeDesignate" lay-filter="NodeDesignate" value="SPECIAL_ROLE" title="指定角色">
                             </div>
                         </div>
+
                         <div class="layui-form-item">
                             <div class="layui-hide" id="specialrole">
+                                <input id="currentDepart" name="currentDepart" type="checkbox" value="true" title="当前部门">
                                 <div class="layui-input-block" style="margin-left: 0px;">
                                     <table class="layui-hide" id="RoleId" lay-filter="RoleTableFilter"></table>
                                 </div>
@@ -89,19 +90,24 @@
     </div>
 </div>
 <script>
-    layui.use(['form', 'layer', 'element', 'table', 'tablePlug', 'jquery', 'common'], function () {
-        var layer = layui.layer,
+    var FlowDesignObject;
+    function initForm(data) {
+        FlowDesignObject = data.FlowDesignObject;
+    }
+    layui.use(['form', 'commonTable', 'element', 'table', 'jquery', 'common', 'optimizeSelectOption'], function () {
+        var commonTable = layui.commonTable,
             $ = layui.jquery,
             table = layui.table,
-            common = layui.common;
-        var form = layui.form;
+            common = layui.common,
+            element = layui.element,
+            form = layui.form;
         var Method = $.request("Method");
         //从flowschemes.js进入的节点信息
-        var node = parent.FlowDesignObject;
+        var node = FlowDesignObject;
         var tmp = {
             NodeName: node.name,
             NodeCode: node.id,//默认的code
-            NodeRejectType: "0",
+            NodeRejectType: "1",
             NodeDesignate: "ALL_USER",
             NodeConfluenceType: "all",
             ThirdPartyUrl: ""
@@ -132,20 +138,23 @@
                 $('#specialrole').removeClass("layui-hide");
                 $('#specialuser').addClass("layui-hide");
                 $('#alluser').addClass("layui-hide");
-
+                form.val("adminform", {
+                    "currentDepart": tmp.NodeDesignateData.currentDepart
+                });
             }
+
         }
-        common.rendertable({
+        commonTable.rendertable({
             elem: '#UserId',
             id: 'UserId',
             url: '/SystemOrganize/User/GetListJson?ids=' + (!!userids ? userids : ""),
             page: false,
             height: 'full-120',
             toolbar: false,//工具栏
-            sqlkey: 'F_Id',//数据库主键
+            
             cols: [[
                 { type: 'checkbox' },
-                { field: 'F_Id', title: 'ID', sort: true, fixed: "left", hide: true, hideAlways: true },
+                
                 { field: 'F_Account', title: '账户', width: 120, sort: true },
                 { field: 'F_RealName', title: '姓名', width: 120, sort: true },
                 {
@@ -173,17 +182,17 @@
                 }
             ]]
         });
-        common.rendertable({
+        commonTable.rendertable({
             elem: '#RoleId',
             id: 'RoleId',
             url: '/SystemOrganize/Role/GetSelectJson?ids=' + (!!roleids ? roleids : ""),
             page: false,
             height: 'full-120',
             toolbar: false,//工具栏
-            sqlkey: 'F_Id',//数据库主键
+            
             cols: [[
                 { type: 'checkbox' },
-                { field: 'F_Id', title: 'ID', sort: true, fixed: "left", hide: true, hideAlways: true },
+                
                 { field: 'F_FullName', title: '角色名称', width: 120, sort: true },
                 {
                     field: 'F_Type', title: '角色类型', width: 120, sort: true,
@@ -268,6 +277,7 @@
                     users: users,
                     roles: roles,
                     orgs: [],
+					currentDepart:$('#currentDepart').is(':checked')?true:false,
                 }
             };
             //  $.extend(result, vm.tmp);

@@ -124,14 +124,13 @@
     }
 </style>
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element'], function () {
+    layui.use(['jquery', 'form', 'table', 'common', 'optimizeSelectOption', "echarts", 'commonTable'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table,
-            common = layui.common,
-            layer = layui.layer,
+            commonTable = layui.commonTable,
             echarts = layui.echarts,
-            element = layui.element;;
+            common = layui.common;
         wcLoading.close();
         $(function () {
             loadOne();
@@ -282,11 +281,11 @@
             });
         }
         function gridList() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId',
                 id: 'currentTableId',
                 url: "/OperationMonitoring/PlanHome/GetGridJson",
-                height: 200,
+                height: 400,
                 toolbar: false,/*隐藏打印*/
                 page: true,/*隐藏分页*/
                 sqlkey: 'id',//数据库主键
@@ -300,15 +299,15 @@
                         }
                     },
                     //{ field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
-                    { field: 'CustomerName', title: '客户名', width: 160, sort: true, filter: true },
-                    { field: 'CustomerCode', title: '客户代码', width: 160, sort: true },
-                    { field: 'CustomerContact', title: '客户联系人', width: 160, sort: true, filter: true },
-                    { field: 'LeadingCadre', title: '内部负责人', width: 160, sort: true, filter: true },
-                    { field: 'DeliveryRate', title: '交付率', width: 160, sort: true},
-                    { field: 'MouldNumber', title: '在制模具数量', width: 150, sort: true },
-                    { field: 'NormalMold', title: '进度正常模具', width: 145, sort: true },
+                    { field: 'CustomerName', title: '客户名', width: 200, sort: true, filter: true },
+                    { field: 'CustomerCode', title: '客户代码', width: 200, sort: true },
+                    { field: 'CustomerContact', title: '客户联系人', width: 200, sort: true, filter: true },
+                    { field: 'LeadingCadre', title: '内部负责人', width: 200, sort: true, filter: true },
+                    { field: 'DeliveryRate', title: '交付率', width: 200, sort: true},
+                    { field: 'MouldNumber', title: '在制模具数量', width: 200, sort: true },
+                    { field: 'NormalMold', title: '进度正常模具', width: 200, sort: true },
                     {
-                        field: 'DelayMould', title: '延期模具', width: 140, sort: true, templet: function (d) {
+                        field: 'DelayMould', title: '延期模具', width: 200, sort: true, templet: function (d) {
                             var btns = "";
                             if (d.DelayMould) {
                                 if (d.DelayMould > 5) {
@@ -321,7 +320,9 @@
                             return btns;
                         }
                     },
-                ]]
+                ]], filter: {
+                    bottom: false
+                }
             });
             // 监听搜索操作
             form.on('submit(data-search-btn)', function (data) {

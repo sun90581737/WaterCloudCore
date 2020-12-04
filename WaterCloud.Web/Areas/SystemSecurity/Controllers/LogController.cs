@@ -1,15 +1,10 @@
-﻿/*******************************************************************************
+/*******************************************************************************
  * Copyright © 2020 WaterCloud.Framework 版权所有
  * Author: WaterCloud
  * Description: WaterCloud快速开发平台
  * Website：
 *********************************************************************************/
-using WaterCloud.Service.SystemSecurity;
 using WaterCloud.Code;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -18,7 +13,6 @@ namespace WaterCloud.Web.Areas.SystemSecurity.Controllers
     [Area("SystemSecurity")]
     public class LogController : ControllerBase
     {
-        public LogService _logService { get; set; }
 
         [HttpGet]
         public ActionResult RemoveLog()
@@ -31,13 +25,18 @@ namespace WaterCloud.Web.Areas.SystemSecurity.Controllers
         {
             pagination.order = "desc";
             pagination.sort = "F_CreatorTime desc";
-            var data =await _logService.GetLookList(pagination, timetype, keyword);
+            //导出全部页使用
+            if (pagination.rows == 0 && pagination.page == 0)
+            {
+                pagination.rows = 99999999;
+                pagination.page = 1;
+            }
+            var data =await _logService.GetList(pagination, timetype, keyword);
             return Success(pagination.records, data);
         }
         [HttpPost]
         [HandlerAjaxOnly]
         [ServiceFilter(typeof(HandlerAuthorizeAttribute))]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> SubmitRemoveLog(string keepTime)
         {
             await _logService.RemoveLog(keepTime);

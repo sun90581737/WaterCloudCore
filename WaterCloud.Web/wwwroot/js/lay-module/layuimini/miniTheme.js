@@ -478,7 +478,8 @@ layui.define(["jquery", "layer"], function (exports) {
                 var bgcolorId = $(this).attr('data-select-bgcolor');
                 $('.layuimini-color .color-content ul .layui-this').attr('class', '');
                 $(this).attr('class', 'layui-this');
-                sessionStorage.setItem('layuiminiBgcolorId', bgcolorId);
+                //sessionStorage.setItem('layuiminiBgcolorId', bgcolorId);
+	localStorage.setItem('watercloudBgcolorId', bgcolorId);
                 miniTheme.render({
                     bgColorDefault: bgcolorId,
                     listen: false,

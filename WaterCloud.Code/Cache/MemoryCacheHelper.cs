@@ -42,7 +42,7 @@ namespace WaterCloud.Code
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            Cache.Set(key, value,
+            Cache.Set(key, value.ToJson(),
                 new MemoryCacheEntryOptions().SetSlidingExpiration(expiresSliding)
                     .SetAbsoluteExpiration(expiressAbsoulte));
             return Exists(key);
@@ -62,7 +62,7 @@ namespace WaterCloud.Code
                 throw new ArgumentNullException(nameof(key));
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
-            Cache.Set(key, value,
+            Cache.Set(key, value.ToJson(),
                 isSliding
                     ? new MemoryCacheEntryOptions().SetSlidingExpiration(expiresIn)
                     : new MemoryCacheEntryOptions().SetAbsoluteExpiration(expiresIn));
@@ -81,7 +81,7 @@ namespace WaterCloud.Code
                 throw new ArgumentNullException(nameof(key));
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
-            Cache.Set(key, value);
+            Cache.Set(key, value.ToJson());
 
             return Exists(key);
         }
@@ -124,8 +124,12 @@ namespace WaterCloud.Code
         {
             if (key == null)
                 throw new ArgumentNullException(nameof(key));
-
-            return Cache.Get(key) as T;
+            object temp;
+            if (Cache.TryGetValue(key,out temp))
+            {
+               return temp.ToString().ToObject<T>();
+            }
+            return null;
         }
 
         /// <summary>
@@ -133,12 +137,12 @@ namespace WaterCloud.Code
         /// </summary>
         /// <param name="key">缓存Key</param>
         /// <returns></returns>
-        public static object Get(string key)
+        public static string Get(string key)
         {
             if (key == null)
                 throw new ArgumentNullException(nameof(key));
 
-            return Cache.Get(key);
+            return Cache.Get(key).ToString();
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-﻿/*******************************************************************************
+/*******************************************************************************
  * Copyright © 2020 WaterCloud.Framework 版权所有
  * Author: WaterCloud
  * Description: WaterCloud快速开发平台
@@ -8,8 +8,6 @@ using Chloe;
 using WaterCloud.Code;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -37,7 +35,14 @@ namespace WaterCloud.DataBase
         Task<List<TEntity>> FindList(Pagination pagination);
         Task<List<TEntity>> FindList(Expression<Func<TEntity, bool>> predicate, Pagination pagination);
         Task<List<T>> OrderList<T>(IQuery<T> query, Pagination pagination);
+        Task<List<T>> OrderList<T>(IQuery<T> query, SoulPage<T> pagination);
+        /// <summary>
+        /// 缓存查询列表(大数据表谨慎使用)
+        /// </summary>
+        /// <param name="cacheKey"></param>
+        /// <param name="old"></param>
+        /// <returns></returns>
         Task<List<TEntity>> CheckCacheList(string cacheKey, long old = 0);
-        Task<TEntity> CheckCache(string cacheKey, string keyValue, long old = 0);
+        Task<TEntity> CheckCache(string cacheKey, object keyValue, long old = 0);
     }
 }

@@ -316,33 +316,39 @@
             });
             /* 清空消息点击事件 分开写交互*/
             $('#messageClearBtn1').click(function () {
+                var thisObj = $(this);
                 common.ajax({
                     url: "/InfoManage/Message/ReadAllMsgForm",
                     param: { type: 0 },
+                    type: "POST",
                     success: function () {
                         $('#message1').html("通知(0)");
-                        $(this).parents('.layui-tab-item').addClass('show-empty');
+                        $(thisObj).parents('.layui-tab-item').addClass('show-empty');
                     }
                 });
             });
             $('#messageClearBtn2').click(function () {
+                var thisObj = $(this);
                 common.ajax({
                     url: "/InfoManage/Message/ReadAllMsgForm",
                     param: { type: 1 },
+                    type: "POST",
                     success: function () {
                         $('#message2').html("私信(0)");
-                        $(this).parents('.layui-tab-item').addClass('show-empty');
+                        $(thisObj).parents('.layui-tab-item').addClass('show-empty');
                     }
                 });
 
             });
             $('#messageClearBtn3').click(function () {
+                var thisObj = $(this);
                 common.ajax({
                     url: "/InfoManage/Message/ReadAllMsgForm",
                     param: { type: 2 },
+                    type: "POST",
                     success: function () {
                         $('#message3').html("待办(0)");
-                        $(this).parents('.layui-tab-item').addClass('show-empty');
+                        $(thisObj).parents('.layui-tab-item').addClass('show-empty');
                     }
                 });
             });
@@ -371,7 +377,7 @@
                 </div>
                 <!-- tab2 -->
                 <div class="layui-tab-item">
-                    <div class="message-list"  id="list2">
+                    <div class="message-list" id="list2">
                     </div>
                     <!-- 列表为空 -->
                     <div class="message-list-empty">
@@ -382,7 +388,7 @@
                 </div>
                 <!-- tab3 -->
                 <div class="layui-tab-item">
-                    <div class="message-list"  id="list3">
+                    <div class="message-list" id="list3">
                     </div>
                     <!-- 列表为空 -->
                     <div class="message-list-empty">

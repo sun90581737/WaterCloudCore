@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Serenity;
 using WaterCloud.Code;
-using WaterCloud.Domain.SystemSecurity;
 using WaterCloud.Domain.FileManage;
 using WaterCloud.Service;
-using WaterCloud.Service.SystemSecurity;
-using Microsoft.AspNetCore.Authorization;
 using WaterCloud.Service.FileManage;
 using WaterCloud.Service.SystemOrganize;
 using System.Net.Http.Headers;
-using System.Web;
 using System.IO;
 
 namespace WaterCloud.Web.Areas.FileManage.Controllers
@@ -27,7 +21,6 @@ namespace WaterCloud.Web.Areas.FileManage.Controllers
     public class UploadfileController :  ControllerBase
     {
         private string className = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.FullName.Split('.')[5];
-        public LogService _logService {get;set;}
         public UploadfileService _service {get;set;}
         public SystemSetService _setService { get; set; }
 
@@ -39,6 +32,12 @@ namespace WaterCloud.Web.Areas.FileManage.Controllers
             //此处需修改
             pagination.order = "desc";
             pagination.sort = "F_CreatorTime desc";
+            //导出全部页使用
+            if (pagination.rows == 0 && pagination.page == 0)
+            {
+                pagination.rows = 99999999;
+                pagination.page = 1;
+            }
             var data = await _service.GetLookList(pagination,keyword);
             return Success(pagination.records, data);
         }
@@ -63,15 +62,13 @@ namespace WaterCloud.Web.Areas.FileManage.Controllers
         #region 提交数据
         [HttpPost]
         [ServiceFilter(typeof(HandlerLoginAttribute))]
+        [IgnoreAntiforgeryToken]
         public async Task<ActionResult> Upload(string fileby,int filetype =0)
         {
-            LogEntity logEntity;
-            logEntity = await _logService.CreateLog(className, DbLogType.Visit.ToString());
-            logEntity.F_Description += DbLogType.Create.ToDescription();
             try
             {
                 string stemp = "local";
-                if (_service.currentuser.CompanyId != Define.SYSTEM_MASTERPROJECT)
+                if (_service.currentuser.CompanyId != GlobalContext.SystemConfig.SysemMasterProject)
                 {
                     var temp = await _setService.GetForm(_service.currentuser.CompanyId);
                     if (temp != null)
@@ -83,8 +80,6 @@ namespace WaterCloud.Web.Areas.FileManage.Controllers
                         throw new Exception("租户不存在");
                     }
                 }
-                logEntity.F_Account = _service.currentuser.UserCode;
-                logEntity.F_NickName = _service.currentuser.UserName;
                 var files = HttpContext.Request.Form.Files;
                 long size = files.Sum(f => f.Length);
                 if (size > 104857600)
@@ -155,15 +150,12 @@ namespace WaterCloud.Web.Areas.FileManage.Controllers
                     file.CopyTo(fs);
                     fs.Flush();
                 }
-                logEntity.F_Description += "操作成功";
-                await _logService.WriteDbLog(logEntity);
+                await _logService.WriteLog("操作成功。",className,"",DbLogType.Visit);
                 return Content(new { code = 0, msg = "操作成功", data = new { src = entity.F_FilePath, title = fileName } }.ToJson());
             }
             catch (Exception ex)
             {
-                logEntity.F_Result = false;
-                logEntity.F_Description += "操作失败，" + ex.Message;
-                await _logService.WriteDbLog(logEntity);
+                await _logService.WriteLog(ex.Message, className, "", DbLogType.Visit,true);
                 return Content(new { code = 400, msg = "操作失败," + ex.Message }.ToJson());
             }
         }
@@ -202,35 +194,17 @@ namespace WaterCloud.Web.Areas.FileManage.Controllers
         }
         [HttpPost]
         [HandlerAjaxOnly]
-        [ValidateAntiForgeryToken]
         public async Task<bool> SubmitForm(UploadfileEntity entity, string keyValue)
         {
-            LogEntity logEntity;
-            if (string.IsNullOrEmpty(keyValue))
-            {
-                logEntity = await _logService.CreateLog(className, DbLogType.Create.ToString());
-                logEntity.F_Description += DbLogType.Create.ToDescription();
-            }
-            else
-            {
-                logEntity = await _logService.CreateLog(className, DbLogType.Update.ToString());
-                logEntity.F_Description += DbLogType.Update.ToDescription();
-                logEntity.F_KeyValue = keyValue;
-            }
             try
             {
-                logEntity.F_Account = _service.currentuser.UserCode;
-                logEntity.F_NickName = _service.currentuser.UserName;
                 await _service.SubmitForm(entity, keyValue);
-                logEntity.F_Description += "操作成功";
-                await _logService.WriteDbLog(logEntity);
+                await Success("操作成功。", className, keyValue);
                 return true;
             }
             catch (Exception ex)
             {
-                logEntity.F_Result = false;
-                logEntity.F_Description += "操作失败，" + ex.Message;
-                await _logService.WriteDbLog(logEntity);
+                await Error(ex.Message, className, keyValue);
                 return false;
             }
         }
@@ -238,26 +212,16 @@ namespace WaterCloud.Web.Areas.FileManage.Controllers
         [HttpPost]
         [HandlerAjaxOnly]
         [ServiceFilter(typeof(HandlerAuthorizeAttribute))]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteForm(string keyValue)
         {
-            LogEntity logEntity = await _logService.CreateLog(className, DbLogType.Delete.ToString());
-            logEntity.F_Description += DbLogType.Delete.ToDescription();
             try
             {
-                logEntity.F_Account = _service.currentuser.UserCode;
-                logEntity.F_NickName = _service.currentuser.UserName;
                 await _service.DeleteForm(keyValue);
-                logEntity.F_Description += "操作成功";
-                await _logService.WriteDbLog(logEntity);
-                return Success("操作成功。");
+                return await Success("操作成功。", className, keyValue, DbLogType.Delete);
             }
             catch (Exception ex)
             {
-                logEntity.F_Result = false;
-                logEntity.F_Description += "操作失败，" + ex.Message;
-                await _logService.WriteDbLog(logEntity);
-                return Error(ex.Message);
+                return await Error(ex.Message, className, keyValue, DbLogType.Delete);
             }
         }
         #endregion

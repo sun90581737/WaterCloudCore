@@ -125,14 +125,14 @@
     }
 </style>
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element'], function () {
+    layui.use(['jquery', 'form', 'table', 'common', 'optimizeSelectOption', "echarts", 'commonTable', 'element'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table,
             common = layui.common,
-            layer = layui.layer,
+            commonTable = layui.commonTable,
             echarts = layui.echarts,
-            element = layui.element;;
+            element = layui.element;
         wcLoading.close();
         $(function () {
             loadOne();
@@ -758,7 +758,7 @@
             });
         }
         function gridList() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId',
                 id: 'currentTableId',
                 url: "/EmployeePerformance/TeamLeaderHomepage/GetGridJson",
@@ -776,11 +776,11 @@
                         }
                     },
                     //{ field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
-                    { field: 'MoldNo', title: '模具编号', width: 140, sort: true },
-                    { field: 'PartNumber', title: '零件编号', width: 130, sort: true},
-                    { field: 'PlannedEquipment', title: '计划设备', width: 120, sort: true },
+                    { field: 'MoldNo', title: '模具编号', width: 180, sort: true },
+                    { field: 'PartNumber', title: '零件编号', width: 180, sort: true},
+                    { field: 'PlannedEquipment', title: '计划设备', width: 180, sort: true },
                     {
-                        field: 'StartTime', title: '开始时间', width: 120,
+                        field: 'StartTime', title: '开始时间', width: 150,
                         templet: function (d) {
                             if (d.StartTime) {
                                 return new Date(d.StartTime).Format("yyyy-MM-dd");
@@ -789,7 +789,7 @@
                         }
                     },
                     {
-                        field: 'ENDTime', title: '结束时间', width: 120,
+                        field: 'ENDTime', title: '结束时间', width: 150,
                         templet: function (d) {
                             if (d.ENDTime) {
                                 return new Date(d.ENDTime).Format("yyyy-MM-dd");
@@ -798,7 +798,7 @@
                         }
                     },
                     {
-                        field: 'LatestStartTime', title: '最晚开始时间', width: 120,
+                        field: 'LatestStartTime', title: '最晚开始时间', width: 150,
                         templet: function (d) {
                             if (d.LatestStartTime) {
                                 return new Date(d.LatestStartTime).Format("yyyy-MM-dd");
@@ -806,10 +806,10 @@
                             }
                         }
                     },
-                    { field: 'WorkingHours', title: '标准工时', width: 120, sort: true },
-                    { field: 'Customer', title: '客户', width: 120, sort: true, filter: true },
-                    { field: 'MoldKernelMaterial', title: '模仁材质', width: 120, sort: true },
-                    { field: 'Category', title: '类别', width: 120, sort: true },
+                    { field: 'WorkingHours', title: '标准工时', width: 150, sort: true },
+                    { field: 'Customer', title: '客户', width: 150, sort: true, filter: true },
+                    { field: 'MoldKernelMaterial', title: '模仁材质', width: 150, sort: true },
+                    { field: 'Category', title: '类别', width: 150, sort: true },
                 ]]
             });
         }

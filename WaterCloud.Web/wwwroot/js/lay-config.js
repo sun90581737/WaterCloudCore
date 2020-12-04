@@ -11,7 +11,7 @@ window.rootPath = (function (src) {
 
 layui.config({
     base: rootPath + "lay-module/",
-    version: true
+    version: false
 }).extend({
     miniAdmin: "layuimini/miniAdmin", // layuimini后台扩展
     miniMenu: "layuimini/miniMenu", // layuimini菜单扩展
@@ -27,7 +27,8 @@ layui.config({
     wangEditor: 'wangEditor/wangEditor', // wangEditor富文本扩展
     layarea: 'layarea/layarea', //  省市县区三级联动下拉选择器
     common: 'waterCloud/common', //  工具类
-    tablePlug: 'tablePlug/tablePlug', //  tabl扩展
+    commonTable: 'waterCloud/commonTable', //  工具类
+    optimizeSelectOption: 'optimizeSelectOption/optimizeSelectOption', //  下拉框遮挡
     dtree: 'dtree/dtree', //  树形扩展
     xmSelect:'xm-select/xm-select', //select多选扩展
     flowlayout:'flowlayout', //flow流程插件
@@ -36,5 +37,10 @@ layui.config({
     formField: 'formDesigner/formField', //表单设计器
     formPreview: 'formDesigner/formPreview', //表单设计器
     notice: 'notice/notice', //消息提醒
-    //optimizeSelectOption: 'tablePlug/optimizeSelectOption/optimizeSelectOption', //  下拉框遮挡
+    soulTable: 'soulTable/soulTable',//表格插件
+    soulTableSlim: 'soulTable/soulTable.slim',//表格插件
+    tableChild: 'soulTable/tableChild',//子表
+    tableMerge: 'soulTable/tableMerge',//合并表格
+    tableFilter: 'soulTable/tableFilter',//表格过滤
+    excel: 'soulTable/excel',//表格导出
 });

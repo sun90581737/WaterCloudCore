@@ -142,14 +142,12 @@
 
 </style>
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", "echarts", 'element'], function () {
-        var $ = layui.jquery,
+    layui.use(['commonTable', 'form', 'table', 'common', 'optimizeSelectOption', "echarts"], function () {
+        var commonTable = layui.commonTable,
             form = layui.form,
             table = layui.table,
-            common = layui.common,
-            layer = layui.layer,
             echarts = layui.echarts,
-            element = layui.element;;
+            common = layui.common;
         wcLoading.close();
         $(function () {
             loadOne1a();

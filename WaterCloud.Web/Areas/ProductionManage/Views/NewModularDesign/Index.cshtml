@@ -154,12 +154,12 @@
     }
 </style>
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element', 'laydate'], function () {
+    layui.use(['jquery', 'form', 'table', 'common', 'optimizeSelectOption', "echarts", 'commonTable', 'element', 'laydate'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table,
             common = layui.common,
-            layer = layui.layer,
+            commonTable = layui.commonTable,
             echarts = layui.echarts,
             element = layui.element,
             laydate = layui.laydate;
@@ -206,7 +206,7 @@
             }
         });
         function loadOne() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId1',
                 id: 'currentTableId1',
                 url: "/ProductionManage/NewModularDesign/GetGridJson?keyvalue=" + $('#test1').val(),
@@ -247,7 +247,7 @@
             });
         }
         function loadTwo() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId2',
                 id: 'currentTableId2',
                 url: "/ProductionManage/NewModularDesign/GetGridJsonTwo?keyvalue=" + $('#test2').val(),
@@ -288,7 +288,7 @@
             });
         }
         function loadThree() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId3',
                 id: 'currentTableId3',
                 url: "/ProductionManage/NewModularDesign/GetGridJsonThree?keyvalue=" + $('#test3').val(),

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using WaterCloud.Code;
 using WaterCloud.DataBase;
 using WaterCloud.Domain.SystemManage;
@@ -113,7 +112,7 @@ namespace WaterCloud.Service
         /// <returns></returns>
         protected bool CheckDataPrivilege(string moduleName)
         {
-            if (currentuser.UserCode == Define.SYSTEM_USERNAME) return false;  //超级管理员特权
+            if (currentuser.UserId == GlobalContext.SystemConfig.SysemUserId) return false;  //超级管理员特权
             var rule = uniwork.IQueryable<DataPrivilegeRuleEntity>(u => u.F_ModuleCode == moduleName).FirstOrDefault();
             ////系统菜单也不需要数据权限 跟字段重合取消这样处理
             //var module = UnitWork.FindEntity<ModuleEntity>(u => u.F_EnCode == moduleName).Result;
@@ -126,6 +125,33 @@ namespace WaterCloud.Service
             //    return false; //没有设置数据规则，那么视为该资源允许被任何主体查看
             //}
             return true;
+        }
+        /// <summary>
+        ///  soul数据反向模板化
+        /// </summary>
+        /// <param name=""moduleName>菜单名称</param>
+        /// <returns></returns>
+        protected SoulPage<TEntity> ChangeSoulData<TEntity>(Dictionary<string, Dictionary<string, string>> dic,SoulPage<TEntity> pagination)
+        {
+            List<FilterSo> filterSos = pagination.getFilterSos();
+            filterSos = FormatData(dic, filterSos);
+            pagination.filterSos = filterSos.ToJson();
+            return pagination;
+        }
+        protected List<FilterSo> FormatData(Dictionary<string, Dictionary<string, string>> dic, List<FilterSo> filterSos)
+        {
+            foreach (var item in filterSos)
+            {
+                if (item.mode == "condition"&&dic.ContainsKey(item.field)&&dic[item.field].ContainsKey(item.value))
+                {
+                    item.value = dic[item.field][item.value];
+                }
+                if (item.children!=null&&item.children.Count>0)
+                {
+                    item.children= FormatData(dic, item.children);
+                }
+            }
+            return filterSos;
         }
         /// <summary>
         ///  字段权限处理

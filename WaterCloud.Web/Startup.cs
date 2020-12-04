@@ -1,4 +1,4 @@
-﻿using CSRedis;
+using CSRedis;
 using System.IO;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Hosting;
@@ -48,7 +48,6 @@ namespace WaterCloud.Web
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
             services.AddSession();
             //代替HttpContext.Current
             services.AddHttpContextAccessor();
@@ -61,10 +60,13 @@ namespace WaterCloud.Web
             {
                 //redis 注入服务
                 string redisConnectiong = Configuration.GetSection("SystemConfig:RedisConnectionString").Value;
-                // 多客户端
-                var redisDB = new CSRedisClient(redisConnectiong + ",defaultDatabase=" + 0);
-                RedisHelper.Initialization(redisDB);
-                services.AddSingleton(redisDB);
+                // 多客户端 1、基础 2、操作日志
+                var redisDB1 = new CSRedisClient(redisConnectiong + ",defaultDatabase=" + 0);
+                BaseHelper.Initialization(redisDB1);
+                var redisDB2 = new CSRedisClient(redisConnectiong + ",defaultDatabase=" + 1);
+                HandleLogHelper.Initialization(redisDB2);
+                services.AddSingleton(redisDB1);
+                services.AddSingleton(redisDB2);
             }
             #region 依赖注入
             //注入数据库连接
@@ -105,12 +107,15 @@ namespace WaterCloud.Web
             services.AddControllersWithViews(options =>
             {
                 options.Filters.Add<GlobalExceptionFilter>();
+                options.Filters.Add<ModelActionFilter>();
                 options.ModelMetadataDetailsProviders.Add(new ModelBindingMetadataProvider());
+                options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
             }).AddNewtonsoftJson(options =>
             {
                 // 返回数据首字母不小写，CamelCasePropertyNamesContractResolver是小写
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
             });
+            services.AddAntiforgery(options => options.HeaderName = "X-CSRF-TOKEN");
             services.AddControllersWithViews().AddControllersAsServices();
             //调试前端可更新
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
@@ -119,6 +124,22 @@ namespace WaterCloud.Web
             GlobalContext.SystemConfig = Configuration.GetSection("SystemConfig").Get<SystemConfig>();
             GlobalContext.Services = services;
             GlobalContext.Configuration = Configuration;
+            //更新数据库管理员和主系统
+            try
+            {
+                var context = DBContexHelper.Contex();
+                var _setService = new Service.SystemOrganize.SystemSetService(context);
+                Domain.SystemOrganize.SystemSetEntity temp = new Domain.SystemOrganize.SystemSetEntity();
+                temp.F_AdminAccount = GlobalContext.SystemConfig.SysemUserCode;
+                temp.F_AdminPassword = GlobalContext.SystemConfig.SysemUserPwd;
+                temp.F_DBProvider = GlobalContext.SystemConfig.DBProvider;
+                temp.F_DbString = GlobalContext.SystemConfig.DBConnectionString;
+                _setService.SubmitForm(temp, GlobalContext.SystemConfig.SysemMasterProject);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Write(ex);
+            }
         }
         //AutoFac注入
         public void ConfigureContainer(ContainerBuilder builder)

@@ -134,14 +134,12 @@
     }
 </style>
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element', 'laydate'], function () {
+    layui.use(['jquery', 'form', 'table', 'common', 'commonTable', 'optimizeSelectOption', 'laydate'], function () {
         var $ = layui.jquery,
             form = layui.form,
+            commonTable = layui.commonTable,
             table = layui.table,
             common = layui.common,
-            layer = layui.layer,
-            echarts = layui.echarts,
-            element = layui.element,
             laydate = layui.laydate;
         wcLoading.close();
         $(function () {
@@ -159,7 +157,7 @@
             }
         });
         function loadOne() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId1',
                 id: 'currentTableId1',
                 url: "/ProductionManage/MouldQuery/GetMQMouldList",
@@ -207,7 +205,7 @@
             // 监听搜索操作
             form.on('submit(data-search-btn1)', function (data) {
                 //执行搜索重载
-                common.reloadtable({
+                commonTable.reloadtable({
                     elem: 'currentTableId1',
                     curr: 1,
                     where: { keyvalue: $('#test1').val(), keyword: $('#txt_keyword1').val() }

@@ -124,14 +124,13 @@
     }
 </style>
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element'], function () {
+    layui.use(['jquery', 'form', 'table', 'common', 'optimizeSelectOption', "echarts", 'commonTable'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table,
-            common = layui.common,
-            layer = layui.layer,
+            commonTable = layui.commonTable,
             echarts = layui.echarts,
-            element = layui.element;;
+            common = layui.common;
         wcLoading.close();
         $(function () {
             loadOne();
@@ -283,11 +282,11 @@
             });
         }
         function gridList() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId',
                 id: 'currentTableId',
                 url: "/ProcessScheduling/SchedulingHome/GetGridJson",
-                height: 250,
+                height: 400,
                 toolbar: false,/*隐藏打印*/
                 page: true,/*隐藏分页*/
                 sqlkey: 'id',//数据库主键
@@ -317,15 +316,17 @@
                     { field: 'WorkingHours', title: '标准工时', width: 100, sort: true },
                     { field: 'Customer', title: '客户', width: 100, sort: true, filter: true },
                     { field: 'MoldKernelMaterial', title: '模仁材质', width: 100, sort: true },
-                ]]
+                ]], filter: {
+                    bottom: false
+                }
             });
         }
         function gridListOne() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableIdOne',
                 id: 'currentTableIdOne',
                 url: "/ProcessScheduling/SchedulingHome/GetGridJsonOne",
-                height: 250,
+                height: 400,
                 toolbar: false,/*隐藏打印*/
                 page: true,/*隐藏分页*/
                 sqlkey: 'id',//数据库主键
@@ -355,7 +356,9 @@
                     { field: 'WorkingHours', title: '标准工时', width: 100, sort: true },
                     { field: 'Customer', title: '客户', width: 100, sort: true, filter: true },
                     { field: 'MoldKernelMaterial', title: '模仁材质', width: 100, sort: true },
-                ]]
+                ]], filter: {
+                    bottom: false
+                }
             });
         }
     })

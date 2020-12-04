@@ -1,4 +1,4 @@
-﻿/*******************************************************************************
+/*******************************************************************************
  * Copyright © 2020 WaterCloud.Framework 版权所有
  * Author: WaterCloud
  * Description: WaterCloud快速开发平台
@@ -12,18 +12,21 @@ using System;
 using System.Threading.Tasks;
 using Chloe;
 using System.IO;
+using WaterCloud.Service.SystemManage;
 
 namespace WaterCloud.Service.SystemOrganize
 {
     public class DutyService : DataFilterService<RoleEntity>, IDenpendency
     {
+        private SystemSetService setApp;
         public DutyService(IDbContext context) :base(context)
         {
+            setApp = new SystemSetService(context);
         }
         /// <summary>
         /// 缓存操作类
         /// </summary>
-        private string cacheKey = "watercloud_dutydata_";// 岗位
+        private string cacheKey = "watercloud_roledata_";// 岗位
         //获取类名
         private string className = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.FullName.Split('.')[3];
 
@@ -37,8 +40,22 @@ namespace WaterCloud.Service.SystemOrganize
             }
             return cachedata.OrderBy(t => t.F_SortCode).ToList();
         }
-        public async Task<List<RoleEntity>> GetLookList(Pagination pagination, string keyword = "")
+        public async Task<List<RoleEntity>> GetLookList(SoulPage<RoleEntity> pagination, string keyword = "")
         {
+            //反格式化显示只能用"等于"，其他不支持
+            Dictionary<string, Dictionary<string, string>> dic = new Dictionary<string, Dictionary<string, string>>();
+            Dictionary<string, string> enabledTemp = new Dictionary<string, string>();
+            enabledTemp.Add("有效", "1");
+            enabledTemp.Add("无效", "0");
+            dic.Add("F_EnabledMark", enabledTemp);
+            var setList =await setApp.GetList();
+            Dictionary<string, string> orgizeTemp = new Dictionary<string, string>();
+            foreach (var item in setList)
+            {
+                orgizeTemp.Add(item.F_CompanyName, item.F_Id);
+            }
+            dic.Add("F_OrganizeId", orgizeTemp);
+            pagination = ChangeSoulData(dic, pagination);
             //获取数据权限
             var list = GetDataPrivilege("u", className.Substring(0, className.Length - 7));
             if (!string.IsNullOrEmpty(keyword))
@@ -79,6 +96,9 @@ namespace WaterCloud.Service.SystemOrganize
             }
             else
             {
+                roleEntity.F_DeleteMark = false;
+                roleEntity.F_AllowEdit = false;
+                roleEntity.F_AllowDelete = false;
                 roleEntity.Create();
                 roleEntity.F_Category = 2;
                 await repository.Insert(roleEntity);
@@ -98,6 +118,7 @@ namespace WaterCloud.Service.SystemOrganize
             File.Delete(fileFullName);
             foreach (var item in list)
             {
+                item.F_Id = Utils.GuId();
                 item.F_EnabledMark = true;
                 item.F_DeleteMark = false;
                 item.F_OrganizeId = currentuser.CompanyId;

@@ -5,15 +5,12 @@
  * Website：
 *********************************************************************************/
 using Chloe;
-using Chloe.SqlServer;
 using WaterCloud.Code;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace WaterCloud.DataBase
@@ -129,6 +126,26 @@ namespace WaterCloud.DataBase
             tempData = tempData.TakePage(pagination.page, pagination.rows);
             return tempData.ToList();
         }
+        public async Task<List<T>> OrderList<T>(IQuery<T> query, SoulPage<T> pagination)
+        {
+            var tempData = query;
+            List<FilterSo> filterSos = pagination.getFilterSos();
+            if (filterSos!=null && filterSos.Count>0)
+            {
+                tempData = tempData.GenerateFilter("u", filterSos);
+            }
+            if (pagination.order == "desc")
+            {
+                tempData = tempData.OrderBy(pagination.field + " " + pagination.order);
+            }
+            else
+            {
+                tempData = tempData.OrderBy(pagination.field);
+            }
+            pagination.count = tempData.Count();
+            tempData = tempData.TakePage(pagination.page, pagination.rows);
+            return tempData.ToList();
+        }
         public async Task<List<TEntity>> CheckCacheList(string cacheKey, long old = 0)
         {
             var cachedata =await CacheHelper.Get<List<TEntity>>(cacheKey);
@@ -139,8 +156,7 @@ namespace WaterCloud.DataBase
             }
             return cachedata;
         }
-
-        public async Task<TEntity> CheckCache(string cacheKey, string keyValue, long old = 0)
+        public async Task<TEntity> CheckCache(string cacheKey, object keyValue, long old = 0)
         {
             var cachedata = await CacheHelper.Get<TEntity>(cacheKey + keyValue);
             if (cachedata == null)

@@ -77,6 +77,7 @@
             elem: '#mainList',
             page: false,
             url: '/FlowManage/Flowinstance/QueryHistories',
+            where: { time: new Date().Format("yyyy-MM-dd hh:mm:ss")},
             cols: [[ //标题栏
                 { field: 'F_Content', title: '流转记录', minWidth: 150 }
                 , { field: 'F_CreatorUserName', title: '操作人', width: 150 }
@@ -87,6 +88,7 @@
                             var time = new Date(d.F_CreatorTime);
                             return time.Format("yyyy-MM-dd hh:mm:ss");
                         }
+                        return '';
                     }
                 },
             ]]
@@ -131,6 +133,7 @@
                         formtext = data.F_FrmData;
                         $("#frmPreview").load(document.location.origin + '/form/' + data.F_DbName + '.html');
                     }
+                    flowDesignPanel.reinitSize($(window).width() - 50, $(window).height() - 100);
                 }
             });
             form.render();

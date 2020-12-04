@@ -3,18 +3,18 @@
     Layout = "~/Views/Shared/_Index.cshtml";
 }
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug'], function () {
+    layui.use(['jquery', 'form', 'commonTable', 'optimizeSelectOption'], function () {
         var $ = layui.jquery,
             form = layui.form,
-            table = layui.table,
-            common = layui.common;
+            commonTable = layui.commonTable;
         var keyValue = $.request("keyValue");
         wcLoading.close();
-        common.rendertable({
+        commonTable.rendertable({
             elem: '#currentTableId',
             url: '/SystemManage/CodeGenerator/GetTableFieldJson?keyValue=' + keyValue,
             toolbar: false,
-            page:false,
+            page: false,
+            search:false,
             cols: [[
                 { field: 'TableColumn', title: '列名', width: 150, sort: true },
                 { field: 'Datatype', title: '数据类型', width: 120, sort: true },
@@ -27,7 +27,7 @@
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
             //执行搜索重载
-            common.reloadtable({
+            commonTable.reloadtable({
                 elem: 'currentTableId',
                 page: false,
                 curr: 1,
@@ -41,7 +41,7 @@
     <div class="layuimini-main">
         <fieldset class="table-search-fieldset">
             @*<legend>搜索信息</legend>*@
-            <div style="margin: 10px 10px 10px 10px">
+            <div>
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
                         <div class="layui-inline">

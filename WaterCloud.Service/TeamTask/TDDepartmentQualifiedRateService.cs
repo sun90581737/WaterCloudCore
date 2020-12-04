@@ -1,16 +1,21 @@
-﻿using Chloe;
-using System;
+﻿
+
+using Chloe;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
+using WaterCloud.DataBase;
 using WaterCloud.Domain.Entity.TeamTask;
 
 namespace WaterCloud.Service.TeamTask
 {
-    public class TDDepartmentQualifiedRateService : DataFilterService<TDDepartmentQualifiedRateEntity>, IDenpendency
+    public class TDDepartmentQualifiedRateService: IDenpendency
     {
-        public TDDepartmentQualifiedRateService(IDbContext context) : base(context)
+        private IRepositoryBase<TDDepartmentQualifiedRateEntity> repository;
+        private IRepositoryBase uniwork;
+        public TDDepartmentQualifiedRateService(IDbContext context)
         {
+            repository = new RepositoryBase<TDDepartmentQualifiedRateEntity>(context);
+            uniwork = new RepositoryBase(context);
         }
         public async Task<List<TDDepartmentQualifiedRateEntity>> GetList()
         {

@@ -4,9 +4,8 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using WaterCloud.Domain.SystemSecurity;
-using WaterCloud.Web;
 using WaterCloud.Service;
-using Serenity;
+using System.Linq;
 
 namespace WaterCloud.Web.Areas.SystemSecurity.Controllers
 {
@@ -18,75 +17,50 @@ namespace WaterCloud.Web.Areas.SystemSecurity.Controllers
     {
         private string className = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.FullName.Split('.')[5];
         public OpenJobsService _service { get; set; }
-        public LogService _logService { get; set; }
 
         //获取详情
         [HttpGet]
         public async Task<ActionResult> GetFormJson(string keyValue)
         {
-            var data = await _service.GetLookForm(keyValue);
+            var data = await _service.GetForm(keyValue);
             return Content(data.ToJson());
         }
         [HttpPost]
         [HandlerAjaxOnly]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> SubmitForm(OpenJobEntity entity, string keyValue)
         {
-            LogEntity logEntity;
             if (string.IsNullOrEmpty(keyValue))
             {
                 entity.F_EnabledMark = false;
                 entity.F_DeleteMark = false;
-                logEntity = await _logService.CreateLog(className, DbLogType.Create.ToString());
-                logEntity.F_Description += DbLogType.Create.ToDescription();
             }
             else
             {
                 entity.F_EnabledMark = null;
-                logEntity = await _logService.CreateLog(className, DbLogType.Update.ToString());
-                logEntity.F_Description += DbLogType.Update.ToDescription();
-                logEntity.F_KeyValue = keyValue;
             }
             try
             {
-                logEntity.F_Account = _logService.currentuser.UserCode;
-                logEntity.F_NickName = _logService.currentuser.UserName;
                 await _service.SubmitForm(entity, keyValue);
-                logEntity.F_Description += "操作成功";
-                await _logService.WriteDbLog(logEntity);
-                return Success("操作成功。");
+                return await Success("操作成功。", className, keyValue);
             }
             catch (Exception ex)
             {
-                logEntity.F_Result = false;
-                logEntity.F_Description += "操作失败，" + ex.Message;
-                await _logService.WriteDbLog(logEntity);
-                return Error(ex.Message);
+                return await Error(ex.Message, className, keyValue);
             }
         }
         [HttpPost]
         [HandlerAjaxOnly]
         [ServiceFilter(typeof(HandlerAuthorizeAttribute))]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteForm(string keyValue)
         {
-            LogEntity logEntity = await _logService.CreateLog(className, DbLogType.Delete.ToString());
-            logEntity.F_Description += DbLogType.Delete.ToDescription();
             try
             {
-                logEntity.F_Account = _logService.currentuser.UserCode;
-                logEntity.F_NickName = _logService.currentuser.UserName;
                 await _service.DeleteForm(keyValue);
-                logEntity.F_Description += "操作成功";
-                await _logService.WriteDbLog(logEntity);
-                return Success("操作成功。");
+                return await Success("操作成功。", className, keyValue, DbLogType.Delete);
             }
             catch (Exception ex)
             {
-                logEntity.F_Result = false;
-                logEntity.F_Description += "操作失败，" + ex.Message;
-                await _logService.WriteDbLog(logEntity);
-                return Error(ex.Message);
+                return await Error(ex.Message, className, keyValue, DbLogType.Delete);
             }
         }
 
@@ -105,8 +79,25 @@ namespace WaterCloud.Web.Areas.SystemSecurity.Controllers
         {
             pagination.order = "desc";
             pagination.sort = "F_EnabledMark";
+            //导出全部页使用
+            if (pagination.rows == 0 && pagination.page == 0)
+            {
+                pagination.rows = 99999999;
+                pagination.page = 1;
+            }
             var data = await _service.GetLookList(pagination, keyword);
             return Success(pagination.records, data);
+        }
+        [HttpGet]
+        [HandlerAjaxOnly]
+        public async Task<ActionResult> GetLogJson(string keyValue, string keyword)
+        {
+            var data = await _service.GetLogList(keyValue);
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                data = data.Where(a => a.F_Description.Contains(keyword)).ToList();
+            }
+            return Success(data.Count, data);
         }
         /// <summary>
         /// 改变任务状态，启动/停止
@@ -114,25 +105,28 @@ namespace WaterCloud.Web.Areas.SystemSecurity.Controllers
         [HttpPost]
         public async Task<ActionResult> ChangeStatus(string keyValue, int status)
         {
-            LogEntity logEntity;
-            logEntity = await _logService.CreateLog(className, DbLogType.Update.ToString());
-            logEntity.F_Description += DbLogType.Update.ToDescription();
-            logEntity.F_KeyValue = keyValue;
             try
             {
-                logEntity.F_Account = _logService.currentuser.UserCode;
-                logEntity.F_NickName = _logService.currentuser.UserName;
                 await _service.ChangeJobStatus(keyValue, status);
-                logEntity.F_Description += "操作成功";
-                await _logService.WriteDbLog(logEntity);
-                return Success("操作成功。");
+                return await Success("操作成功。", className, keyValue);
             }
             catch (Exception ex)
             {
-                logEntity.F_Result = false;
-                logEntity.F_Description += "操作失败，" + ex.Message;
-                await _logService.WriteDbLog(logEntity);
-                return Error(ex.Message);
+                return await Error(ex.Message, className, keyValue);
+            }
+        }
+        [HttpPost]
+        [HandlerAjaxOnly]
+        public async Task<ActionResult> DeleteLogForm(string keyValue)
+        {
+            try
+            {
+                await _service.DeleteLogForm(keyValue);
+                return await Success("操作成功。", className, keyValue, DbLogType.Delete);
+            }
+            catch (Exception ex)
+            {
+                return await Error(ex.Message, className, keyValue, DbLogType.Delete);
             }
         }
     }

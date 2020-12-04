@@ -124,14 +124,13 @@
     }
 </style>
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element'], function () {
+    layui.use(['jquery', 'form', 'table', 'common', 'optimizeSelectOption', "echarts", 'commonTable'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table,
-            common = layui.common,
-            layer = layui.layer,
+            commonTable = layui.commonTable,
             echarts = layui.echarts,
-            element = layui.element;;
+            common = layui.common;
         var keyValue = $.request("keyValue");
         wcLoading.close();
         $(function () {
@@ -139,7 +138,7 @@
         });
         function loadTwo() {
             if (!!keyValue) {
-            common.rendertable({
+                commonTable.rendertable({
                 elem: '#currentTableId2',
                 id: 'currentTableId2',
                 url: "/QualityOptimization/QualityExceptionQuery/GetGridJsonKey?keyvalue=" + keyValue,

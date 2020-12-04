@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Web;
 using System.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -6,14 +6,10 @@ using WaterCloud.Domain;
 using WaterCloud.Code;
 using WaterCloud.CodeGenerator;
 using WaterCloud.Service.CommonService;
-using WaterCloud.Service.SystemSecurity;
-using WaterCloud.Service.SystemManage;
-using WaterCloud.Domain.SystemSecurity;
 using System.Linq;
 using WaterCloud.Service;
 using System.Threading.Tasks;
 using WaterCloud.Code.Extend;
-using Serenity;
 using Chloe;
 
 namespace WaterCloud.Web.Areas.SystemManage.Controllers
@@ -23,7 +19,6 @@ namespace WaterCloud.Web.Areas.SystemManage.Controllers
     {
         private string className = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.FullName.Split('.')[5];
         private readonly IDatabaseTableService _service;
-        public LogService _logService { get; set; }
         private readonly IDbContext _context;
         public CodeGeneratorController(IDbContext context)
         {
@@ -54,6 +49,12 @@ namespace WaterCloud.Web.Areas.SystemManage.Controllers
         [HandlerAjaxOnly]
         public async Task<ActionResult> GetTablePageListJson(Pagination pagination,string keyword)
         {
+            //导出全部页使用
+            if (pagination.rows == 0 && pagination.page == 0)
+            {
+                pagination.rows = 99999999;
+                pagination.page = 1;
+            }
             List<TableInfo> data =await _service.GetTablePageList(keyword, pagination);
             return Success(pagination.records, data);
         }
@@ -123,6 +124,7 @@ namespace WaterCloud.Web.Areas.SystemManage.Controllers
         #region 提交数据
         [HttpPost]
         [HandlerAjaxOnly]
+        [IgnoreAntiforgeryToken]
         public async Task<ActionResult> CodePreviewJson(BaseConfigModel baseConfig)
         {
             try
@@ -135,20 +137,59 @@ namespace WaterCloud.Web.Areas.SystemManage.Controllers
                 baseConfig.PageIndex.ButtonList=ExtList.removeNull(baseConfig.PageIndex.ButtonList);
                 baseConfig.PageIndex.ColumnList.Remove("");
                 baseConfig.PageForm.FieldList.Remove("");
+                string idType = "string";
+                //扩展删除字段和创建时间字段
+                string[] isDeleteMarkFieldNames = new[] { "F_DeleteMark", "IsDelete" };
+                string[] createTimeFieldNames = new[] { "F_CreatorTime", "AddTime" };
+
+                string isDeleteMarkField = "F_DeleteMark";
+                string createTimeField = "F_CreatorTime";
                 foreach (DataRow dr in dt.Rows)
                 {
+
                     if (dr["TableIdentity"].ToString() == "Y")
                     {
                         idcolumn = dr["TableColumn"].ToString();
+                        string datatype = dr["Datatype"].ToString();
+                        datatype = TableMappingHelper.GetPropertyDatatype(datatype);
+                        if (datatype == "int?")
+                        {
+                            idType = "int";
+                        }
+                        else if (datatype == "long?")
+                        {
+                            idType = "long";  
+                        }
+                        else
+                        {
+                            idType = "string";
+                        }
+                    }
+                    string columnName = dr["TableColumn"].ToString();
+                    foreach(var isDeleteMarkFieldName in isDeleteMarkFieldNames)
+                    {
+                        if (string.Compare(isDeleteMarkFieldName, columnName, true) == 0)
+                        {
+                            isDeleteMarkField = columnName;
+                        }
+                    }
+                    foreach (var createTimeFieldName in createTimeFieldNames)
+                    {
+                        if (string.Compare(createTimeFieldName, columnName, true) == 0)
+                        {
+                            createTimeField = columnName;
+                        }
                     }
                 }
+
+  
                 string codeEntity = template.BuildEntity(baseConfig, dt, idcolumn);
-                string codeService = template.BuildService(baseConfig,dt, idcolumn);
-                string codeController = template.BuildController(baseConfig, idcolumn);
+                string codeService = template.BuildService(baseConfig,dt, idcolumn,idType,isDeleteMarkField,createTimeField);
+                string codeController = template.BuildController(baseConfig, idcolumn,idType, createTimeField);
                 string codeIndex = template.BuildIndex(baseConfig, idcolumn);
                 string codeForm = template.BuildForm(baseConfig);
                 string codeDetails = template.BuildDetails(baseConfig);
-                string codeMenu = template.BuildMenu(baseConfig);
+                string codeMenu = template.BuildMenu(baseConfig,idcolumn);
                 var json = new
                 {
                     CodeEntity = HttpUtility.HtmlEncode(codeEntity),
@@ -163,7 +204,6 @@ namespace WaterCloud.Web.Areas.SystemManage.Controllers
             }
             catch (System.Exception ex)
             {
-
                 return Error(ex.Message);
             }
 
@@ -186,15 +226,10 @@ namespace WaterCloud.Web.Areas.SystemManage.Controllers
         [HttpPost]
         [HandlerAjaxOnly]
         [ServiceFilter(typeof(HandlerAuthorizeAttribute))]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> CodeGenerateJson(BaseConfigModel baseConfig, string Code)
         {
-            LogEntity logEntity = await _logService.CreateLog(className, DbLogType.Create.ToString());
-            logEntity.F_Description += DbLogType.Create.ToDescription();
             try
             {
-                logEntity.F_Account = _logService.currentuser.UserCode;
-                logEntity.F_NickName = _logService.currentuser.UserName;
                 if (!GlobalContext.SystemConfig.Debug)
                 {
                     throw new System.Exception("请在本地开发模式时使用代码生成");
@@ -204,30 +239,20 @@ namespace WaterCloud.Web.Areas.SystemManage.Controllers
                     SingleTableTemplate template = new SingleTableTemplate(_context);
                     await template.CreateCode(baseConfig, HttpUtility.UrlDecode(Code));
                 }
-                logEntity.F_Description += "操作成功";
-                await _logService.WriteDbLog(logEntity);
-                return Success("操作成功。");
+                return await Success("操作成功。", className, "");
             }
             catch (System.Exception ex)
             {
-                logEntity.F_Result = false;
-                logEntity.F_Description += "操作失败，" + ex.Message;
-                await _logService.WriteDbLog(logEntity);
-                return Error(ex.Message);
+                return await Error(ex.Message, className, "");
             }
         }
         [HttpPost]
         [HandlerAjaxOnly]
         [ServiceFilter(typeof(HandlerAuthorizeAttribute))]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> EntityCodeGenerateJson(BaseConfigModel baseConfig, string keyValue)
         {
-            LogEntity logEntity = await _logService.CreateLog(className, DbLogType.Create.ToString());
-            logEntity.F_Description += DbLogType.Create.ToDescription();
             try
             {
-                logEntity.F_Account = _logService.currentuser.UserCode;
-                logEntity.F_NickName = _logService.currentuser.UserName;
                 if (!GlobalContext.SystemConfig.Debug)
                 {
                     throw new System.Exception("请在本地开发模式时使用代码生成");
@@ -248,16 +273,11 @@ namespace WaterCloud.Web.Areas.SystemManage.Controllers
                     string codeEntity = template.BuildEntity(baseConfig, dt, idcolumn);
                     await template.EntityCreateCode(baseConfig, codeEntity);
                 }
-                logEntity.F_Description += "操作成功";
-                await _logService.WriteDbLog(logEntity);
-                return Success("操作成功。");
+                return await Success("操作成功。", className, "");
             }
             catch (System.Exception ex)
             {
-                logEntity.F_Result = false;
-                logEntity.F_Description += "操作失败，" + ex.Message;
-                await _logService.WriteDbLog(logEntity);
-                return Error(ex.Message);
+                return await Error(ex.Message, className, "");
             }
         }
         #endregion

@@ -142,14 +142,14 @@
 
 </style>
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element'], function () {
+    layui.use(['jquery', 'form', 'table', 'common', 'optimizeSelectOption', 'commonTable', 'echarts', 'element'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table,
-            common = layui.common,
-            layer = layui.layer,
+            commonTable = layui.commonTable,
             echarts = layui.echarts,
-            element = layui.element;;
+            element = layui.element,
+            common = layui.common;
         wcLoading.close();
         // toolbarDemo.innerHTML = common.authorizeButtonNew(toolbarDemo.innerHTML);
 
@@ -251,6 +251,10 @@
                 }]
             };
             myChart.setOption(option);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
         }
         function loadTwoA() {
             var ListMonth = new Array();
@@ -377,6 +381,10 @@
                 ]
             };
             myChart.setOption(option);
+            // echarts 窗口缩放自适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
         }
     })
 </script>
@@ -391,11 +399,11 @@
                     <div class="layui-card-body layui-text">
                         <div style="float:left;width:40%">
                             <div style="text-align:center;font-size:13px;color:#808080;">上月交付模具数量</div>
-                            <div id="chart2b" style="        height: 450px;"></div>
+                            <div id="chart2b" style="height:600px;"></div>
                         </div>
                         <div style="margin-left:40%;">
                             <div style="text-align:center;font-size:13px;color:#808080;">交期达成率趋势</div>
-                            <div id="chart1" style="height:450px;"></div>
+                            <div id="chart1" style="height:600px;"></div>
                         </div>
                     </div>
                 </div>

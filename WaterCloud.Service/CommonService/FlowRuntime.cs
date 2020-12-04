@@ -1,4 +1,4 @@
-﻿// <summary>
+// <summary>
 // 一个正在运行中的流程实例
 //</summary>
 // ***********************************************************************
@@ -21,7 +21,7 @@ namespace WaterCloud.Service.CommonService
         /// </summary>
         public FlowRuntime(FlowinstanceEntity instance)
         {
-            dynamic schemeContentJson = instance.F_SchemeContent.ToJson();//获取工作流模板内容的json对象;
+            dynamic schemeContentJson = instance.F_SchemeContent.ToObject();//获取工作流模板内容的json对象;
 
             InitLines(schemeContentJson);
             InitNodes(schemeContentJson);
@@ -31,7 +31,7 @@ namespace WaterCloud.Service.CommonService
             FrmData = instance.F_FrmData;
             title = schemeContentJson.title;
             initNum = schemeContentJson.initNum?? 0;
-            previousId = instance.F_PreviousId;
+            previousId = GetPreviousNodeId(currentNodeId);
             flowInstanceId = instance.F_Id;
 
             //会签开始节点和流程结束节点没有下一步
@@ -133,7 +133,44 @@ namespace WaterCloud.Service.CommonService
 
             return lines[0].to;
         }
+        /// <summary>
+        /// 获取上一个节点
+        /// </summary>
+        private string GetPreviousNodeId(string nodeId = null)
+        {
+            try
+            {
+                var lines = nodeId == null ? ToNodeLines[currentNodeId] : ToNodeLines[nodeId];
+                if (lines.Count == 0)
+                {
+                    return string.Empty;
+                }
 
+                if (FrmData == "") return lines[0].from;
+
+                FrmData = FrmData.ToLower();//统一转小写
+                var frmDataJson = FrmData.ToJObject();//获取数据内容
+
+                foreach (var l in lines)
+                {
+                    if (l.Compares == null)
+                    {
+                        l.Compares = new List<DataCompare>();
+                    }
+                    if (l.Compares.Count > 0 && l.Compare(frmDataJson))
+                    {
+                        return l.from;
+                    }
+                }
+
+                return lines[0].from;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+
+        }
         #endregion 私有方法
 
         #region 共有方法
@@ -181,6 +218,35 @@ namespace WaterCloud.Service.CommonService
 
                 default:
                     return 2;
+            }
+        }
+
+        public void RemoveNode(string nodeId)
+        {
+            var node = Nodes[nodeId];
+            if (node != null && node.setInfo != null)
+            {
+                node.setInfo.Taged = null;
+                node.setInfo.UserName = null;
+                node.setInfo.UserId = null;
+                node.setInfo.Description = null;
+                node.setInfo.TagedTime = null;
+            }
+        }
+
+        public void RemoveNodes()
+        {
+            foreach (var item in Nodes)
+            {
+                var node = item.Value;
+                if (node != null && node.setInfo != null)
+                {
+                    node.setInfo.Taged = null;
+                    node.setInfo.UserName = null;
+                    node.setInfo.UserId = null;
+                    node.setInfo.Description = null;
+                    node.setInfo.TagedTime = null;
+                }
             }
         }
 
@@ -312,7 +378,7 @@ namespace WaterCloud.Service.CommonService
             }
             if (rejectType == "1")
             {
-                return GetNextNodeId(startNodeId);
+                return startNodeId;
             }
             return previousId;
         }
@@ -375,12 +441,9 @@ namespace WaterCloud.Service.CommonService
                 execTime = tag.TagedTime,
                 isFinish = currentNodeType == 4
             };
-
-            using (HttpContent httpContent = new StringContent(JsonHelper.Serialize(postData), Encoding.UTF8))
-            {
-                    httpContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-                   client.PostAsync(currentNode.setInfo.ThirdPartyUrl, httpContent);
-            }
+            HttpContent httpContent = new StringContent(postData.ToJson(), Encoding.UTF8);
+            httpContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+            client.PostAsync(currentNode.setInfo.ThirdPartyUrl, httpContent);
         }
 
         #endregion 共有方法

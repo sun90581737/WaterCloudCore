@@ -3,25 +3,23 @@
     Layout = "~/Views/Shared/_Index.cshtml";
 }
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', 'miniTab', 'layer'], function () {
-        var $ = layui.jquery,
-            form = layui.form,
+    layui.use(['form', 'table', 'common', 'commonTable', 'optimizeSelectOption'], function () {
+        var form = layui.form,
             table = layui.table,
-            layer = layui.layer,
-            miniTab = layui.miniTab,
+            commonTable = layui.commonTable,
             common = layui.common;
         //加载数据
         wcLoading.close();
         //权限控制(js是值传递)
         toolbarDemo.innerHTML = common.authorizeButtonNew(toolbarDemo.innerHTML);
-        common.rendertable({
+        commonTable.rendertable({
             elem: '#currentTableId',
             url: '/SystemManage/CodeGenerator/GetTablePageListJson',
             sqlkey: 'TableName',//数据库主键
             cols: [[
                 { field: 'TableName', title: '表名称', width: 200, sort: true },
-                { field: 'TableKeyName', title: '主键名称', width: 100 },
-                { field: 'TableKey', title: '主键字段', width: 250 },
+                { field: 'TableKeyName', title: '主键名称', minWidth: 250 },
+                { field: 'TableKey', title: '主键字段', minWidth: 100 },
                 { field: 'TableCount', title: '记录数', width: 80 },
                 { field: 'Remark', title: '备注', minWidth: 150 },
             ]]
@@ -29,7 +27,7 @@
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
             //执行搜索重载
-            common.reloadtable({
+            commonTable.reloadtable({
                 elem: 'currentTableId',
                 curr: 1,
                 where: { keyword: data.field.txt_keyword}
@@ -81,15 +79,23 @@
                     btn: []
                 });
             }
+            else if (obj.event === 'TABLE_SEARCH') {
+                var _that = $("#searchField");
+                if (_that.hasClass("layui-hide")) {
+                    _that.removeClass('layui-hide');
+                } else {
+                    _that.addClass('layui-hide');
+                }
+            }
             return false;
         });
     });
 </script>
 <div class="layuimini-container">
     <div class="layuimini-main">
-        <fieldset class="table-search-fieldset">
+        <fieldset class="table-search-fieldset layui-hide" id="searchField">
             @*<legend>搜索信息</legend>*@
-            <div style="margin: 10px 10px 10px 10px">
+            <div>
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
                         <div class="layui-inline">

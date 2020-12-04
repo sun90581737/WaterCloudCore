@@ -142,14 +142,13 @@
 
 </style>
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element'], function () {
+    layui.use(['jquery', 'form', 'table', 'common', 'optimizeSelectOption', "echarts", 'commonTable'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table,
-            common = layui.common,
-            layer = layui.layer,
+            commonTable = layui.commonTable,
             echarts = layui.echarts,
-            element = layui.element;;
+            common = layui.common;
         wcLoading.close();
         // toolbarDemo.innerHTML = common.authorizeButtonNew(toolbarDemo.innerHTML);
 
@@ -512,7 +511,7 @@
             });
         }
         function gridList() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId',
                 id: 'currentTableId',
                 url: '/OperationMonitoring/EngineeringHomepage/GetGridJson',
@@ -522,11 +521,11 @@
                 sqlkey: 'id',//数据库主键
                 cols: [[
                     { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
-                    { field: 'MoldNo', title: '模具编号', width: 80, sort: true },
-                    { field: 'Customers', title: '客户', width: 60, sort: true, filter: true },
-                    { field: 'Type', title: '类型', width: 60, sort: true },
+                    { field: 'MoldNo', title: '模具编号', width: 110, sort: true },
+                    { field: 'Customers', title: '客户', width: 100, sort: true, filter: true },
+                    { field: 'Type', title: '类型', width: 80, sort: true },
                     {
-                        field: 'PlannedDeliveryDate', title: '计划交期', width: 80,
+                        field: 'PlannedDeliveryDate', title: '计划交期', width: 100,
                         templet: function (d) {
                             if (d.PlannedDeliveryDate) {
                                 return new Date(d.PlannedDeliveryDate).Format("yyyy-MM-dd");
@@ -561,11 +560,11 @@
             });
         }
         function gridListOn() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId2',
                 id: 'currentTableId2',
                 url: '/OperationMonitoring/EngineeringHomepage/GetGridJsonOn',
-                height: 190,
+                height: 300,
                 toolbar: false,/*隐藏打印*/
                 page: true,/*隐藏分页*/
                 sqlkey: 'id',//数据库主键
@@ -579,13 +578,13 @@
                         }
                     },
                     //{ field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
-                    { field: 'MoldName', title: '模具名称', width: 120, sort: true },
-                    { field: 'MoldNo', title: '模具编号', width: 120, sort: true },
-                    { field: 'TN', title: 'TN', width: 120, sort: true },
-                    { field: 'CustomerName', title: '客户', width: 120, sort: true },
-                    { field: 'ContactPerson', title: '内部负责人', width: 120, sort: true },
-                    { field: 'MoldType', title: '类型', width: 120, sort: true, filter: true },
-                    { field: 'MoldState', title: '状态', width: 120, sort: true, filter: true },
+                    { field: 'MoldName', title: '模具名称', width: 180, sort: true },
+                    { field: 'MoldNo', title: '模具编号', width: 180, sort: true },
+                    { field: 'TN', title: 'TN', width: 180, sort: true },
+                    { field: 'CustomerName', title: '客户', width: 150, sort: true },
+                    { field: 'ContactPerson', title: '内部负责人', width: 150, sort: true },
+                    { field: 'MoldType', title: '类型', width: 150, sort: true, filter: true },
+                    { field: 'MoldState', title: '状态', width: 150, sort: true, filter: true },
                     {
                         field: 'MoldDate', title: '试模日期', width: 150,
                         templet: function (d) {
@@ -595,9 +594,11 @@
                             }
                         }
                     },
-                    { field: 'MoldMaterial', title: '模仁材质', width: 120, sort: true },
-                    { field: 'Category', title: '类别', width: 120, sort: true },
-                ]]
+                    { field: 'MoldMaterial', title: '模仁材质', width: 150, sort: true },
+                    { field: 'Category', title: '类别', width: 150, sort: true },
+                ]], filter: {
+                    bottom: false
+                }
             });
         }
         $(document).on('click', "#funOne", function () {

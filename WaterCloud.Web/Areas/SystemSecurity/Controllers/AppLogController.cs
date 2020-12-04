@@ -4,7 +4,6 @@
  * Description: WaterCloud快速开发平台
  * Website：
 *********************************************************************************/
-using WaterCloud.Service.SystemSecurity;
 using WaterCloud.Code;
 using System;
 using System.Collections.Generic;
@@ -25,6 +24,12 @@ namespace WaterCloud.Web.Areas.SystemSecurity.Controllers
         [HandlerAjaxOnly]
         public async Task<ActionResult> GetGridJson(Pagination pagination, int timetype = 2)
         {
+            //导出全部页使用
+            if (pagination.rows == 0 && pagination.page == 0)
+            {
+                pagination.rows = 99999999;
+                pagination.page = 1;
+            }
             List<AppLogEntity> list = new List<AppLogEntity>();
             string logPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
             getDirectory(list, logPath);

@@ -16,15 +16,14 @@
     </div>
 </div>
 <script>
-    layui.use(['jquery', 'table', 'upload', 'form', 'common', 'layer'], function () {
+    layui.use(['jquery', 'table', 'upload', 'common', 'commonTable'], function () {
         var $ = layui.jquery,
-            form = layui.form,
-            layer = layui.layer,
             table = layui.table,
             upload = layui.upload,
+            commonTable = layui.commonTable,
             common = layui.common;
         var dataJson = [];
-        common.rendertable({
+        commonTable.rendertable({
             elem: '#currentTableId',
             id: 'currentTableId',
             data: dataJson,
@@ -35,19 +34,19 @@
                 , first: false //不显示首页
                 , last: false //不显示尾页
             },
-            sqlkey: 'F_Id',//数据库主键
+            search:false,
             cols: [[
                 { type: 'checkbox', fixed: "left" },
                 { field: 'ErrorMsg', title: '错误信息', width: 150 },
                 { field: 'F_FullName', title: '岗位名称', width: 120, sort: true },
                 { field: 'F_EnCode', title: '岗位编号', width: 120, sort: true },
                 {
-                    field: 'F_EnabledMark', title: '有效', width: 80, sort: true,
+                    field: 'F_EnabledMark', title: '状态', width: 80,
                     templet: function (d) {
                         if (d.F_EnabledMark == true) {
-                            return "<input type='checkbox' checked='' lay-skin='primary' name='true' valuer='true'>";
+                            return "<span class='layui-btn layui-btn-normal layui-btn-xs'>有效</span>";
                         } else {
-                            return "<input type='checkbox' name='false'  lay-skin='primary' valuer='false'>";
+                            return "<span class='layui-btn layui-btn-warm layui-btn-xs'>无效</span>";
                         }
                     }
                 },

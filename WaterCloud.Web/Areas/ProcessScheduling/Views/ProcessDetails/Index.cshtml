@@ -124,14 +124,14 @@
     }
 </style>
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element'], function () {
+    layui.use(['jquery', 'form', 'table', 'common', 'optimizeSelectOption', "echarts", 'commonTable', 'element'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table,
             common = layui.common,
-            layer = layui.layer,
+            commonTable = layui.commonTable,
             echarts = layui.echarts,
-            element = layui.element;;
+            element = layui.element;
         wcLoading.close();
         $(function () {
             loadOne();
@@ -293,7 +293,7 @@
                         @*<button type="button" id="funOne" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>*@
                     </div>
                     <div class="layui-card-body layui-text">
-                        <div id="chart1" style="height:520px;"></div>
+                        <div id="chart1" style="height:740px;"></div>
                     </div>
                 </div>
             </div>

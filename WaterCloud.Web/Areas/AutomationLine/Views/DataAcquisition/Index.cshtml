@@ -126,13 +126,12 @@
 </style>
 <script src="~/js/lay-module/echarts/echarts.min.js"></script>
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'element'], function () {
-        var $ = layui.jquery,
+    layui.use(['commonTable', 'form', 'table', 'common', 'optimizeSelectOption','element'], function () {
+        var commonTable = layui.commonTable,
             form = layui.form,
             table = layui.table,
-            common = layui.common,
-            layer = layui.layer,
-            element = layui.element;;
+            element = layui.element,
+            common = layui.common;
         wcLoading.close();
         $(function () {
             LoadAllData();

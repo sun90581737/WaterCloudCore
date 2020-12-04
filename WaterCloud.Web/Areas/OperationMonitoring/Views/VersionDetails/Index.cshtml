@@ -134,12 +134,12 @@
     }
 </style>
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element', 'laydate'], function () {
+    layui.use(['jquery', 'form', 'table', 'common', 'optimizeSelectOption', "echarts", 'commonTable', 'element', 'laydate'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table,
             common = layui.common,
-            layer = layui.layer,
+            commonTable = layui.commonTable,
             echarts = layui.echarts,
             element = layui.element,
             laydate = layui.laydate;
@@ -500,7 +500,7 @@
             });
         }
         function gridList() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId',
                 id: 'currentTableId',
                 url: "/OperationMonitoring/VersionDetails/GetGridJson",
@@ -525,7 +525,9 @@
                     },
                     { field: 'DaysOfExtension', title: '延期天数', width: 110 },
                     { field: 'OrderStatus', title: '状态', width: 100, sort: true, filter: true },
-                ]]
+                ]], filter: {
+                    bottom: false
+                }
             });
         }
         function loadFour() {
@@ -660,7 +662,7 @@
             });
         }
         function loadFive() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId2',
                 id: 'currentTableId2',
                 url: "/OperationMonitoring/VersionDetails/GetGridJsonOne",

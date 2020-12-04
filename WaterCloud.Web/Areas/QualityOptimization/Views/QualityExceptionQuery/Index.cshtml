@@ -124,20 +124,19 @@
     }
 </style>
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element'], function () {
+    layui.use(['jquery', 'form', 'table', 'common', 'optimizeSelectOption', "echarts", 'commonTable'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table,
-            common = layui.common,
-            layer = layui.layer,
+            commonTable = layui.commonTable,
             echarts = layui.echarts,
-            element = layui.element;;
+            common = layui.common;
         wcLoading.close();
         $(function () {
             loadOne();
         });
         function loadOne() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId',
                 id: 'currentTableId',
                 url: '/QualityOptimization/QualityExceptionQuery/GetGridJson',
@@ -159,7 +158,6 @@
             });
             //监听行双击事件
             table.on('rowDouble(currentTableFilter)', function (obj) {
-                debugger;
                 //obj 同上
                 common.modalOpen({
                     title: "品质异常查询明细",

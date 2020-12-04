@@ -124,36 +124,35 @@
     }
 </style>
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer", 'echarts', 'element'], function () {
+    layui.use(['jquery', 'form', 'table', 'common', 'optimizeSelectOption', "echarts", 'commonTable'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table,
-            common = layui.common,
-            layer = layui.layer,
+            commonTable = layui.commonTable,
             echarts = layui.echarts,
-            element = layui.element;;
+            common = layui.common;
         wcLoading.close();
         $(function () {
             gridList();
         });
         function gridList() {
-            common.rendertable({
+            commonTable.rendertable({
                 elem: '#currentTableId',
                 id: 'currentTableId',
                 url: "/QualityOptimization/ExceptionDetailsList/GetGridJson",
-                height: 520,
+                height: 740,
                 toolbar: true,/*隐藏打印*/
                 page: true,/*隐藏分页*/
                 sqlkey: 'id',//数据库主键
                 cols: [[
                     { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
-                    { field: 'ExceptionNumber', title: '异常编号', width: 150, sort: true },
-                    { field: 'ExceptionModule', title: '异常模号', width: 150, sort: true },
-                    { field: 'FaultDescription', title: '故障描述', width: 150, sort: true },
-                    { field: 'Department', title: '所属部门', width: 150, sort: true, filter: true  },
-                    { field: 'ResponsibleProcess', title: '责任工序', width: 150, sort: true},
-                    { field: 'PersonLiable', title: '责任人', width: 150, sort: true, filter: true  },
-                    { field: 'ResponsibleSupplier', title: '责任供应商', width: 180, sort: true },
+                    { field: 'ExceptionNumber', title: '异常编号', width: 250, sort: true },
+                    { field: 'ExceptionModule', title: '异常模号', width: 200, sort: true },
+                    { field: 'FaultDescription', title: '故障描述', width: 200, sort: true },
+                    { field: 'Department', title: '所属部门', width: 200, sort: true, filter: true  },
+                    { field: 'ResponsibleProcess', title: '责任工序', width: 200, sort: true},
+                    { field: 'PersonLiable', title: '责任人', width: 200, sort: true, filter: true  },
+                    { field: 'ResponsibleSupplier', title: '责任供应商', width: 200, sort: true },
                     { field: 'AnomalyTracking', title: '异常追踪', width: 200 },
                 ]]
             });

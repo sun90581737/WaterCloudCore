@@ -1,20 +1,17 @@
-﻿/*******************************************************************************
+/*******************************************************************************
  * Copyright © 2020 WaterCloud.Framework 版权所有
  * Author: WaterCloud
  * Description: WaterCloud快速开发平台
  * Website：
 *********************************************************************************/
 using Chloe;
-using Chloe.SqlServer;
 using WaterCloud.Code;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace WaterCloud.DataBase
@@ -85,7 +82,7 @@ namespace WaterCloud.DataBase
             {
                 return await _context.InsertAsync(entity);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 this.Rollback();
                 throw;
@@ -95,11 +92,10 @@ namespace WaterCloud.DataBase
         {
             try
             {
-                int i = 1;
                 await _context.InsertRangeAsync(entitys);
                 return 1;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 this.Rollback();
                 throw;
@@ -128,7 +124,7 @@ namespace WaterCloud.DataBase
                 }
                 return await _context.UpdateAsync(newentity);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 this.Rollback();
                 throw;
@@ -140,7 +136,7 @@ namespace WaterCloud.DataBase
             {
                 return await _context.UpdateAsync(predicate, content);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 this.Rollback();
                 throw;
@@ -153,7 +149,7 @@ namespace WaterCloud.DataBase
             {
                 return await _context.DeleteAsync(entity);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 this.Rollback();
                 throw;
@@ -166,7 +162,7 @@ namespace WaterCloud.DataBase
             {
                 return await _context.DeleteAsync(predicate);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 this.Rollback();
                 throw;
@@ -220,6 +216,26 @@ namespace WaterCloud.DataBase
             tempData = tempData.TakePage(pagination.page, pagination.rows);
             return tempData.ToList();
         }
+        public async Task<List<T>> OrderList<T>(IQuery<T> query, SoulPage<T> pagination)
+        {
+            var tempData = query;
+            List<FilterSo> filterSos = pagination.getFilterSos();
+            if (filterSos != null && filterSos.Count > 0)
+            {
+                tempData = tempData.GenerateFilter("u", filterSos);
+            }
+            if (pagination.order == "desc")
+            {
+                tempData = tempData.OrderBy(pagination.field + " " + pagination.order);
+            }
+            else
+            {
+                tempData = tempData.OrderBy(pagination.field);
+            }
+            pagination.count = tempData.Count();
+            tempData = tempData.TakePage(pagination.page, pagination.rows);
+            return tempData.ToList();
+        }
         public async Task<List<TEntity>> CheckCacheList<TEntity>(string cacheKey, long old = 0) where TEntity : class
         {
             var cachedata = await CacheHelper.Get<List<TEntity>>(cacheKey);
@@ -231,7 +247,7 @@ namespace WaterCloud.DataBase
             return cachedata;
         }
 
-        public async Task<TEntity> CheckCache<TEntity>(string cacheKey, string keyValue, long old = 0) where TEntity : class
+        public async Task<TEntity> CheckCache<TEntity>(string cacheKey, object keyValue, long old = 0) where TEntity : class
         {
             var cachedata = await CacheHelper.Get<TEntity>(cacheKey + keyValue);
             if (cachedata == null)

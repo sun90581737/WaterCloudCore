@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -47,8 +47,14 @@ namespace WaterCloud.Code.Model
         /// 数据库备份路径
         /// </summary>
         public string DBBackup { get; set; }
-
+        
         public string CacheProvider { get; set; }
+        public string HandleLogProvider { get; set; }
         public string RedisConnectionString { get; set; }
+        public string SysemUserId { get; set; }
+        public string SysemUserCode { get; set; }
+        public string SysemUserPwd { get; set; }
+        public string SysemMasterProject { get; set; }
+        public string TokenName { get; set; }
     }
 }

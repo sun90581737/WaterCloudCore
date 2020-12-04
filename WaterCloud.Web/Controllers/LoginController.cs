@@ -5,7 +5,6 @@
  * Website：
 *********************************************************************************/
 
-using Serenity;
 using System;
 using Microsoft.AspNetCore.Mvc;
 using WaterCloud.Service;
@@ -34,17 +33,10 @@ namespace WaterCloud.Web.Controllers
             try
             {
                 var systemset = await _setService.GetFormByHost("");
-                if (systemset.F_DBProvider!= GlobalContext.SystemConfig.DBProvider|| systemset.F_DbString != GlobalContext.SystemConfig.DBConnectionString)
-                {
-                    SystemSetEntity temp = new SystemSetEntity();
-                    temp.F_DBProvider = GlobalContext.SystemConfig.DBProvider;
-                    temp.F_DbString = GlobalContext.SystemConfig.DBConnectionString;
-                    await _setService.SubmitForm(temp, systemset.F_Id);
-                }
                 if (GlobalContext.SystemConfig.Demo)
                 {
-                    ViewBag.UserName = Define.SYSTEM_USERNAME;
-                    ViewBag.Password = Define.SYSTEM_USERPWD;
+                    ViewBag.UserName = GlobalContext.SystemConfig.SysemUserCode;
+                    ViewBag.Password = GlobalContext.SystemConfig.SysemUserPwd;
                 }
                 ViewBag.ProjectName = systemset.F_ProjectName;
                 ViewBag.LogoIcon = "../icon/" + systemset.F_Logo;
@@ -65,17 +57,10 @@ namespace WaterCloud.Web.Controllers
             try
             {
                 var systemset = await _setService.GetFormByHost("");
-                if (systemset.F_DBProvider != GlobalContext.SystemConfig.DBProvider || systemset.F_DbString != GlobalContext.SystemConfig.DBConnectionString)
-                {
-                    SystemSetEntity temp = new SystemSetEntity();
-                    temp.F_DBProvider = GlobalContext.SystemConfig.DBProvider;
-                    temp.F_DbString = GlobalContext.SystemConfig.DBConnectionString;
-                    await _setService.SubmitForm(temp, systemset.F_Id);
-                }
                 if (GlobalContext.SystemConfig.Demo)
                 {
-                    ViewBag.UserName = Define.SYSTEM_USERNAME;
-                    ViewBag.Password = Define.SYSTEM_USERPWD;
+                    ViewBag.UserName = GlobalContext.SystemConfig.SysemUserCode;
+                    ViewBag.Password = GlobalContext.SystemConfig.SysemUserPwd;
                 }
                 ViewBag.ProjectName = systemset.F_ProjectName;
                 ViewBag.LogoIcon = "../icon/" + systemset.F_Logo;
@@ -87,7 +72,6 @@ namespace WaterCloud.Web.Controllers
                 ViewBag.LogoIcon = "../icon/favicon.ico";
                 return View();
             }
-
         }
         /// <summary>
         /// 验证码获取（此接口已弃用）
@@ -119,6 +103,7 @@ namespace WaterCloud.Web.Controllers
         /// <returns></returns>
         [HttpPost]
         [HandlerAjaxOnly]
+        [IgnoreAntiforgeryToken]
         public async Task<ActionResult> CheckLoginState()
         {
             try
@@ -153,6 +138,7 @@ namespace WaterCloud.Web.Controllers
         /// <returns></returns>
         [HttpPost]
         [HandlerAjaxOnly]
+        [IgnoreAntiforgeryToken]
         public async Task<ActionResult> CheckLogin(string username, string password,string localurl)
         {
             //根据域名判断租户
@@ -178,7 +164,7 @@ namespace WaterCloud.Web.Controllers
                 operatorModel.CompanyId = userEntity.F_OrganizeId;
                 operatorModel.DepartmentId = userEntity.F_DepartmentId;
                 operatorModel.RoleId = userEntity.F_RoleId;
-                operatorModel.DefaultUrl = data != null && data.Count>0 ? data[0].F_Description : "";//根据当前账号的“岗位”备注（URL），登录跳转默认首页。
+                operatorModel.DefaultUrl = data != null && data.Count > 0 ? data[0].F_Description : "";//根据当前账号的“岗位”备注（URL），登录跳转默认首页。
                 operatorModel.LoginIPAddress = WebHelper.Ip;
                 operatorModel.LoginIPAddressName = "本地局域网";//Net.GetLocation(operatorModel.LoginIPAddress);
                 operatorModel.LoginTime = DateTime.Now;
@@ -208,7 +194,7 @@ namespace WaterCloud.Web.Controllers
                 logEntity.F_Result = true;
                 logEntity.F_Description = "登录成功";
                 await _logService.WriteDbLog(logEntity);
-                return Content(new AjaxResultUrl { state = ResultType.success.ToString(), message = "登录成功。", url= operatorModel.DefaultUrl }.ToJson());
+                return Content(new AjaxResultUrl { state = ResultType.success.ToString(), message = "登录成功。", url = operatorModel.DefaultUrl }.ToJson());
             }
             catch (Exception ex)
             {
@@ -217,7 +203,7 @@ namespace WaterCloud.Web.Controllers
                 logEntity.F_Result = false;
                 logEntity.F_Description = "登录失败，" + ex.Message;
                 await _logService.WriteDbLog(logEntity);
-                return Content(new AjaxResultUrl { state = ResultType.error.ToString(), message = ex.Message, url="" }.ToJson());
+                return Content(new AjaxResultUrl { state = ResultType.error.ToString(), message = ex.Message, url = "" }.ToJson());
             }
         }
         private async Task<bool> CheckIP()

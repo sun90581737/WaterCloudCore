@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -37,9 +37,9 @@ namespace WaterCloud.Code
             }
             return resStr;
         }
-        public static object ToJson(this string Json)
+        public static object ToObject(this string Json)
         {
-            return Json == null ? null : JsonConvert.DeserializeObject(Json);
+            return string.IsNullOrEmpty(Json) ? null : JsonConvert.DeserializeObject(Json);
         }
         public static T ToObject<T>(this string Json)
         {
@@ -55,9 +55,9 @@ namespace WaterCloud.Code
         {
             return Json == null ? null : JsonConvert.DeserializeObject<List<T>>(Json);
         }
-        public static string Serialize(object obj)
+        public static string ToJson(this object obj, string dateFormat = "yyyy/MM/dd HH:mm:ss")
         {
-            return JsonConvert.SerializeObject(obj, new IsoDateTimeConverter { DateTimeFormat = "yyyy-MM-dd HH:mm:ss" });
+            return obj == null ? string.Empty : JsonConvert.SerializeObject(obj, new IsoDateTimeConverter { DateTimeFormat = dateFormat });
         }
     }
     #endregion
@@ -122,7 +122,7 @@ namespace WaterCloud.Code
                 writer.WriteNull();
                 return;
             }
-            writer.WriteValue(dt.Value.ToString("yyyy-MM-dd HH:mm:ss"));
+            writer.WriteValue(dt.Value.ToString("yyyy/MM/dd HH:mm:ss"));
         }
     }
     #endregion

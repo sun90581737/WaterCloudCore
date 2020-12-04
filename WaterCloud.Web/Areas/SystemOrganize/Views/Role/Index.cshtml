@@ -3,23 +3,20 @@
     Layout = "~/Views/Shared/_Index.cshtml";
 }
 <script>
-    layui.use(['jquery', 'form', 'table', 'common', 'tablePlug', "layer"], function () {
-        var $ = layui.jquery,
-            form = layui.form,
+    layui.use(['form', 'table', 'common', 'commonTable', 'optimizeSelectOption'], function () {
+        var form = layui.form,
             table = layui.table,
-            layer = layui.layer,
+            commonTable = layui.commonTable,
             common = layui.common;
         //加载数据
         wcLoading.close();
         //权限控制(js是值传递)
         toolbarDemo.innerHTML = common.authorizeButtonNew(toolbarDemo.innerHTML);
-        common.rendertable({
+        commonTable.rendertable({
             elem: '#currentTableId',
             id: 'currentTableId',
             url: '/SystemOrganize/Role/GetGridJson',
-            sqlkey: 'F_Id',//数据库主键
             cols: [[
-                { field: 'F_Id', title: 'ID', sort: true, fixed: "left", hide: true, hideAlways: true },
                 { field: 'F_FullName', title: '角色名称', width: 200, sort: true },
                 { field: 'F_EnCode', title: '角色编号', width: 200, sort: true },
                 {
@@ -35,12 +32,12 @@
                     }
                 },
                 {
-                    field: 'F_EnabledMark', title: '状态', width: 120, sort: true,
+                    field: 'F_EnabledMark', title: '状态', width: 80, sort: true,
                     templet: function (d) {
                         if (d.F_EnabledMark == true) {
-                            return "<span class=\"layui-bg-green\">正常</span>";
+                            return "<span class='layui-btn layui-btn-normal layui-btn-xs'>有效</span>";
                         } else {
-                            return "<span class=\"layui-bg-red\">禁用</span>";
+                            return "<span class='layui-btn layui-btn-warm layui-btn-xs'>无效</span>";
                         }
                     }
                 },
@@ -51,6 +48,7 @@
                             var time = new Date(d.F_CreatorTime);
                             return time.Format("yyyy-MM-dd");
                         }
+                        return '';
                     }
                 },
                 { field: 'F_Description', title: '备注', minWidth: 150, sort: true },
@@ -60,7 +58,7 @@
         form.on('submit(data-search-btn)', function (data) {
             var queryJson = data.field.txt_keyword;
             //执行搜索重载
-            common.reloadtable({
+            commonTable.reloadtable({
                 elem: 'currentTableId',
                 curr: 1,
                 where: { keyword: data.field.txt_keyword }
@@ -125,15 +123,23 @@
                     btn: []
                 });
             }
+            else if (obj.event === 'TABLE_SEARCH') {
+                var _that = $("#searchField");
+                if (_that.hasClass("layui-hide")) {
+                    _that.removeClass('layui-hide');
+                } else {
+                    _that.addClass('layui-hide');
+                }
+            }
             return false;
         });
     });
 </script>
 <div class="layuimini-container">
     <div class="layuimini-main">
-        <fieldset class="table-search-fieldset">
+        <fieldset class="table-search-fieldset layui-hide" id="searchField">
             @*<legend>搜索信息</legend>*@
-            <div style="margin: 10px 10px 10px 10px">
+            <div>
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
                         <div class="layui-inline">

@@ -4,17 +4,17 @@
  }
  <div class="layuimini-container">
      <div class="layuimini-main">
-         <fieldset class="table-search-fieldset">
-             <div style="margin: 10px 10px 10px 10px">
-                 <form class="layui-form layui-form-pane" >
+         <fieldset class="table-search-fieldset layui-hide" id="searchField">
+             <div>
+                 <form class="layui-form layui-form-pane">
                      <div class="layui-form-item">
                          <div class="layui-inline">
                              <label class="layui-form-label">关键字:</label>
                              <div class="layui-input-inline">
-                                 <input type="text" id="txt_keyword" name="txt_keyword" autocomplete="off" class="layui-input" >
+                                 <input type="text" id="txt_keyword" name="txt_keyword" autocomplete="off" class="layui-input">
                              </div>
                          </div>
-                        <div class="layui-inline"> 
+                         <div class="layui-inline">
                              <button type="submit" class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
                          </div>
                      </div>
@@ -33,23 +33,19 @@
      </div>
  </div>
  <script>
-     layui.use(['jquery', 'form','table', 'tablePlug', 'common','layer'], function () {
-         var $ = layui.jquery,
-             form = layui.form,
-             layer = layui.layer,
+     layui.use(['jquery', 'form', 'table', 'common', 'commonTable','optimizeSelectOption'], function () {
+         var form = layui.form,
              table = layui.table,
-             treeTable = layui.treeTable,
+             commonTable = layui.commonTable,
              common = layui.common;
          var entity;
          //权限控制(js是值传递)
          toolbarDemo.innerHTML = common.authorizeButtonNew(toolbarDemo.innerHTML);
-         common.rendertable({
+         commonTable.rendertable({
              elem: '#currentTableId',
              id: 'currentTableId',
-             url: '/FlowManage/Flowinstance/GetGridJson',
-             sqlkey: 'F_Id',//数据库主键
+             url: '/FlowManage/Flowinstance/GetGridJson',           
              cols: [[
-                 { field: 'F_Id', title: 'ID', sort: true, hide: true, hideAlways: true },
                  {
                      field: 'F_IsFinish', title: '流程状态', width: 120, sort: true, 
                      templet: function (d) {
@@ -79,6 +75,7 @@
                              var time = new Date(d.F_CreatorTime);
                              return time.Format("yyyy-MM-dd");
                          }
+                         return '';
                      }
                  },
                  { field: 'F_CreatorUserName', title: '创建人', width: 120, sort: true },
@@ -87,7 +84,7 @@
          // 监听搜索操作
          form.on('submit(data-search-btn)', function (data) {
              //执行搜索重载
-             common.reloadtable({
+             commonTable.reloadtable({
                  elem: 'currentTableId',
                  curr: 1,
                  where: { keyword: data.field.txt_keyword}
@@ -131,7 +128,9 @@
                      common.modalMsg("未选中数据", "warning");
                      return false;
                  }
-                 if (entity.data.F_IsFinish != 4) {
+                 var userJsonStr = sessionStorage.getItem('currentUser');
+                 var userId = JSON.parse(userJsonStr).F_Id;
+                 if (entity.data.F_IsFinish != 4 || entity.data.F_MakerList.indexOf(userId)<0 ) {
                      common.modalMsg("申请已处理，无法修改", "warning");
                      return false;
                  }
@@ -152,7 +151,15 @@
                      height: "600px",
                      btn: []
                  });
-           }
+             }
+             else if (obj.event === 'TABLE_SEARCH') {
+                 var _that = $("#searchField");
+                 if (_that.hasClass("layui-hide")) {
+                     _that.removeClass('layui-hide');
+                 } else {
+                     _that.addClass('layui-hide');
+                 }
+             }
            return false;
        });
    });

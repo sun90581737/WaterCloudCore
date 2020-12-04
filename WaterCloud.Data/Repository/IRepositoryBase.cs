@@ -1,4 +1,4 @@
-﻿/*******************************************************************************
+/*******************************************************************************
  * Copyright © 2020 WaterCloud.Framework 版权所有
  * Author: WaterCloud
  * Description: WaterCloud快速开发平台
@@ -8,8 +8,6 @@ using Chloe;
 using WaterCloud.Code;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -20,6 +18,7 @@ namespace WaterCloud.DataBase
         IDbContext GetDbContext();
         IRepositoryBase BeginTrans();
         void Commit();
+        void Rollback();
         /// <summary>
         /// 插入
         /// </summary>
@@ -127,6 +126,14 @@ namespace WaterCloud.DataBase
         /// <returns></returns>
         Task<List<T>> OrderList<T>(IQuery<T> query, Pagination pagination);
         /// <summary>
+        /// soultable-后端筛选
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <param name="pagination"></param>
+        /// <returns></returns>
+        Task<List<T>> OrderList<T>(IQuery<T> query, SoulPage<T> pagination);
+        /// <summary>
         /// 缓存单个对象
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>
@@ -134,9 +141,9 @@ namespace WaterCloud.DataBase
         /// <param name="keyValue"></param>
         /// <param name="old"></param>
         /// <returns></returns>
-        Task<TEntity> CheckCache<TEntity>(string cacheKey, string keyValue, long old = 0) where TEntity : class;
+        Task<TEntity> CheckCache<TEntity>(string cacheKey, object keyValue, long old = 0) where TEntity : class;
         /// <summary>
-        /// 缓存查询列表
+        /// 缓存查询列表(大数据表谨慎使用)
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>
         /// <param name="cacheKey"></param>

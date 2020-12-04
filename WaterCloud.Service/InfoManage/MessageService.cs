@@ -7,9 +7,6 @@ using Chloe;
 using WaterCloud.Domain.InfoManage;
 using Microsoft.AspNetCore.SignalR;
 using WaterCloud.Domain.SystemOrganize;
-using Serenity;
-using Microsoft.AspNetCore.Mvc;
-using Renci.SshNet.Security;
 
 namespace WaterCloud.Service.InfoManage
 {
@@ -21,6 +18,7 @@ namespace WaterCloud.Service.InfoManage
     public class MessageService : DataFilterService<MessageEntity>, IDenpendency
     {
         private string cacheKey = "watercloud_messagedata_";
+        private string cacheHubKey = "watercloud_hubuserinfo_";
         private string className = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.FullName.Split('.')[3];
         private readonly IHubContext<MessageHub> _messageHub;
         public MessageService(IDbContext context, IHubContext<MessageHub> messageHub) : base(context)
@@ -36,12 +34,12 @@ namespace WaterCloud.Service.InfoManage
                 //此处需修改
                 cachedata = cachedata.Where(t => t.F_MessageInfo.Contains(keyword) || t.F_CreatorUserName.Contains(keyword)).ToList();
             }
-            return cachedata.Where(a=>a.F_EnabledMark==true).OrderByDescending(t => t.F_CreatorTime).ToList();
+            return cachedata.Where(a => a.F_EnabledMark == true).OrderByDescending(t => t.F_CreatorTime).ToList();
         }
 
         public async Task<List<MessageEntity>> GetLookList(string keyword = "")
         {
-            var list =new List<MessageEntity>();
+            var list = new List<MessageEntity>();
             if (!CheckDataPrivilege(className.Substring(0, className.Length - 7)))
             {
                 list = await repository.CheckCacheList(cacheKey + "list");
@@ -56,13 +54,15 @@ namespace WaterCloud.Service.InfoManage
                 //此处需修改
                 list = list.Where(t => t.F_MessageInfo.Contains(keyword) || t.F_CreatorUserName.Contains(keyword)).ToList();
             }
-            return GetFieldsFilterData(list.Where(a => a.F_EnabledMark == true).OrderByDescending(t => t.F_CreatorTime).ToList(),className.Substring(0, className.Length - 7));
+            return GetFieldsFilterData(list.Where(a => a.F_EnabledMark == true).OrderByDescending(t => t.F_CreatorTime).ToList(), className.Substring(0, className.Length - 7));
         }
 
         public async Task<List<MessageEntity>> GetUnReadListJson()
         {
             var hisquery = uniwork.IQueryable<MessageHistoryEntity>(a => a.F_CreatorUserId == currentuser.UserId).Select(a => a.F_MessageId).ToList();
-            var query = repository.IQueryable(a => (a.F_ToUserId.Contains(currentuser.UserId)||a.F_ToUserId=="")&&a.F_EnabledMark==true&&!hisquery.Contains(a.F_Id));
+            var tempList= repository.IQueryable(a => a.F_MessageType == 2).InnerJoin<MessageHistoryEntity>((a, b) => a.F_Id == b.F_MessageId).Select((a, b) => a.F_Id).ToList();
+            hisquery.AddRange(tempList);
+            var query = repository.IQueryable(a => (a.F_ToUserId.Contains(currentuser.UserId) || a.F_ToUserId == "") && a.F_EnabledMark == true && !hisquery.Contains(a.F_Id));
             return GetFieldsFilterData(query.OrderByDesc(t => t.F_CreatorTime).ToList(), className.Substring(0, className.Length - 7));
         }
 
@@ -109,13 +109,13 @@ namespace WaterCloud.Service.InfoManage
                 foreach (var item in str)
                 {
                     //存在就私信
-                    var connectionID = await CacheHelper.Get<string>(cacheKey + item);
+                    var connectionID = await CacheHelper.Get<string>(cacheHubKey + item);
                     if (connectionID == null)
                     {
                         continue;
                     }
                     string msg = entity.ToJson();
-                    await _messageHub.Clients.User(connectionID).SendAsync("ReceiveMessage", msg);
+                    await _messageHub.Clients.Client(connectionID).SendAsync("ReceiveMessage", msg);
                 }
             }
             await repository.Insert(entity);
