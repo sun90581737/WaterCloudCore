@@ -240,17 +240,17 @@
                 elem: '#currentTableId2',
                 id: 'currentTableId2',
                 url: "/ProductionManage/ProductionManageHome/GetGridJsonOn",
-                height: 220,
+                height: 320,
                 toolbar: false,/*隐藏打印*/
                 page: true,/*隐藏分页*/
                 sqlkey: 'id',//数据库主键
                 cols: [[
                     { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
-                    { field: 'MoldNo', title: '模具编号', width: 90, sort: true },
-                    { field: 'Edition', title: '版本', width: 50, sort: true, filter: true },
-                    { field: 'Type', title: '类型', width: 60, sort: true },
+                    { field: 'MoldNo', title: '模具编号', width: 110, sort: true },
+                    { field: 'Edition', title: '版本', width: 80, sort: true, filter: true },
+                    { field: 'Type', title: '类型', width: 80, sort: true },
                     {
-                        field: 'PlannedDeliveryDate', title: '计划交期', width: 80,
+                        field: 'PlannedDeliveryDate', title: '计划交期', width: 110,
                         templet: function (d) {
                             if (d.PlannedDeliveryDate) {
                                 return new Date(d.PlannedDeliveryDate).Format("yyyy-MM-dd");
@@ -259,7 +259,7 @@
                         }
                     },
                     {
-                        field: 'Progress', title: '预警', align: 'center', width: 80,
+                        field: 'Progress', title: '预警', align: 'center', width: 90,
                         templet: function (d) {
                             if (d.Progress) {
                                 var temp = ''
@@ -525,7 +525,7 @@
                 elem: '#currentTableId',
                 id: 'currentTableId',
                 url: "/ProductionManage/ProductionManageHome/GetGridJson",
-                height: 220,
+                height: 300,
                 toolbar: false,/*隐藏打印*/
                 page: true,/*隐藏分页*/
                 sqlkey: 'id',//数据库主键
@@ -694,7 +694,7 @@
                     </div>
                     <div class="layui-card-body layui-text">
                         <div style="float:left;width:40%">
-                            <div id="chart1" style="height:240px; "></div>
+                            <div id="chart1" style="height:340px; "></div>
                         </div>
                         <div style="margin-left:40%;width:auto;">
                             <table class="layui-hide" id="currentTableId2" lay-filter="currentTableFilter"></table>
@@ -710,7 +710,7 @@
                         <button type="button" id="funTwo" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
                     </div>
                     <div class="layui-card-body layui-text">
-                        <div id="chart2" style="height:240px;"></div>
+                        <div id="chart2" style="height:340px;"></div>
                     </div>
                 </div>
             </div>
@@ -723,7 +723,7 @@
                     </div>
                     <div class="layui-card-body layui-text">
                         <div style="float:left;width:40%">
-                            <div id="chart3" style="height:200px;"></div>
+                            <div id="chart3" style="height:300px;"></div>
                         </div>
                         <div style="margin-left:40%;">
                             <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
@@ -739,7 +739,7 @@
                         <button type="button" id="funTwo" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
                     </div>
                     <div class="layui-card-body layui-text">
-                        <div id="chart4" style="height:240px;"></div>
+                        <div id="chart4" style="height:320px;"></div>
                     </div>
                 </div>
             </div>

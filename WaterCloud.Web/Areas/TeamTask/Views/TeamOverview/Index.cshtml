@@ -482,7 +482,7 @@
                 elem: '#currentTableId',
                 id: 'currentTableId',
                 url: '/TeamTask/TeamOverview/GetGridJson',
-                height: 350,
+                height: 360,
                 toolbar: false,/*隐藏打印*/
                 page: true,/*隐藏分页*/
                 sqlkey: 'id',//数据库主键
@@ -525,7 +525,9 @@
                     },
                     { field: 'TreatMachining', title: '待加工（件）', width: 190, sort: true},
                     { field: 'Processing', title: '加工中', width: 190, sort: true },
-                ]]
+                ]], filter: {
+                    bottom: false
+                }
             });
         }
     })
@@ -540,7 +542,7 @@
                         <button type="button" id="funOne" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
                     </div>
                     <div class="layui-card-body layui-text">
-                        <div id="chart1" style="height:280px;"></div>
+                        <div id="chart1" style="height:300px;"></div>
                     </div>
                 </div>
             </div>
@@ -551,7 +553,7 @@
                         <button type="button" id="funTwo" style="border: none;float: right;" class="layui-btn layui-btn-primary"><i class="fa fa-expand icon"></i></button>
                     </div>
                     <div class="layui-card-body layui-text">
-                        <div id="chart2" style="height:280px;"></div>
+                        <div id="chart2" style="height:300px;"></div>
                     </div>
                 </div>
             </div>

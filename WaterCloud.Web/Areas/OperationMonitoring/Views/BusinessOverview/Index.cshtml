@@ -146,11 +146,12 @@
 <script src="~/js/lay-module/d3/d3.js"></script>
 <script src="~/js/lay-module/d3/d3.layout.cloud.js"></script>
 <script>
-    layui.use(['commonTable', 'form', 'table', 'common', 'optimizeSelectOption'], function () {
+    layui.use(['commonTable', 'form', 'table', 'common', 'optimizeSelectOption', 'element'], function () {
         var commonTable = layui.commonTable,
             form = layui.form,
             table = layui.table,
-            common = layui.common;
+            common = layui.common,
+            element = layui.element;
         wcLoading.close();
         // toolbarDemo.innerHTML = common.authorizeButtonNew(toolbarDemo.innerHTML);
 
@@ -627,6 +628,9 @@
                     //***重点***：table渲染完成后渲染element进度条
                     element.render()
                 }
+                , filter: {
+                    bottom: false
+                }
             });
         }
         function loadThree() {
@@ -949,7 +953,7 @@
             }
             );
 
-            option = {
+            var option = {
                 backgroundColor: 'transparent',
                 tooltip: {
                     trigger: 'item',
@@ -980,7 +984,7 @@
                 series: series
             };
             myChart.setOption(option);
-            window.addEventListener = echart.resize;
+            //window.addEventListener = echart.resize;
             function resize(width, height) {
                 var chart = document.getElementById('chart4b');
                 chart.style.width = width + "px";
