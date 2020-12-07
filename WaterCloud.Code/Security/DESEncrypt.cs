@@ -15,7 +15,7 @@ namespace WaterCloud.Code
     /// </summary>
     public class DESEncrypt
     {
-        private static string DESKey = "WaterCloud_desencrypt_2019";
+        private static string DESKey = "i-Quicker2020";
 
         #region ========加密========
         /// <summary>
