@@ -32,6 +32,7 @@ namespace WaterCloud.WebApi.Controllers
             catch (Exception ex)
             {
                 result.val = ex.Message;
+                LogHelper.Write(ex.Message);
                 return result;
             }
             return result;
@@ -45,9 +46,10 @@ namespace WaterCloud.WebApi.Controllers
             result.msg = "success";
             if (!VerifyMiddleSign(param.operator_name, param.operator_time, param.sign))
             {
-               // LogHelper.Info(string.Format("operator_name{0},operation_time{1},sign{2}", param.operator_name, param.operator_time, param.sign));
+                // LogHelper.Info(string.Format("operator_name{0},operation_time{1},sign{2}", param.operator_name, param.operator_time, param.sign));
                 result.msg = "签名错误";
                 result.code = "1040";
+                LogHelper.Write(result.msg);
                 return result;
             }
             List<TaskListBDTO> dto = new List<TaskListBDTO>();
@@ -63,6 +65,7 @@ namespace WaterCloud.WebApi.Controllers
             {
                 result.msg = ex.Message;
                 result.code = "1060";
+                LogHelper.Write(result.msg);
                 return result;
             }
             return result;
