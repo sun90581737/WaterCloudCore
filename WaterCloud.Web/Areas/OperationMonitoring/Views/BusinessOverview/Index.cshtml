@@ -203,6 +203,7 @@
                         var str3 = new Object();
                         str3.name = item.Name;
                         str3.value = item.Cost;
+                        str3.url = "/Home/Index#//AutomationLine/RunningState/Index";//"https://www.baidu.com/";
                         str[index] = str3;
                         TotalCost += item.Cost;
                     })
@@ -312,6 +313,14 @@
                 ]
             };
             myChart.setOption(option);
+            //点击事件
+            myChart.on('click', function (params) {
+                console.log(params);
+                var name = params.name;
+                //window.open('https://www.baidu.com/s?ie=UTF-8&wd=' + name);
+
+                window.open(params.data.url);
+            });
             // echarts 窗口缩放自适应
             window.addEventListener("resize", function () {
                 myChart.resize();
@@ -659,10 +668,15 @@
             $.each(listDeviceName, function (index, value) {
                 var tempName = new Array();
                 var tempArry = new Array();
+                var tempNew = new Array();
                 $.each(listAll, function (index1, value1) {
+                    var tempold = {};
                     if (value == value1.DeviceName) {
                         tempName = value1.DeviceName;
                         tempArry.push(value1.Number);
+                        tempold.value = value1.Number;
+                        tempold.url = "/Home/Index#//OperationMonitoring/BusinessOverview/Form4";//"https://www.baidu.com/";
+                        tempNew.push(tempold);
                     }
                 });
                 series.push({
@@ -670,7 +684,7 @@
                     type: 'bar',
                     barWidth: '15%',
                     barGap: '80%',
-                    data: tempArry,
+                    data: tempNew,
                     itemStyle: {
                         normal: {
                             label: {
@@ -771,6 +785,14 @@
                 series: series
             };
             myChart.setOption(option, true);
+            //点击事件
+            myChart.on('click', function (params) {
+                console.log(params);
+                var name = params.name;
+                //window.open('https://www.baidu.com/s?ie=UTF-8&wd=' + name);
+
+                window.open(params.data.url);
+            });
             // echarts 窗口缩放自适应
             window.addEventListener("resize", function () {
                 myChart.resize();
@@ -1335,18 +1357,24 @@
             $.each(listDeviceName, function (index, value) {
                 var tempName = new Array();
                 var tempArry = new Array();
+                var tempNew = new Array();
                 $.each(listAll, function (index1, value1) {
+                    var tempold = {};
                     if (value == value1.DeviceName) {
                         tempName = value1.DeviceName;
                         tempArry.push(value1.Number);
+                        tempold.value = value1.Number;
+                        tempold.url = "/Home/Index#//OperationMonitoring/BusinessOverview/Form4";//"https://www.baidu.com/";
+                        tempNew.push(tempold);
                     }
                 });
+                //var qq = JSON.parse(JSON.stringify(tempNew));
                 series.push({
                     name: tempName,
                     type: 'bar',
                     barWidth: '15%',
                     barGap: '80%',
-                    data: tempArry,
+                    data: tempNew,//tempArry,
                     itemStyle: {
                         normal: {
                             label: {
@@ -1454,6 +1482,15 @@
                 series: series
             };
             myChart.setOption(option, true);
+            //点击事件
+            myChart.on('click', function (params) {
+                console.log(params);
+                var name = params.name;
+                //window.open('https://www.baidu.com/s?ie=UTF-8&wd=' + name);
+
+                window.open(params.data.url);
+            });
+
             // echarts 窗口缩放自适应
             window.addEventListener("resize", function () {
                 myChart.resize();
