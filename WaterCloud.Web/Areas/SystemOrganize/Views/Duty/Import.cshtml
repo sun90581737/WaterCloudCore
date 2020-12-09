@@ -59,6 +59,15 @@
             , url: "/SystemOrganize/Duty/CheckFile" //改成您自己的上传接口
             , size: 1024
             , accept: 'file'
+            , headers: { 'X-CSRF-TOKEN': "" }
+            , before: function (obj) {
+                if ($('[name=__RequestVerificationToken]').length > 0) {
+                    // 1、动态添加headers中的参数
+                    this.headers['X-CSRF-TOKEN'] = $('[name=__RequestVerificationToken]').val();
+                }
+                // 2、动态添加的其它参数
+                //this.data.type = outerType
+            }
             , done: function (res) {
                 var index = parent.layer.load(0, {
                     shade: [0.5, '#000'], //0.1透明度的背景
