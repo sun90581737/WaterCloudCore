@@ -599,13 +599,13 @@
                 sqlkey: 'id',//数据库主键
                 cols: [[
                     { field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
-                    { field: 'MoldNo', title: '模具编号', width: 150, sort: true },
-                    { field: 'MoldTest', title: '试模', width: 110, sort: true, filter: true },
-                    { field: 'Type', title: '类型', width: 110, sort: true },
-                    { field: 'State', title: '状态', width: 100, sort: true },
+                    { field: 'MoldNo', title: '模具编号',  sort: true },
+                    { field: 'MoldTest', title: '试模',  sort: true, filter: true },
+                    { field: 'Type', title: '类型',  sort: true },
+                    { field: 'State', title: '状态',  sort: true },
                     { field: 'ProductName', title: '产品名称', width: 110, sort: true },
                     {
-                        field: 'PlannedDeliveryDate', title: '计划交期', width: 105,
+                        field: 'PlannedDeliveryDate', title: '计划交期', 
                         templet: function (d) {
                             if (d.PlannedDeliveryDate) {
                                 return new Date(d.PlannedDeliveryDate).Format("yyyy-MM-dd");
@@ -614,7 +614,7 @@
                         }
                     },
                     {
-                        field: 'EarlyWarning', title: '预警', align: 'center', width: 100,
+                        field: 'EarlyWarning', title: '预警', align: 'center', 
                         templet: function (d) {
                             if (d.EarlyWarning) {
                                 var temp = ''

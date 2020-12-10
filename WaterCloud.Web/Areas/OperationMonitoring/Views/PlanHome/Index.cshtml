@@ -299,15 +299,15 @@
                         }
                     },
                     //{ field: 'id', title: 'ID', sort: true, hide: true, hideAlways: true },
-                    { field: 'CustomerName', title: '客户名', width: 200, sort: true, filter: true },
-                    { field: 'CustomerCode', title: '客户代码', width: 200, sort: true },
-                    { field: 'CustomerContact', title: '客户联系人', width: 200, sort: true, filter: true },
-                    { field: 'LeadingCadre', title: '内部负责人', width: 200, sort: true, filter: true },
-                    { field: 'DeliveryRate', title: '交付率', width: 200, sort: true},
-                    { field: 'MouldNumber', title: '在制模具数量', width: 200, sort: true },
-                    { field: 'NormalMold', title: '进度正常模具', width: 200, sort: true },
+                    { field: 'CustomerName', title: '客户名', sort: true, filter: true },
+                    { field: 'CustomerCode', title: '客户代码', sort: true },
+                    { field: 'CustomerContact', title: '客户联系人', sort: true, filter: true },
+                    { field: 'LeadingCadre', title: '内部负责人', sort: true, filter: true },
+                    { field: 'DeliveryRate', title: '交付率', sort: true},
+                    { field: 'MouldNumber', title: '在制模具数量', sort: true },
+                    { field: 'NormalMold', title: '进度正常模具', sort: true },
                     {
-                        field: 'DelayMould', title: '延期模具', width: 200, sort: true, templet: function (d) {
+                        field: 'DelayMould', title: '延期模具', sort: true, templet: function (d) {
                             var btns = "";
                             if (d.DelayMould) {
                                 if (d.DelayMould > 5) {

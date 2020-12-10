@@ -228,10 +228,10 @@
                 sqlkey: 'id',//数据库主键
                 cols: [[
                     { field: 'id', title: '序号', hide: false, width: 80, hideAlways: true, align: 'center' },
-                    { field: 'WorkingProcedure', title: '工序', width: 130 },
-                    { field: 'Workpiece', title: '工件', width: 150, templet:'#imgTpl' },
+                    { field: 'WorkingProcedure', title: '工序' },
+                    { field: 'Workpiece', title: '工件', templet:'#imgTpl' },
                     {
-                        field: 'StartTime', title: '计划开始时间', width: 180,
+                        field: 'StartTime', title: '计划开始时间',
                         templet: function (d) {
                             if (d.StartTime) {
                                 return new Date(d.StartTime).Format("yyyy-MM-dd hh:mm:ss");
@@ -240,7 +240,7 @@
                         }
                     },
                     {
-                        field: 'EndTime', title: '计划完成时间', width: 180,
+                        field: 'EndTime', title: '计划完成时间',
                         templet: function (d) {
                             if (d.EndTime) {
                                 return new Date(d.EndTime).Format("yyyy-MM-dd hh:mm:ss");
@@ -248,7 +248,7 @@
                             }
                         }
                     },
-                    { field: 'Duration', title: '时长', width: 80 },
+                    { field: 'Duration', title: '时长'},
                 ]]
             });
         }
