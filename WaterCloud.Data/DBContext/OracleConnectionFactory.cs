@@ -19,7 +19,7 @@ namespace WaterCloud.DataBase
         public IDbConnection CreateConnection()
         {
             OracleConnection oracleConnection = new OracleConnection(this._connString);
-            OracleConnectionDecorator conn = new OracleConnectionDecorator(oracleConnection); 
+            OracleConnectionDecorator conn = new OracleConnectionDecorator(oracleConnection);  
             return conn;
         }
     }
