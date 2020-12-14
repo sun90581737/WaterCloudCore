@@ -42,6 +42,7 @@ namespace WaterCloud.Code.Model
 
         public string DBProvider { get; set; }
         public string DBConnectionString { get; set; }
+        public string DBConnectionStringSubDatabase { get; set; }
         public string DBCommandTimeout { get; set; }
         /// <summary>
         /// 数据库备份路径

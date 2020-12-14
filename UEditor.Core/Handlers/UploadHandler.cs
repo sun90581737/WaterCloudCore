@@ -7,12 +7,10 @@ namespace UEditor.Core.Handlers
 {
     public class UploadHandler : Handler
     {
-
         public UploadConfig UploadConfig { get; private set; }
         public UploadResult Result { get; private set; }
 
-        public UploadHandler(HttpContext context, UploadConfig config)
-            : base(context)
+        public UploadHandler(HttpContext context, UploadConfig config) : base(context)
         {
             this.UploadConfig = config;
             this.Result = new UploadResult() { State = UploadState.Unknown };
@@ -46,7 +44,6 @@ namespace UEditor.Core.Handlers
                     WriteResult();
                     return;
                 }
-
                 uploadFileBytes = new byte[file.Length];
                 try
                 {
@@ -63,13 +60,20 @@ namespace UEditor.Core.Handlers
             Result.OriginFileName = uploadFileName;
 
             var savePath = PathFormatter.Format(uploadFileName, UploadConfig.PathFormat);
-            //var localPath = Path.Combine(Config.WebRootPath, savePath);
-            var localPath = Path.Combine(UploadConfig.SaveAbsolutePath, savePath);
+            var localPath = "";
+
+            if (string.IsNullOrEmpty(UploadConfig.SaveAbsolutePath))
+            {
+                localPath = Path.Combine(Config.WebRootPath, savePath);
+            }
+            else
+            {
+                localPath = Path.Combine(UploadConfig.SaveAbsolutePath, savePath);
+            }
             try
             {
                 if (UploadConfig.FtpUpload)
                 {
-                    
                     var fileExt = Path.GetExtension(uploadFileName).TrimStart('.');
                     var key = savePath;//UploadConfig.PathFormat + "." + fileExt;
                     //FtpUpload.UploadFile(new MemoryStream(uploadFileBytes), localPath, UploadConfig.FtpIp,
@@ -80,16 +84,14 @@ namespace UEditor.Core.Handlers
                 }
                 else
                 {
-
                     if (!Directory.Exists(Path.GetDirectoryName(localPath)))
                     {
                         Directory.CreateDirectory(Path.GetDirectoryName(localPath));
                     }
-
                     File.WriteAllBytes(localPath, uploadFileBytes);
                 }
                 Result.Url = savePath;
-                Result.State = UploadState.Success; 
+                Result.State = UploadState.Success;
             }
             catch (Exception e)
             {
