@@ -28,7 +28,7 @@ namespace WaterCloud.Service.SystemOrganize
         private string authorizecacheKey = "watercloud_authorizeurldata_";// +权限
         private string initcacheKey = "watercloud_init_";
         //获取类名
-        private string className = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.FullName.Split('.')[3];
+        
         public RoleService(IDbContext context) : base(context)
         {
             moduleApp = new ModuleService(context);
@@ -36,14 +36,14 @@ namespace WaterCloud.Service.SystemOrganize
             moduleFieldsApp = new ModuleFieldsService(context);
         }
 
-        public async Task<List<RoleEntity>> GetList( string keyword = "")
+        public async Task<List<RoleExtend>> GetList( string keyword = "")
         {
-            var cachedata =await repository.CheckCacheList(cacheKey + "list");
+            var cachedata = GetQuery();
             if (!string.IsNullOrEmpty(keyword))
             {
-                cachedata = cachedata.Where(t => t.F_FullName.Contains(keyword) || t.F_EnCode.Contains(keyword)).ToList();
+                cachedata = cachedata.Where(t => t.F_FullName.Contains(keyword) || t.F_EnCode.Contains(keyword));
             }
-            return cachedata.Where(t => t.F_Category == 1&&t.F_DeleteMark==false).ToList();
+            return cachedata.ToList();
         }
         public async Task<List<RoleEntity>> GetListOne(string keyword = "")
         {
@@ -55,16 +55,15 @@ namespace WaterCloud.Service.SystemOrganize
             }
             return cachedata.OrderBy(t => t.F_SortCode).ToList();
         }
-        public async Task<List<RoleEntity>> GetLookList(Pagination pagination, string keyword = "")
+        public async Task<List<RoleExtend>> GetLookList(Pagination pagination, string keyword = "")
         {
             //获取数据权限
-            var list = GetDataPrivilege("u", className.Substring(0, className.Length - 7));
+            var list = GetDataPrivilege("u","", GetQuery());
             if (!string.IsNullOrEmpty(keyword))
             {
                 list = list.Where(u => u.F_FullName.Contains(keyword) || u.F_EnCode.Contains(keyword));
             }
-            list = list.Where(u => u.F_DeleteMark == false && u.F_Category == 1);
-            return GetFieldsFilterData(await repository.OrderList(list, pagination), className.Substring(0, className.Length - 7));
+            return GetFieldsFilterData(await repository.OrderList(list, pagination));
         }
         public async Task<RoleEntity> GetForm(string keyValue)
         {
@@ -74,7 +73,31 @@ namespace WaterCloud.Service.SystemOrganize
         public async Task<RoleEntity> GetLookForm(string keyValue)
         {
             var cachedata = await repository.CheckCache(cacheKey, keyValue);
-            return GetFieldsFilterData(cachedata, className.Substring(0, className.Length - 7));
+            return GetFieldsFilterData(cachedata);
+        }
+        private IQuery<RoleExtend> GetQuery()
+        {
+            var query = repository.IQueryable(u => u.F_DeleteMark == false && u.F_Category == 1)
+                .LeftJoin<SystemSetEntity>((a, b) => a.F_OrganizeId == b.F_Id)
+                .Select((a, b) => new RoleExtend
+                {
+                    F_Id = a.F_Id,
+                    F_AllowDelete = a.F_AllowDelete,
+                    F_AllowEdit = a.F_AllowEdit,
+                    F_Category = a.F_Category,
+                    F_CompanyName = b.F_CompanyName,
+                    F_CreatorTime = a.F_CreatorTime,
+                    F_CreatorUserId = a.F_CreatorUserId,
+                    F_Description = a.F_Description,
+                    F_DeleteMark = a.F_DeleteMark,
+                    F_EnabledMark = a.F_EnabledMark,
+                    F_EnCode = a.F_EnCode,
+                    F_FullName = a.F_FullName,
+                    F_OrganizeId=a.F_OrganizeId,
+                    F_SortCode=a.F_SortCode,
+                    F_Type=a.F_Type,
+                });
+            return query;
         }
         public async Task DeleteForm(string keyValue)
         {

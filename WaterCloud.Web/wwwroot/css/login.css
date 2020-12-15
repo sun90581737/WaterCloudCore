@@ -211,4 +211,21 @@ p {
     border: 1px solid #ccc;
     border-radius: 5px;
     cursor: pointer;
+    background-color: white;
 }
+.layui-tab-title {
+    position: relative;
+    left: 0;
+    height: 40px;
+    white-space: nowrap;
+    font-size: 0;
+    border-bottom-width: 1px;
+    border-bottom-style: unset;
+    transition: all .2s;
+    -webkit-transition: all .2s;
+}
+
+    .layui-tab-title .layui-this {
+        color: orange;
+        background-color: #FFFFCE;
+    }

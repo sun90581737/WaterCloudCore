@@ -39,7 +39,7 @@ namespace WaterCloud.Web.Controllers
                     ViewBag.Password = GlobalContext.SystemConfig.SysemUserPwd;
                 }
                 ViewBag.ProjectName = systemset.F_ProjectName;
-                ViewBag.LogoIcon = "../icon/" + systemset.F_Logo;
+                ViewBag.LogoIcon = ".." + systemset.F_Logo;
                 return View();
             }
             catch (Exception)
@@ -63,7 +63,7 @@ namespace WaterCloud.Web.Controllers
                     ViewBag.Password = GlobalContext.SystemConfig.SysemUserPwd;
                 }
                 ViewBag.ProjectName = systemset.F_ProjectName;
-                ViewBag.LogoIcon = "../icon/" + systemset.F_Logo;
+                ViewBag.LogoIcon = ".." + systemset.F_Logo;
                 return View();
             }
             catch (Exception)
