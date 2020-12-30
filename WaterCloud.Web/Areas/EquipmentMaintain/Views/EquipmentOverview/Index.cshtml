@@ -222,7 +222,8 @@
                 async: false,
                 success: function (da) {
                     $(da).each(function (index, item) {
-                       $("#Type_id").append("<option value='" + item.Type + "'>" + item.Type + "</option>");
+                        $("#Type_id").append("<option value='" + item.Type + "'>" + item.Type + "</option>");
+                        $("#Type_id").find("option").eq(1).attr("selected", "true");
                         form.render("select");//注意：最后必须重新渲染下拉框，否则没有任何效果。
                     })
                 }
